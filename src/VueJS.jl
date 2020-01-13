@@ -1,5 +1,12 @@
 module VueJS
 
-greet() = print("Hello World!")
+using XMLDict,JSON
+
+export el,vuetify
+
+include("structs.jl")
+
+### modules
+include("vuetify.jl")
 
 end # module

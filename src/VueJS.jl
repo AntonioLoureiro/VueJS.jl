@@ -1,14 +1,25 @@
 module VueJS
 
-using XMLDict,JSON
+using JSON
 
-export htmlElement,el,vuetify,htmlString,VueElement,VueComponent
+export htmlElement,htmlString,VueElement,page,VueComponent,grid
 
 
 include("structs.jl")
 include("base.jl")
+include("grid.jl")
 
-### modules
-include("vuetify.jl")
 
-end # module
+    module vuetify
+
+        using JSON,..VueJS
+
+        export update_validate!,comp,page,VueElement,comp,page,@el
+
+        ### modules
+        include("vuetify.jl")
+
+
+    end # module
+
+end

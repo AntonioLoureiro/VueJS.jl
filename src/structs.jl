@@ -9,11 +9,11 @@ end
 
 htmlString(s::String)=s
 htmlString(n::Nothing)=nothing
-htmlString(a::Vector{htmlElement})=join(htmlString.(a))
+htmlString(a::Vector)=join(htmlString.(a))
 
 function htmlString(el::htmlElement)
     tag=el.tag
-    attrs=join([" "*k*"=\""*v*"\"" for (k,v) in el.attrs])
+    attrs=join([typeof(v)==Bool ? " $k" : " "*k*"=\""*string(v)*"\"" for (k,v) in el.attrs])
     value=htmlString(el.value)
     
     if value==nothing
@@ -39,6 +39,7 @@ mutable struct VueElement
     
     id::String
     dom::htmlElement
+    binds::Dict{String,String}
     scriptels::Vector{String}
     cols::Int64
     
@@ -50,8 +51,9 @@ mutable struct VueComponent
      id::String
      elements::Vector{Pair{String,Union{VueElement,VueComponent}}}
      dom::htmlElement
-     scriptels::Vector{String}
+     script::String
      cols::Int64
      data::Dict{String,Any}
      
 end
+

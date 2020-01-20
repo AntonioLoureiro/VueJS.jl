@@ -2,7 +2,7 @@ module VueJS
 
 using JSON
 
-export htmlElement,htmlString,VueElement,page,VueComponent,grid
+export htmlElement,htmlString,VueElement,page,VueComponent,grid,update_def_data!
 
 
 include("structs.jl")
@@ -14,7 +14,7 @@ include("grid.jl")
 
         using JSON,..VueJS
 
-        export update_validate!,comp,page,VueElement,comp,page,@el
+        export update_validate!,page,VueElement,VueComponent,page,@el
 
         ### modules
         include("vuetify.jl")

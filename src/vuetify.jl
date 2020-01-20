@@ -18,8 +18,6 @@ function update_validate!(vuel::VueElement,args::Dict)
     
     ## Binding value to vue element id
     vuel.binds["value"]=vuel.id   
-    vuel.dom.attrs[":value"]=vuel.id
-    vuel.dom.attrs["@input"]="$(vuel.id) = \$event.target.value"
     
     
     tag=vuel.dom.tag
@@ -60,25 +58,17 @@ macro el(args...)
     end
 end
 
-function comp(id::String,garr::Array;scripts=["vuetify: new Vuetify()"],kwargs...)
+
+
+function VueComponent(id::String,garr::Array;kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
-    gridnt=grid(garr)
-    scriptels=[]
-    push!(scriptels,"el: '#$id'")
-    append!(scriptels,scripts)
-    def_data=gridnt.def_data
-    
-    if haskey(args,"data")
-        for (k,v) in def_data
-            haskey(args["data"],k) ? def_data[k]=args["data"][k] : nothing
-        end
-    end
-    push!(scriptels,"data: "*JSON.json(def_data))
-    
-    script="new Vue({"*join(scriptels,",")*"})"
-    VueComponent(id,gridnt.elements,htmlElement("div",Dict("id"=>id),htmlElement("v-container",Dict("fluid"=>true),gridnt.dom)),script,3,def_data)
+    scripts=haskey(args,"scripts") ? args["scripts"] : []
+        
+    data=haskey(args,"data") ? args["data"] : Dict()
+        
+    VueJS.VueComponent(id,garr,scripts,3,data)
     
 end
 
@@ -87,15 +77,26 @@ function page(garr::Array;kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
-    vueapp=comp("app",garr;kwargs...)
+    grid_data=grid(garr)
     
-    body=htmlElement("body",Dict(),htmlElement("div",Dict("id"=>"app"),htmlElement("v-app",Dict(),htmlElement("v-container",Dict("fluid"=>true),vueapp.dom))))
-        
-    elscripts=[vueapp.script]
+    scripts=haskey(args,"scripts") ? args["scripts"] : []
+    push!(scripts,"el: '#app'")
+    push!(scripts,"vuetify: new Vuetify()")
     
-    haskey(args,"scripts") ? append!(elscripts,args["scripts"]) : nothing
-            
-    page_inst=VueJS.page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,join(elscripts,"\n"))
+    data=haskey(args,"data") ? args["data"] : Dict
+    def_data=grid_data["def_data"]
+    
+    update_def_data!(def_data,data)
+    
+    push!(scripts,"data: "*JSON.json(def_data))
+    
+    append!(scripts,grid_data["scriptels"])
+    
+    script="var app = new Vue({"*join(scripts,",")*"})"
+    
+    body=htmlElement("body",Dict(),htmlElement("div",Dict("id"=>"app"),htmlElement("v-app",Dict(),htmlElement("v-container",Dict("fluid"=>true),grid_data["arr_dom"]))))
+    
+    page_inst=VueJS.page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,script)
     
     include_scripts=map(x->htmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
     include_styles=map(x->htmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x),nothing),page_inst.include_styles)

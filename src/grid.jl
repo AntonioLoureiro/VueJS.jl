@@ -1,59 +1,101 @@
-function grid(arr::Array; rows=true)
-    arr_dom=[]
-    elements=[]
-    def_data=Dict{String,Any}()
-    scriptels=[]
+
+function grid_data!(r,rows::Bool,grid_data::Dict,scope::Array)
     
-#     arr_cols=WebTools.getcols(arr,rows)
-    
-#     tot=sum(arr_cols)
-#     if tot>12
-#         arr_cols=Int.(round.(arr_cols./tot*12,digits=0))
-#         idx=findmax(arr_cols)[2]
-#         arr_cols[idx]=arr_cols[idx]-1
-#     end
-    
-    for (i,rorig) in enumerate(arr)
-       
-        r=deepcopy(rorig)
+    ## Vue Element
         if typeof(r)==VueElement
            domvalue=r.dom
-           push!(elements,r.id=>r)
-           
-            #data
+                      
+            #data binding
             if length(r.binds)!=0
                 for (k,v) in r.binds
                     
+                    scope_str=length(scope)!=0 ? join(scope,".")*"." : ""
+                    
+                    r.dom.attrs[":$k"]=scope_str*v
+                    r.dom.attrs["@input"]="$(scope_str*v) = \$event.target.$k"
+    
                     if haskey(r.dom.attrs,k) 
                         datavalue=r.dom.attrs[k]
                         delete!(r.dom.attrs,k)
                     else
                         datavalue=""
                     end
-                    def_data[v]=datavalue
+                    grid_data["def_data"][v]=datavalue
                 end
+                
             end
-        elseif typeof(r)==VueComponent
-            domvalue=r.dom
-            push!(elements,r.id=>r)
-            push!(scriptels,r.script)
+            
+        ## Vue Component
+        elseif typeof(r)==VueJS.VueComponent
+            push!(scope,r.id)
+            grid_child=grid(r.grid,rows=true,scope=scope)
+            domvalue=grid_child["arr_dom"]        
+            append!(grid_data["scriptels"],grid_child["scriptels"])
+            grid_data["def_data"][r.id]=grid_child["def_data"]
+            
+        
+        ## Array Elements/Components
         elseif typeof(r)<:Array
-            grid_nt=grid(r,rows=(rows ? false : true))
-            domvalue=grid_nt.dom
-            append!(elements,grid_nt.elements)
-            append!(scriptels,grid_nt.scriptels)
-            merge!(def_data,grid_nt.def_data)
+            grid_child=grid(r,rows=(rows ? false : true))
+            domvalue=grid_child["arr_dom"]
+            append!(grid_data["scriptels"],grid_child["scriptels"])
+            merge!(grid_data["def_data"],grid_child["def_data"])
             
         else
+            
             error("$r with invalid type for Grid!")
         end
         
-        grid_class=rows ? "v-row" : "v-col"
-        new_el=htmlElement(grid_class,Dict(),domvalue)
-        push!(arr_dom,new_el)
-           
+    return domvalue
+end
+
+
+function update_def_data!(def_data::Dict,data::Dict)
+    
+    for (k,v) in def_data
+        
+        if typeof(v)<:Dict
+            if haskey(data,k)
+                update_def_data!(def_data[k],data[k])
+            end
+        else
+            haskey(data,k) ? def_data[k]=data[k] : nothing
+        end
+        
     end
     
-    return (dom=arr_dom,elements=elements,def_data=def_data,scriptels=scriptels)
+end
+
+
+function grid(arr::Array; rows=true,scope=[])
+    
+    grid_data=Dict("arr_dom"=>[],"def_data"=>Dict{String,Any}(),"scriptels"=>[])
+    
+    for (i,rorig) in enumerate(arr)
+       
+        r=deepcopy(rorig)
+        
+        ## update grid_data recursively
+        domvalue=grid_data!(r,rows,grid_data,scope)  
+        
+        grid_class=rows ? "v-row" : "v-col"
+        new_el=htmlElement(grid_class,Dict(),domvalue)
+        append=false
+        try
+             startswith(domvalue[1].attrs["class"],"v-row") && rows
+                append=true
+        catch;
+        end
+        
+        if append
+        append!(grid_data["arr_dom"],domvalue)
+        else
+        push!(grid_data["arr_dom"],new_el)
+        end
+           
+    
+    end
+    
+    return grid_data
 
 end

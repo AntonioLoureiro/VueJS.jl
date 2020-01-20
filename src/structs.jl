@@ -49,9 +49,8 @@ end
 mutable struct VueComponent
     
      id::String
-     elements::Vector{Pair{String,Union{VueElement,VueComponent}}}
-     dom::htmlElement
-     script::String
+     grid::Array
+     scriptels::Vector{String}
      cols::Int64
      data::Dict{String,Any}
      

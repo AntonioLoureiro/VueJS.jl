@@ -107,7 +107,6 @@ function page(garr::Array;kwargs...)
     htmlpage=htmlElement("html",Dict(),[page_inst.head,page_inst.body])
     
     return htmlString(htmlpage)*"<script>$(page_inst.scripts)</script>"
-end
- 
+end 
 
 

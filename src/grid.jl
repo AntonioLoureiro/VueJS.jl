@@ -1,6 +1,6 @@
 
 function grid_data!(r,rows::Bool,grid_data::Dict,scope::Array)
-    
+    append=false
     ## Vue Element
         if typeof(r)==VueElement
            domvalue=r.dom
@@ -32,7 +32,7 @@ function grid_data!(r,rows::Bool,grid_data::Dict,scope::Array)
             domvalue=grid_child["arr_dom"]        
             append!(grid_data["scriptels"],grid_child["scriptels"])
             grid_data["def_data"][r.id]=grid_child["def_data"]
-            
+            append=true
         
         ## Array Elements/Components
         elseif typeof(r)<:Array
@@ -46,7 +46,7 @@ function grid_data!(r,rows::Bool,grid_data::Dict,scope::Array)
             error("$r with invalid type for Grid!")
         end
         
-    return domvalue
+    return (append,domvalue)
 end
 
 
@@ -66,34 +66,28 @@ function update_def_data!(def_data::Dict,data::Dict)
     
 end
 
-
 function grid(arr::Array; rows=true,scope=[])
     
     grid_data=Dict("arr_dom"=>[],"def_data"=>Dict{String,Any}(),"scriptels"=>[])
     
+    i_rows=[]
     for (i,rorig) in enumerate(arr)
        
         r=deepcopy(rorig)
         
         ## update grid_data recursively
-        domvalue=grid_data!(r,rows,grid_data,scope)  
-        
+        (append,domvalue)=grid_data!(r,rows,grid_data,scope)  
+     
         grid_class=rows ? "v-row" : "v-col"
         new_el=htmlElement(grid_class,Dict(),domvalue)
-        append=false
-        try
-             startswith(domvalue[1].attrs["class"],"v-row") && rows
-                append=true
-        catch;
-        end
         
-        if append
+        if ((i!=1 && i_rows[i-1]) || (rows)) && append
         append!(grid_data["arr_dom"],domvalue)
         else
         push!(grid_data["arr_dom"],new_el)
         end
            
-    
+    push!(i_rows,rows)
     end
     
     return grid_data

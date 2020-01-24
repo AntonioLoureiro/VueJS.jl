@@ -13,13 +13,9 @@ end
 
 function update_validate!(vuel::VueElement,args::Dict)
     
-    ## Mandatory Args
-#     haskey(args,"value") ? nothing : args["value"]=""
-    
-    ## Binding value to vue element id
-    vuel.binds["value"]=vuel.id   
-    
-    
+    ## Default Binding value_attr 
+    vuel.binds=[vuel.value_attr]
+        
     tag=vuel.dom.tag
     if haskey(specific_update_validation,tag)
         specific_update_validation[tag](vuel)
@@ -37,7 +33,7 @@ function VueElement(id::String,tag::String;kwargs...)
     ## Args for Vue
     haskey(args,"cols") ? cols=args["cols"] : cols=3
     
-    vuel=VueElement(id,htmlElement(tag,args,""),Dict(),[],cols)
+    vuel=VueElement(id,htmlElement(tag,args,""),"",[],[],"value",cols)
     update_validate!(vuel,args)
     
     return vuel
@@ -60,43 +56,115 @@ end
 
 
 
-function VueComponent(id::String,garr::Array;kwargs...)
+function VueComponent(id::String,garr::Array;binds=Dict{String,String}(),kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
     scripts=haskey(args,"scripts") ? args["scripts"] : []
         
     data=haskey(args,"data") ? args["data"] : Dict()
+    
+    scope=[]
+    garr=element_path(garr,scope)
+    comp=VueJS.VueComponent(id,garr,binds,scripts,3,data,Dict{String,Any}())
+    element_binds!(comp,binds=binds)
+    return comp
+end
+
+function element_path(arr::Array,scope::Array)
+    
+    new_arr=deepcopy(arr)
+    scope_str=join(scope,".")
+    
+    for (i,r) in enumerate(new_arr)
+        ## Vue Element
+        if typeof(r)==VueElement
+            r.path=scope_str
+        ## Vue Component
+        elseif typeof(r)==VueJS.VueComponent
+            push!(scope,r.id)
+            r.grid=element_path(r.grid,scope)
+            r.binds=Dict(scope_str=="" ? k=>v : scope_str*"."*k=>scope_str*"."*v for (k,v) in r.binds)
+        ## Array Elements/Components
+        elseif typeof(r)<:Array
+            r=element_path(r,scope)
+        end
+    end
+    return new_arr
+end
+
+element_binds!(comp::VueJS.VueComponent;binds=Dict())=map(x->element_binds!(x,binds=comp.binds),comp.grid)
+element_binds!(el::Array;binds=Dict())=map(x->element_binds!(x,binds=binds),el)
+
+function element_binds!(el::VueJS.VueElement;binds=Dict())    
+    
+    for (k,v) in binds
         
-    VueJS.VueComponent(id,garr,scripts,3,data)
+        (path_tgt,attr_tgt)=try 
+            arr_s=split(v,".")
+            (join(arr_s[1:end-1],"."),arr_s[end])
+        catch
+            ("","")
+        end
+        
+        ## update binds in element due to be binded in other element
+        if startswith(path_tgt,el.path)
+           push!(el.binds,attr_tgt)
+        end
+        
+         (path_src,attr_src)=try 
+            arr_s=split(k,".")
+            (join(arr_s[1:end-1],"."),arr_s[end])
+        catch
+            ("","")
+        end
+        
+        ## update binds in element due to be binded in other element
+        if startswith(path_src,el.path)
+            el_path=path_tgt*"."*attr_tgt
+            el.dom.attrs[":$attr_src"]=el_path
+            el.dom.attrs["@input"]="$el_path= \$event" 
+        end
+            
+    end
+    
+    el.binds=unique(el.binds)
+
+    ## Bind el values
+    for b in el.binds
+        attr_path=(el.path=="" ? el.id*".$(b)" : el.path*"."*el.id*".$(b)")
+        el.dom.attrs[":$b"]=attr_path
+        el.dom.attrs["@input"]="$attr_path= \$event"
+        
+    end
     
 end
+
+
 
 
 function page(garr::Array;kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
-    grid_data=grid(garr)
+    data=haskey(args,"data") ? args["data"] : Dict()
+    (arr_dom,def_data)=grid(garr,data=data)
     
     scripts=haskey(args,"scripts") ? args["scripts"] : []
-    push!(scripts,"el: '#app'")
-    push!(scripts,"vuetify: new Vuetify()")
     
-    data=haskey(args,"data") ? args["data"] : Dict
-    def_data=grid_data["def_data"]
+    push!(scripts,"const app_state = $(JSON.json(def_data))")
     
-    update_def_data!(def_data,data)
+    ## component script
+    comp_script=[]
+    push!(comp_script,"el: '#app'")
+    push!(comp_script,"vuetify: new Vuetify()")
+    push!(comp_script,"data: app_state")
+    comp_script="var app = new Vue({"*join(comp_script,",")*"})"
+    push!(scripts,comp_script)
     
-    push!(scripts,"data: "*JSON.json(def_data))
+    body=htmlElement("body",Dict(),htmlElement("div",Dict("id"=>"app"),htmlElement("v-app",Dict(),htmlElement("v-container",Dict("fluid"=>true),arr_dom))))
     
-    append!(scripts,grid_data["scriptels"])
-    
-    script="var app = new Vue({"*join(scripts,",")*"})"
-    
-    body=htmlElement("body",Dict(),htmlElement("div",Dict("id"=>"app"),htmlElement("v-app",Dict(),htmlElement("v-container",Dict("fluid"=>true),grid_data["arr_dom"]))))
-    
-    page_inst=VueJS.page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,script)
+    page_inst=VueJS.page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,join(scripts,"\n"))
     
     include_scripts=map(x->htmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
     include_styles=map(x->htmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x),nothing),page_inst.include_styles)
@@ -108,5 +176,3 @@ function page(garr::Array;kwargs...)
     
     return htmlString(htmlpage)*"<script>$(page_inst.scripts)</script>"
 end 
-
-

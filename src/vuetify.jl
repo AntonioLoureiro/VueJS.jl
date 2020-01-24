@@ -68,6 +68,7 @@ function VueComponent(id::String,garr::Array;binds=Dict{String,String}(),kwargs.
     garr=element_path(garr,scope)
     comp=VueJS.VueComponent(id,garr,binds,scripts,3,data,Dict{String,Any}())
     element_binds!(comp,binds=binds)
+    update_data!(comp)
     return comp
 end
 
@@ -140,7 +141,57 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
     
 end
 
+function update_data!(el::VueJS.VueElement,datavalue)
+    
+    def_data=Dict{String,Any}()
+    for b in el.binds
+        
+        if haskey(el.dom.attrs,b)
+           realdata=el.dom.attrs[b]
+           if b==el.value_attr && datavalue!=nothing
+                realdata=datavalue
+           end
+           delete!(el.dom.attrs,b)
+        else
+           realdata=""
+        end
+        
+        def_data[b]=realdata
+    end
+    return Dict(el.id=>def_data)
+end
 
+function update_data!(el::Array,datavalue=Dict{String,Any}())
+    def_data=Dict{String,Any}()
+    for e in el
+       datavalue=update_data!(e,datavalue)
+       merge!(def_data,datavalue)
+    end
+    
+    return def_data
+end
+
+function update_data!(el::VueJS.VueComponent,datavalue=Dict{String,Any}())
+    
+    for e in el.grid
+        
+        if typeof(e) in [VueElement,VueComponent]
+            if haskey(el.data,e.id)
+                datavalue=el.data[e.id]
+            else    
+                datavalue=nothing
+            end
+            
+            def_data=update_data!(e,datavalue)
+            merge!(el.def_data,def_data)
+        elseif typeof(e)<:Array
+            def_data=update_data!(e,el.data)
+            merge!(el.def_data,def_data)
+        end
+    end
+        
+    return Dict(el.id=>el.def_data)
+end
 
 
 function page(garr::Array;kwargs...)

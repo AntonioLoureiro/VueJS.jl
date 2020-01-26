@@ -1,5 +1,5 @@
 
-function grid(arr::Array;binds=Dict{String,String}(),rows=true,scope=[],data=Dict(),def_data=Dict{Any,Any}())
+function grid(arr::Array;rows=true)
     
     arr_dom=[]
     
@@ -18,17 +18,13 @@ function grid(arr::Array;binds=Dict{String,String}(),rows=true,scope=[],data=Dic
 
             ## Vue Component
             elseif typeof(r)==VueJS.VueComponent
-                push!(scope,r.id)
                 append=true
-                (domvalue,def_data_child)=grid(r.grid,rows=true,scope=scope,data=(haskey(data,r.id) ? data[r.id] : Dict()))
-                def_data=convert(Dict{Any,Any},def_data)
-                def_data[r.id]=def_data_child
-
+                domvalue=grid(r.grid,rows=true)
+          
             ## Array Elements/Components
-            elseif typeof(r)<:Array
-                def_data=convert(Dict{Any,Any},def_data)
-                (domvalue,def_data)=grid(r,rows=(rows ? false : true),data=data,def_data=def_data)
-                      
+            elseif typeof(r)<:Array                
+                domvalue=grid(r,rows=(rows ? false : true))
+      
         else
             
             error("$r with invalid type for Grid!")
@@ -51,8 +47,6 @@ function grid(arr::Array;binds=Dict{String,String}(),rows=true,scope=[],data=Dic
            
     push!(i_rows,rows)
     end
-
-    def_data=convert(Dict{Any,Any},def_data)
-    return (arr_dom,def_data)
+    return arr_dom
 
 end

@@ -34,29 +34,3 @@ mutable struct page
     scripts::String
     
 end
-
-mutable struct VueElement
-    
-    id::String
-    dom::htmlElement
-    path::String
-    binds::Vector{String}
-    scriptels::Vector{String}
-    value_attr::String
-    cols::Int64
-    
-end
- 
-
-mutable struct VueComponent
-    
-     id::String
-     grid::Array
-     binds::Dict{String,String}
-     scriptels::Vector{String}
-     cols::Int64
-     data::Dict{String,Any}
-     def_data::Dict{String,Any}
-     
-end
-

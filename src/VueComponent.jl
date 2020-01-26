@@ -56,12 +56,13 @@ function element_path(arr::Array,scope::Array)
 end
 
 
+element_binds!(comp::VueJS.VueComponent;binds=Dict())=element_binds!(comp.grid,binds=binds)
 
-element_binds!(comp::VueJS.VueComponent;binds=Dict())=map(x->element_binds!(x,binds=comp.binds),comp.grid)
 element_binds!(el::Array;binds=Dict())=map(x->element_binds!(x,binds=binds),el)
 
 function element_binds!(el::VueJS.VueElement;binds=Dict())    
-    
+    full_path=el.path=="" ? el.id : el.path*"."*el.id
+ 
     for (k,v) in binds
         
         (path_tgt,attr_tgt)=try 
@@ -72,7 +73,7 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
         end
         
         ## update binds in element due to be binded in other element
-        if startswith(path_tgt,el.path)
+        if startswith(path_tgt,full_path)
            push!(el.binds,attr_tgt)
         end
         
@@ -82,12 +83,16 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
         catch
             ("","")
         end
-        
+            
         ## update binds in element due to be binded in other element
-        if startswith(path_src,el.path)
+        if startswith(path_src,full_path)
+            
             el_path=path_tgt*"."*attr_tgt
             el.dom.attrs[":$attr_src"]=el_path
             el.dom.attrs["@input"]="$el_path= \$event" 
+            el.binds=filter(x->x!=attr_tgt,el.binds)
+            delete!(el.dom.attrs,attr_src)
+            
         end
             
     end
@@ -107,6 +112,8 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
     end
     
 end
+
+
 
 
 function merge_def_data!(a::Dict,b::Dict)

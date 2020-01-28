@@ -13,7 +13,23 @@ function grid(arr::Array;rows=true)
         
         ## Vue Element
             if typeof(r)==VueElement
-                              
+            
+            ## Bind el values
+                for (k,v) in r.binds
+                    value=r.path=="" ? v : r.path*"."*v
+                    r.dom.attrs[":$k"]=value
+                    if haskey(r.dom.attrs,"@input")
+                        r.dom.attrs["@input"]=r.dom.attrs["@input"]*"; "*"$value= \$event;"
+                    else
+                        r.dom.attrs["@input"]="$value= \$event"
+                    end
+
+                    if haskey(r.dom.attrs,k)
+                        delete!(r.dom.attrs,k)
+                    end
+
+                end     
+            
                domvalue=r.dom
 
             ## Vue Component

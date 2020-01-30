@@ -3,7 +3,7 @@ using Sockets
 using JSON
 include("../src/VueJS.jl")
 using Revise
-using .VueJS
+#using .VueJS
 # include("../src/HtmlElement.jl")
 # include("../src/VueElement.jl")
 # include("../src/VueComponent.jl")
@@ -20,8 +20,9 @@ dom = HtmlElement("tag", Dict("class"=>"test-class"), "valor")
 input = HtmlElement("h4", Dict("type"=>"text", "placeholder"=>"luis"), "texto")
 
 function index(req)
-    myvue = VueElement("luis", "h4", value="texto", placeholder="luis", type="text")
-    comp = VueComponent("luis", [myvue])
+    myvue = VueElement("luis", "h4", value="outro")
+    myinp = VueElement("inp", "input", placeholder="dummy data", type="text")
+    comp = VueComponent("page1", [myvue, myinp])
     return page([myvue])
     #return JSON.json(Dict("welcome"=>"home"))
 end
@@ -29,9 +30,3 @@ end
 HTTP.@register(router, "GET", "/", index)
 
 @async HTTP.serve(router, "127.0.0.1" , 9000)
-
-function b(; kwargs...)
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-    println(args)
-end
-b(b=2)

@@ -14,7 +14,6 @@ new_binds=Dict{String,Any}()
 
             (string(join(arr_s[1:end-1],".")),string(arr_s[end]))
             catch
-            error("KKK")
                 ("","")
             end
 

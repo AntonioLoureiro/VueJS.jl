@@ -1,4 +1,4 @@
-function methods_script(c::VueComponent)
+function methods_script(c::VueStruct)
     out=[]
     for (f_name,script) in c.methods 
 

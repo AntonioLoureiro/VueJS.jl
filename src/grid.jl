@@ -51,8 +51,8 @@ function grid(arr::Array;rows=true)
             
                domvalue=r.dom
 
-            ## Vue Component
-            elseif r isa VueJS.VueComponent
+            ## VueStruct
+            elseif r isa VueStruct
                 append=true
                 domvalue=grid(r.grid,rows=true)
           

@@ -5,7 +5,7 @@ function page(garr::Array;binds=Dict{String,String}(),methods=Dict{String,Any}()
     
     data=haskey(args,"data") ? args["data"] : Dict()
     
-    comp=VueComponent("app",garr,data=data,binds=binds,methods=methods)
+    comp=VueStruct("app",garr,data=data,binds=binds,methods=methods)
         
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     
@@ -23,7 +23,7 @@ function page(garr::Array;binds=Dict{String,String}(),methods=Dict{String,Any}()
     arr_dom=grid(comp.grid)
     body=htmlElement("body",Dict(),nothing,htmlElement("div",Dict("id"=>"app"),nothing,htmlElement("v-app",Dict(),nothing,htmlElement("v-container",Dict("fluid"=>true),nothing,arr_dom))))
     
-    page_inst=VueJS.page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,join(scripts,"\n"))
+    page_inst=page(deepcopy(VueJS.HEAD),VueJS.INCLUDE_SCRIPTS,VueJS.INCLUDE_STYLES,body,join(scripts,"\n"))
     
     include_scripts=map(x->htmlElement("script",Dict("src"=>x),nothing,""),page_inst.include_scripts)
     include_styles=map(x->htmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x),nothing,nothing),page_inst.include_styles)

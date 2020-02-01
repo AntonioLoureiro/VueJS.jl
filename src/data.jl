@@ -42,11 +42,11 @@ function update_data!(arr::Array,datavalue::Dict)
     def_data=Dict{String,Any}()
     for r in arr
         
-        if typeof(r)==VueElement
+        if r isa VueElement
             
             founddata=haskey(datavalue,r.id) ? datavalue[r.id] : nothing
             
-        elseif typeof(r)==VueComponent
+        elseif r isa VueStruct
             
             founddata=haskey(datavalue,r.id) ? datavalue[r.id] : Dict{String,Any}()
             
@@ -63,14 +63,14 @@ function update_data!(arr::Array,datavalue::Dict)
     return def_data
 end
 
-function update_data!(el::VueComponent,datavalue=Dict{String,Any}())
+function update_data!(el::VueStruct,datavalue=Dict{String,Any}())
     
     new_data=deepcopy(el.data)
     new_def_data=deepcopy(el.def_data)
     
     merge!(new_data,datavalue)
     updated_data=update_data!(el.grid,new_data)
-    VueJS.merge_def_data!(new_def_data,updated_data)
+    merge_def_data!(new_def_data,updated_data)
 
     el.data=new_data
     el.def_data=new_def_data

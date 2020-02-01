@@ -55,11 +55,11 @@ function reverse_binds(binds::Dict)
 end
 
 element_binds!(comp::String;binds=Dict())=nothing
-element_binds!(comp::VueJS.VueComponent;binds=Dict())=element_binds!(comp.grid,binds=binds)
+element_binds!(comp::VueStruct;binds=Dict())=element_binds!(comp.grid,binds=binds)
 
 element_binds!(el::Array;binds=Dict())=map(x->element_binds!(x,binds=binds),el)
 
-function element_binds!(el::VueJS.VueElement;binds=Dict()) 
+function element_binds!(el::VueElement;binds=Dict()) 
     
     full_path=el.path=="" ? el.id : el.path*"."*el.id
     
@@ -70,7 +70,7 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
         end
     end
            
-    reverse_b=VueJS.reverse_binds(binds)
+    reverse_b=reverse_binds(binds)
     ## update binds in element due to be binded in other element
     if haskey(reverse_b,full_path)
         for (k,v) in reverse_b[full_path]

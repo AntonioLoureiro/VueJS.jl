@@ -1,5 +1,5 @@
 
-mutable struct VueComponent
+mutable struct VueStruct
     
      id::String
      grid::Array
@@ -13,7 +13,7 @@ mutable struct VueComponent
 end
 
 
-function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),kwargs...)
+function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
@@ -22,9 +22,9 @@ function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{
     
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueComponent(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}(),methods)
+    comp=VueStruct(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}(),methods)
     element_binds!(comp,binds=comp.binds)
-    VueJS.update_data!(comp,data)
+    update_data!(comp,data)
     
     ## Cols
     m_cols=maximum(max_cols.(grid(garr)))
@@ -47,8 +47,8 @@ function element_path(arr::Array,scope::Array)
             
             new_arr[i].path=scope_str
             
-        ## Vue Component
-        elseif typeof(r)==VueJS.VueComponent
+        ## VueStruct
+        elseif r isa VueStruct
 
             scope2=deepcopy(scope)
             push!(scope2,r.id)
@@ -71,7 +71,7 @@ function element_path(arr::Array,scope::Array)
         new_arr[i].binds=new_binds
             
         ## Array Elements/Components
-        elseif typeof(r)<:Array
+        elseif r isa Array
             new_arr[i]=element_path(r,scope)
         end
     end

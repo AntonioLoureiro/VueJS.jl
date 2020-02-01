@@ -74,7 +74,7 @@ function element_binds!(el::VueJS.VueElement;binds=Dict())
     ## update binds in element due to be binded in other element
     if haskey(reverse_b,full_path)
         for (k,v) in reverse_b[full_path]
-            el.binds[k]=full_path*"."*k
+            el.binds[k]=el.id*"."*k
         end
     end
 

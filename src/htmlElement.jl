@@ -14,7 +14,7 @@ htmlString(a::Vector)=join(htmlString.(a))
 
 function htmlString(el::htmlElement)
     tag=el.tag
-    attrs=join([typeof(v)==Bool ? " $k" : " "*k*"=\""*string(v)*"\"" for (k,v) in el.attrs])
+    attrs=join([v isa Bool ? (v ? " $k" : "") : " "*k*"=\""*string(v)*"\"" for (k,v) in el.attrs])
     value=htmlString(el.value)
     
     if value==nothing

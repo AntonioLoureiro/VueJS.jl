@@ -54,6 +54,7 @@ function reverse_binds(binds::Dict)
     return reverse_d
 end
 
+element_binds!(comp::String;binds=Dict())=nothing
 element_binds!(comp::VueJS.VueComponent;binds=Dict())=element_binds!(comp.grid,binds=binds)
 
 element_binds!(el::Array;binds=Dict())=map(x->element_binds!(x,binds=binds),el)

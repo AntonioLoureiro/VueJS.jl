@@ -53,9 +53,11 @@ function update_data!(arr::Array,datavalue::Dict)
         else
             founddata=datavalue
         end
-                
-        got_data=update_data!(r,founddata)
-        merge!(def_data,got_data)
+        
+        if !(r isa String)
+            got_data=update_data!(r,founddata)
+            merge!(def_data,got_data)
+        end
     end
     
     return def_data

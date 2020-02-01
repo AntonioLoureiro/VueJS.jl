@@ -6,7 +6,7 @@ mutable struct VueElement
     path::String
     binds::Dict{String,String}
     scriptels::Vector{String}
-    value_attr::String
+    value_attr::Union{Nothing,String}
     data::Dict{String,Any}
     cols::Union{Nothing,Int64}
     
@@ -26,8 +26,15 @@ end
 
 function update_validate!(vuel::VueElement,args::Dict)
     
-    ## Default Binding value_attr 
-    vuel.binds=Dict(vuel.value_attr=>vuel.id.*"."*vuel.value_attr)
+    ## Default Binding value_attr
+    vuel.value_attr!=nothing ? vuel.binds=Dict(vuel.value_attr=>vuel.id.*"."*vuel.value_attr) : nothing
+    
+    ## Bindig of non html accepted values
+    for (k,v) in args
+       if v isa Array || v isa Dict  
+          vuel.binds[k]=vuel.id.*"."*k
+       end 
+    end
     
     tag=vuel.dom.tag
     if haskey(specific_update_validation,tag)

@@ -23,19 +23,22 @@ function grid(arr::Array;rows=true)
         append=false
         
         ## Vue Element
-            if typeof(r)==VueElement
+            if r isa VueElement
             
             ## Bind el values
                 for (k,v) in r.binds
                     value=r.path=="" ? v : r.path*"."*v
                     r.dom.attrs[":$k"]=value
                 
-                    ### Event if tgt=src otherwise double count
+                    ### Capture Event if tgt=src otherwise double count
                     if r.id*"."*k==v
-                        if haskey(r.dom.attrs,"@input")
-                            r.dom.attrs["@input"]=r.dom.attrs["@input"]*"; "*"$value= \$event;"
-                        else
-                            r.dom.attrs["@input"]="$value= \$event"
+                        ## And only if value attr! Others do not change on input! I Think!
+                        if r.value_attr==k
+                            if haskey(r.dom.attrs,"@input")
+                                r.dom.attrs["@input"]=r.dom.attrs["@input"]*"; "*"$value= \$event;"
+                            else
+                                r.dom.attrs["@input"]="$value= \$event"
+                            end
                         end
                     end
                     
@@ -49,25 +52,27 @@ function grid(arr::Array;rows=true)
                domvalue=r.dom
 
             ## Vue Component
-            elseif typeof(r)==VueJS.VueComponent
+            elseif r isa VueJS.VueComponent
                 append=true
                 domvalue=grid(r.grid,rows=true)
           
             ## Array Elements/Components
-            elseif typeof(r)<:Array                
+            elseif r isa Array                
                 domvalue=grid(r,rows=(rows ? false : true))
-      
-        else
             
-            error("$r with invalid type for Grid!")
-        end
+            elseif r isa String                
+                domvalue=htmlElement("div",Dict(),12,r)
+            else
+
+                error("$r with invalid type for Grid!")
+            end
    
         grid_rows="v-row"
         grid_cols="v-col"
         grid_class=rows ? grid_rows : grid_cols
         
         ## one row only must have a single col
-        domvalue=(rows && typeof(r)==VueElement) ? htmlElement(grid_cols,Dict(),r.cols,domvalue) : domvalue
+        domvalue=(rows && typeof(r) in [VueElement,String]) ? htmlElement(grid_cols,Dict(),domvalue.cols,domvalue) : domvalue
         
         cols=domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue)
         

@@ -3,6 +3,7 @@ mutable struct htmlElement
     
     tag::String
     attrs::Dict{String,Any}
+    cols::Union{Nothing,Int64}
     value
     
 end

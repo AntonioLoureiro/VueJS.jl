@@ -20,11 +20,17 @@ function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
     
     scope=[]
-    garr=VueJS.element_path(garr,scope)
+    garr=element_path(garr,scope)
     comp=VueComponent(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}())
-    VueJS.element_binds!(comp,binds=comp.binds)
+    element_binds!(comp,binds=comp.binds)
     VueJS.update_data!(comp,data)
     
+    ## Cols
+    m_cols=maximum(max_cols.(grid(garr)))
+    m_cols>12 ? m_cols=12 : nothing
+    if comp.cols==nothing
+        comp.cols=m_cols
+    end
     return comp
 end
 

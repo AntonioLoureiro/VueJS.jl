@@ -28,10 +28,18 @@ function update_validate!(vuel::VueElement,args::Dict)
     
     ## Default Binding value_attr 
     vuel.binds=Dict(vuel.value_attr=>vuel.id.*"."*vuel.value_attr)
-        
+    
     tag=vuel.dom.tag
     if haskey(specific_update_validation,tag)
         specific_update_validation[tag](vuel)
+    end
+    
+    ## cols
+    if vuel.cols==nothing
+        vuel.cols=3
+        vuel.dom.cols=3
+    else
+        vuel.dom.cols=vuel.cols
     end
     
     return nothing
@@ -46,7 +54,7 @@ function VueElement(id::String,tag::String;kwargs...)
     ## Args for Vue
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
     
-    vuel=VueElement(id,htmlElement(tag,args,""),"",Dict(),[],"value",Dict(),cols)
+    vuel=VueElement(id,htmlElement(tag,args,cols,""),"",Dict(),[],"value",Dict(),cols)
     update_validate!(vuel,args)
     
     return vuel

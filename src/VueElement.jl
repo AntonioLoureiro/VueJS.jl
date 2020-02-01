@@ -15,20 +15,18 @@ end
 
 specific_update_validation=Dict(
 
+"v-btn"=>(x)->begin
+    x.value_attr=nothing
+end,   
 "v-select"=>(x)->begin
-        
     @assert haskey(x.dom.attrs,"items") "Vuetify Select element with no arg items!"
     @assert typeof(x.dom.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
-    
 end
 
 )
 
 function update_validate!(vuel::VueElement,args::Dict)
-    
-    ## Default Binding value_attr
-    vuel.value_attr!=nothing ? vuel.binds=Dict(vuel.value_attr=>vuel.id.*"."*vuel.value_attr) : nothing
-    
+     
     ## Bindig of non html accepted values
     for (k,v) in args
        if v isa Array || v isa Dict  
@@ -41,6 +39,24 @@ function update_validate!(vuel::VueElement,args::Dict)
         specific_update_validation[tag](vuel)
     end
     
+    ## Default Binding value_attr
+    if vuel.value_attr==nothing
+        if haskey(vuel.dom.attrs,"value")
+            vuel.dom.value=vuel.dom.attrs["value"]
+            delete!(vuel.dom.attrs,"value")
+        end
+    else    
+        vuel.binds[vuel.value_attr]=vuel.id.*"."*vuel.value_attr
+    end
+    
+    ## Special args
+    events=intersect(keys(vuel.dom.attrs),["click","mouseover"])
+    for e in events
+        event_js=vuel.dom.attrs[e]
+        delete!(vuel.dom.attrs,e)
+        vuel.dom.attrs["@$e"]=event_js isa Array ? join(event_js) : event_js
+    end
+   
     ## cols
     if vuel.cols==nothing
         vuel.cols=3

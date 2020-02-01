@@ -1,10 +1,11 @@
-function page(garr::Array;binds=Dict{String,String}(),kwargs...)
+
+function page(garr::Array;binds=Dict{String,String}(),methods=Dict{String,Any}(),kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
     data=haskey(args,"data") ? args["data"] : Dict()
     
-    comp=VueComponent("app",garr,data=data,binds=binds)
+    comp=VueComponent("app",garr,data=data,binds=binds,methods=methods)
         
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     
@@ -15,6 +16,7 @@ function page(garr::Array;binds=Dict{String,String}(),kwargs...)
     push!(comp_script,"el: '#app'")
     push!(comp_script,"vuetify: new Vuetify()")
     push!(comp_script,"data: app_state")
+    push!(comp_script,methods_script(comp))
     comp_script="var app = new Vue({"*join(comp_script,",")*"})"
     push!(scripts,comp_script)
     

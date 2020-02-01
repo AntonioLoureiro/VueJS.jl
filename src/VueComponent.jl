@@ -8,11 +8,12 @@ mutable struct VueComponent
      cols::Union{Nothing,Int64}
      data::Dict{String,Any}
      def_data::Dict{String,Any}
+     methods::Dict{String,Any}
      
 end
 
 
-function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),kwargs...)
+function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),kwargs...)
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
@@ -21,7 +22,7 @@ function VueComponent(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{
     
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueComponent(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}())
+    comp=VueComponent(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}(),methods)
     element_binds!(comp,binds=comp.binds)
     VueJS.update_data!(comp,data)
     

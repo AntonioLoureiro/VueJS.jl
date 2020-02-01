@@ -12,6 +12,7 @@ include("binding.jl")
 include("data.jl")
 include("base.jl")
 include("grid.jl")
+include("methods.jl")
 include("page.jl")
 
 

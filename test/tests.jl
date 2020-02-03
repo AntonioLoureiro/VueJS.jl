@@ -36,7 +36,6 @@ c2=VueStruct("c2",[r4,c1, VueElement(user.tag, user.tag)],data=Dict("vuet"=>"Ceb
     binds=Dict("r1.label"=>"r2.value","r1.value"=>"r3.value")
 
 )
-println(p1)
 
 function index(req)
     return p1
@@ -45,4 +44,4 @@ end
 router = HTTP.Router()
 HTTP.@register(router, "GET", "/", index)
 
-@async HTTP.serve(router, "127.0.0.1" , 8999)
+@async HTTP.serve(router, "127.0.0.1" , 8888)

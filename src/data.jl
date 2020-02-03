@@ -19,32 +19,19 @@ function update_data!(el::VueElement,datavalue)
     def_data=Dict{String,Any}()
     for (k,v) in el.binds
         new_k=deepcopy(k)
-<<<<<<< HEAD
-        if haskey(el.dom.attrs,k)   
-           real_data=deepcopy(el.dom.attrs[k])
-        end
-        
-        if k==el.value_attr 
-=======
+
         if haskey(el.dom.attrs,k)
            real_data=deepcopy(el.dom.attrs[k])
         end
 
         if k==el.value_attr
->>>>>>> luis/master
             new_k="value"
             if datavalue!=nothing
                real_data=datavalue
             end
         end
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> luis/master
         def_data[new_k]=real_data
     end
-
     el.data=def_data
     return Dict(el.id=>def_data)
 end
@@ -53,48 +40,24 @@ function update_data!(arr::Array,datavalue::Dict)
 
     def_data=Dict{String,Any}()
     for r in arr
-<<<<<<< HEAD
-        
         if r isa VueElement
-            
             founddata=haskey(datavalue,r.id) ? datavalue[r.id] : nothing
-            
         elseif r isa VueStruct
-            
-=======
-
-        if r isa VueElement
-
-            founddata=haskey(datavalue,r.id) ? datavalue[r.id] : nothing
-
-        elseif r isa VueStruct
-
->>>>>>> luis/master
             founddata=haskey(datavalue,r.id) ? datavalue[r.id] : Dict{String,Any}()
-
         else
             founddata=datavalue
         end
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> luis/master
         if !(r isa String)
             got_data=update_data!(r,founddata)
             merge!(def_data,got_data)
         end
     end
-
     return def_data
 end
 
 function update_data!(el::VueStruct,datavalue=Dict{String,Any}())
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> luis/master
     new_data=deepcopy(el.data)
     new_def_data=deepcopy(el.def_data)
 

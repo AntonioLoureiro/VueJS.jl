@@ -2,10 +2,9 @@ module VueJS
 
 using JSON
 
-export htmlElement,htmlString,VueElement,VueStruct,grid,page,@el
+export HtmlElement,htmlstring,VueElement,VueStruct,grid,page,@el
 
-
-include("htmlElement.jl")
+include("HtmlElement.jl")
 include("VueElement.jl")
 include("VueStruct.jl")
 include("binding.jl")

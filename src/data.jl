@@ -20,17 +20,19 @@ function update_data!(el::VueElement,datavalue)
     real_data=nothing
     def_data=Dict{String,Any}()
     for (k,v) in el.binds
-        
+        new_k=deepcopy(k)
         if haskey(el.dom.attrs,k)   
            real_data=deepcopy(el.dom.attrs[k])
         end
         
-        if k==el.value_attr && datavalue!=nothing
-           real_data=datavalue
+        if k==el.value_attr 
+            new_k="value"
+            if datavalue!=nothing
+               real_data=datavalue
+            end
         end
         
-        def_data[k]=real_data
-        
+        def_data[new_k]=real_data
     end
     
     el.data=def_data

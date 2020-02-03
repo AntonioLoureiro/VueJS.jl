@@ -4,7 +4,6 @@ mutable struct VueStruct
      id::String
      grid::Array
      binds::Dict{String,Any}
-     scriptels::Vector{String}
      cols::Union{Nothing,Int64}
      data::Dict{String,Any}
      def_data::Dict{String,Any}
@@ -17,12 +16,11 @@ function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{Str
     
     args=Dict(string(k)=>v for (k,v) in kwargs)
     
-    scripts=haskey(args,"scripts") ? args["scripts"] : []
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
     
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,VueJS.trf_binds(binds),scripts,cols,data,Dict{String,Any}(),methods)
+    comp=VueStruct(id,garr,VueJS.trf_binds(binds),cols,data,Dict{String,Any}(),methods)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
     

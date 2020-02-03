@@ -13,7 +13,6 @@ end
 function grid(arr::Array;rows=true)
     
     arr_dom=[]
-    
     i_rows=[]
     for (i,rorig) in enumerate(arr)
        
@@ -30,23 +29,24 @@ function grid(arr::Array;rows=true)
                     value=r.path=="" ? v : r.path*"."*v
                     r.dom.attrs[":$k"]=value
                 
-                    ### Capture Event if tgt=src otherwise double count
-                    if r.id*"."*k==v
+                    ### Capture Event if tgt=src otherwise double count or if value is value attr
+                    if r.id*"."*k==v || r.id*".value"==v
+                        
                         ## And only if value attr! Others do not change on input! I Think!
                         if r.value_attr==k
-                            if haskey(r.dom.attrs,"@input")
-                                r.dom.attrs["@input"]=r.dom.attrs["@input"]*"; "*"$value= \$event;"
+                            event=r.value_attr=="value" ? "@input" : "@change"
+                            if haskey(r.dom.attrs,event)
+                                r.dom.attrs[event]=r.dom.attrs[event]*"; "*"$value= \$event;"
                             else
-                                r.dom.attrs["@input"]="$value= \$event"
+                                r.dom.attrs[event]="$value= \$event"
                             end
                         end
                     end
                     
-                    ### delete atribute from dom
+                    ### delete attribute from dom
                     if haskey(r.dom.attrs,k)
                         delete!(r.dom.attrs,k)
                     end
-
                 end     
             
                domvalue=r.dom
@@ -59,11 +59,9 @@ function grid(arr::Array;rows=true)
             ## Array Elements/Components
             elseif r isa Array                
                 domvalue=grid(r,rows=(rows ? false : true))
-            
             elseif r isa String                
                 domvalue=htmlElement("div",Dict(),12,r)
             else
-
                 error("$r with invalid type for Grid!")
             end
    
@@ -91,3 +89,4 @@ function grid(arr::Array;rows=true)
     return arr_dom
 
 end
+

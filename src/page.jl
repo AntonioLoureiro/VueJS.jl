@@ -6,9 +6,8 @@ function page(garr::Array;binds=Dict{String,String}(),methods=Dict{String,Any}()
     data=haskey(args,"data") ? args["data"] : Dict()
     
     comp=VueStruct("app",garr,data=data,binds=binds,methods=methods)
-        
-    scripts=haskey(args,"scripts") ? args["scripts"] : []
     
+    scripts=[]
     push!(scripts,"const app_state = $(JSON.json(comp.def_data))")
     
     ## component script

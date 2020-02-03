@@ -5,7 +5,6 @@ mutable struct VueElement
     dom::htmlElement
     path::String
     binds::Dict{String,String}
-    scriptels::Vector{String}
     value_attr::Union{Nothing,String}
     data::Dict{String,Any}
     cols::Union{Nothing,Int64}
@@ -15,6 +14,10 @@ end
 
 specific_update_validation=Dict(
 
+"v-switch"=>(x)->begin
+    x.value_attr="input-value"
+end,   
+    
 "v-btn"=>(x)->begin
     x.value_attr=nothing
 end,   
@@ -27,13 +30,14 @@ end
 
 function update_validate!(vuel::VueElement,args::Dict)
      
-    ## Bindig of non html accepted values
+    ## Bindig of non html accepted values => Arrays/Dicts
     for (k,v) in args
        if v isa Array || v isa Dict  
           vuel.binds[k]=vuel.id.*"."*k
        end 
     end
     
+    ### Specific Validations and updates
     tag=vuel.dom.tag
     if haskey(specific_update_validation,tag)
         specific_update_validation[tag](vuel)
@@ -45,11 +49,12 @@ function update_validate!(vuel::VueElement,args::Dict)
             vuel.dom.value=vuel.dom.attrs["value"]
             delete!(vuel.dom.attrs,"value")
         end
-    else    
-        vuel.binds[vuel.value_attr]=vuel.id.*"."*vuel.value_attr
+    else
+        ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
+        vuel.binds[vuel.value_attr]=vuel.id.*".value"
     end
     
-    ## Special args
+    ## Events
     events=intersect(keys(vuel.dom.attrs),["click","mouseover"])
     for e in events
         event_js=vuel.dom.attrs[e]
@@ -77,7 +82,7 @@ function VueElement(id::String,tag::String;kwargs...)
     ## Args for Vue
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
     
-    vuel=VueElement(id,htmlElement(tag,args,cols,""),"",Dict(),[],"value",Dict(),cols)
+    vuel=VueElement(id,htmlElement(tag,args,cols,""),"",Dict(),"value",Dict(),cols)
     update_validate!(vuel,args)
     
     return vuel

@@ -30,18 +30,20 @@ end
 
 function update_validate!(vuel::VueElement,args::Dict)
      
-    ## Bindig of non html accepted values => Arrays/Dicts
-    for (k,v) in args
-       if v isa Array || v isa Dict  
-          vuel.binds[k]=vuel.id.*"."*k
-       end 
-    end
-    
+   
     ### Specific Validations and updates
     tag=vuel.dom.tag
     if haskey(specific_update_validation,tag)
         specific_update_validation[tag](vuel)
     end
+    
+     ## Bindig of non html accepted values => Arrays/Dicts
+    for (k,v) in vuel.dom.attrs
+       if !(v isa String || v isa Date || v isa Number)
+          vuel.binds[k]=vuel.id.*"."*k
+       end 
+    end
+    
     
     ## Default Binding value_attr
     if vuel.value_attr==nothing
@@ -72,7 +74,6 @@ function update_validate!(vuel::VueElement,args::Dict)
     
     return nothing
 end
-
 
 
 function VueElement(id::String,tag::String;kwargs...)

@@ -1,6 +1,6 @@
 module VueJS
 
-using JSON
+using JSON,Dates,DataFrames
 
 export htmlElement,htmlString,VueElement,VueStruct,grid,page,@el
 

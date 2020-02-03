@@ -39,7 +39,7 @@ function reverse_binds(binds::Dict)
     for (k,v) in binds
 
         for (ki,vi) in v
-          values=Dict(k=>vi)
+          values=Dict(k=>ki)
 
             for (kij,vij) in vi
                 if haskey(reverse_d, kij)

@@ -10,3 +10,15 @@ HEAD=HtmlElement("head",
 
     FRAMEWORK="vuetify"
     VIEWPORT="md"
+
+
+KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
+
+function dom_events(elem::Union{VueElement, HtmlElement})
+    attrs = elem isa VueElement ? vuel.dom.attrs : elem.attrs
+    matches = []
+    for entry in filter(x->startswith(first(x), "@"), attrs)
+        push!(matches, Dict(first(entry)=>last(entry)))
+    end
+    return matches
+end

@@ -17,7 +17,11 @@ Defines vue's `app` scripts.
 
 ```
 """
-function page(garr::Array; binds=Dict{String,String}(), methods=Dict{String,Any}(), kwargs...)
+function page(
+    garr::Array;
+    binds=Dict{String,String}(),
+    methods=Dict{String,Any}(),
+    kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 

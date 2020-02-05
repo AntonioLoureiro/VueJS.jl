@@ -1,26 +1,35 @@
 
 mutable struct VueStruct
 
-     id::String
-     grid::Array
-     binds::Dict{String,Any}
-     cols::Union{Nothing,Int64}
-     data::Dict{String,Any}
-     def_data::Dict{String,Any}
-     methods::Dict{String,Any}
-
+    id::String
+    grid::Array
+    binds::Dict{String,Any}
+    cols::Union{Nothing,Int64}
+    data::Dict{String,Any}
+    def_data::Dict{String,Any}
+    methods::Dict{String,Any}
+    computed::Dict{String, Any}
+    watched::Dict{String, Any}
 end
 
-function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),kwargs...)
+function VueStruct(
+    id::String,
+    garr::Array;
+    binds=Dict{String,Any}(),
+    data=Dict{String,Any}(),
+    methods=Dict{String,Any}(),
+    computed=Dict{String, Any}(),
+    watched=Dict{String, Any}(),
+    kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
     scope=[]
-    garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,VueJS.trf_binds(binds),cols,data,Dict{String,Any}(),methods)
-    element_binds!(comp,binds=comp.binds)
+    garr=element_path(garr, scope)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),methods, computed, watched)
+    element_binds!(comp, binds=comp.binds)
     update_data!(comp,data)
 
     ## Cols
@@ -40,7 +49,7 @@ function element_path(arr::Array,scope::Array)
     for (i,rorig) in enumerate(new_arr)
         r=deepcopy(rorig)
         ## Vue Element
-        if typeof(r)==VueElement
+        if typeof(r) <: VueElement
 
             new_arr[i].path=scope_str
 
@@ -53,14 +62,14 @@ function element_path(arr::Array,scope::Array)
             new_arr[i].grid=element_path(r.grid,scope2)
             new_binds=Dict{String,Any}()
             for (k,v) in new_arr[i].binds
-               for (kk,vv) in v
+               for (ki,vi) in v
                     path=scope2_str=="" ? k : scope2_str*"."*k
-                    values=Dict(path=>kk)
-                    for (kkk,vvv) in vv
-                        if haskey(new_binds,kkk)
-                            new_binds[kkk][vvv]=values
+                    values=Dict(path=>ki)
+                    for (kij,vij) in vi
+                        if haskey(new_binds,kij)
+                            new_binds[kij][vij]=values
                         else
-                            new_binds[kkk]=Dict(vvv=>values)
+                            new_binds[kij]=Dict(vij=>values)
                         end
                     end
                 end

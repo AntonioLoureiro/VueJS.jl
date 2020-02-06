@@ -132,19 +132,6 @@ function update_validate!(vuel::VueElement,args::Dict)
     return nothing
 end
 
-function VueElement(id::String, tag::String; kwargs...)
-
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    ## Args for Vue
-    haskey(args, "cols")  ? cols = args["cols"] : cols=nothing
-
-    vuel=VueElement(id, HtmlElement(tag, args, ""),"",Dict(), "value", Dict(), cols)
-    update_validate!(vuel, args)
-
-    return vuel
-end
-
 """
 ### Examples
 ```julia

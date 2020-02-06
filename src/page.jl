@@ -1,4 +1,34 @@
 """
+```julia
+example = VueElement("teste", HtmlElement("v-text-field", Dict{String,Any}("label"=>"R1","value"=>"JValue"), 3, ""), "", Dict("value"=>"teste.value"), "value", Dict{String,Any}(), 3)
+body=HtmlElement("body",
+        HtmlElement("div",Dict("id"=>"app"),
+            HtmlElement("v-app",
+                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
+
+page_inst=Page(
+        deepcopy(HEAD),
+        [],
+        [],
+        body,
+        "")
+
+htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
+
+@show htmlstring([htmlpage])
+```
+
+"""
+mutable struct Page
+    head::HtmlElement
+    include_scripts::Array
+    include_styles::Array
+    vuestruct::VueStruct
+    scripts::Vector{String}
+end
+
+
+"""
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
 
 Constructs a VueStruct from `garr`, `data`, `binds` and `methods` arguments.
@@ -17,48 +47,49 @@ Defines vue's `app` scripts.
 
 ```
 """
-function page(garr::Array; binds=Dict{String,String}(), methods=Dict{String,Any}(), kwargs...)
+function page(garr::Array; binds=Dict{String,String}(),data=Dict{String,Any}(), methods=Dict{String,Any}(), kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
-    data=haskey(args,"data") ? args["data"] : Dict()
+    scripts=haskey(args,"scripts") ? args["scripts"] : []
     comp=VueStruct("app",garr,data=data,binds=binds,methods=methods)
+    
+    return page(comp::VueStruct, kwargs...)
+end
 
-    scripts=[]
-    push!(scripts,"const app_state = $(JSON.json(comp.def_data))")
+function page(comp::VueStruct, binds=Dict{String,String}(),data=Dict{String,Any}(), methods=Dict{String,Any}(),kwargs...)
 
-    ## component script
-    comp_script=[]
-    push!(comp_script,"el: '#app'")
-    push!(comp_script,"vuetify: new Vuetify()")
-    push!(comp_script,"data: app_state")
-
-    push!(comp_script, methods_script(comp))
-
-    comp_script="var app = new Vue({"*join(comp_script,",")*"})"
-    push!(scripts,comp_script)
-
-    arr_dom=grid(comp.grid)
-    body=HtmlElement("body",
-            HtmlElement("div",Dict("id"=>"app"),
-                HtmlElement("v-app",
-                    HtmlElement("v-container",Dict("fluid"=>true),arr_dom))))
-
+    args=Dict(string(k)=>v for (k,v) in kwargs)
+    scripts=haskey(args,"scripts") ? args["scripts"] : []
+    
     page_inst=Page(
             deepcopy(HEAD),
             INCLUDE_SCRIPTS,
             INCLUDE_STYLES,
-            body,
-            join(scripts,"\n"))
+            comp,
+            scripts)
 
+    return page_inst
+end
 
+function htmlstring(page_inst::Page)
+    
     include_scripts=map(x->HtmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
     include_styles=map(x->HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x)),page_inst.include_styles)
 
     append!(page_inst.head.value,include_scripts)
     append!(page_inst.head.value,include_styles)
+    
+    nt=dom_scripts(page_inst.vuestruct::VueStruct)
+    body_dom=nt.dom
+    append!(page_inst.scripts,nt.scripts)
+    
+    htmlpage=HtmlElement("html",[page_inst.head,HtmlElement("body",body_dom)])
 
-    htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
+    return join([htmlstring(htmlpage), """<script>$(join(page_inst.scripts,"\n"))</script>"""],"")
+end
 
-    return join([htmlstring(htmlpage), "<script>$(page_inst.scripts)</script>"],"")
+function response(page::VueJS.Page)
+    
+    return HTTP.Response(200,htmlstring(page))
 end

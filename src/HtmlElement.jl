@@ -55,32 +55,3 @@ function htmlstring(el::HtmlElement)
         return """<$tag$attrs>$value</$tag>"""
     end
 end
-
-"""
-```julia
-example = VueElement("teste", HtmlElement("v-text-field", Dict{String,Any}("label"=>"R1","value"=>"JValue"), 3, ""), "", Dict("value"=>"teste.value"), "value", Dict{String,Any}(), 3)
-body=HtmlElement("body",
-        HtmlElement("div",Dict("id"=>"app"),
-            HtmlElement("v-app",
-                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
-
-page_inst=Page(
-        deepcopy(HEAD),
-        [],
-        [],
-        body,
-        "")
-
-htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
-
-@show htmlstring([htmlpage])
-```
-
-"""
-mutable struct Page
-    head::HtmlElement
-    include_scripts::Array
-    include_styles::Array
-    body::HtmlElement
-    scripts::String
-end

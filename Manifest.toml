@@ -3,6 +3,12 @@
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[BinaryProvider]]
+deps = ["Libdl", "SHA"]
+git-tree-sha1 = "5b08ed6036d9d3f0ee6369410b830f8873d4024c"
+uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
+version = "0.5.8"
+
 [[CategoricalArrays]]
 deps = ["Compat", "DataAPI", "Future", "JSON", "Missings", "Printf", "Reexport", "Statistics", "Unicode"]
 git-tree-sha1 = "23d7324164c89638c18f6d7f90d972fa9c4fa9fb"
@@ -11,9 +17,9 @@ version = "0.7.7"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "3819f476b6b37ef8ea837070ed831b4ebadfa1e9"
+git-tree-sha1 = "06be57f11a029927e10d050a6c5496a8695a5437"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.2.0"
+version = "3.3.0"
 
 [[DataAPI]]
 git-tree-sha1 = "674b67f344687a88310213ddfa8a2b3c76cc4252"
@@ -53,6 +59,18 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
+[[HTTP]]
+deps = ["Base64", "Dates", "IniFile", "MbedTLS", "Sockets"]
+git-tree-sha1 = "5c49dab19938b119fe204fd7d7e8e174f4e9c68b"
+uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+version = "0.8.8"
+
+[[IniFile]]
+deps = ["Test"]
+git-tree-sha1 = "098e4d2c533924c921f9f9847274f2ad89e018b8"
+uuid = "83e8ac13-25f8-5344-8a64-a9f2b223428f"
+version = "0.5.0"
+
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
@@ -90,6 +108,12 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
+[[MbedTLS]]
+deps = ["BinaryProvider", "Dates", "Libdl", "Random", "Sockets"]
+git-tree-sha1 = "85f5947b53c8cfd53ccfa3f4abae31faa22c2181"
+uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
+version = "0.7.0"
 
 [[Missings]]
 deps = ["DataAPI"]

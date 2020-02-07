@@ -47,17 +47,17 @@ Defines vue's `app` scripts.
 
 ```
 """
-function page(garr::Array; binds=Dict{String,String}(),data=Dict{String,Any}(), methods=Dict{String,Any}(), kwargs...)
+function page(garr::Array; binds=Dict{String,String}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),computed=Dict{String,Any}(),watched=Dict{String,Any}(), kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     scripts=haskey(args,"scripts") ? args["scripts"] : []
-    comp=VueStruct("app",garr,data=data,binds=binds,methods=methods)
+    comp=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched)
     
     return page(comp::VueStruct, kwargs...)
 end
 
-function page(comp::VueStruct, binds=Dict{String,String}(),data=Dict{String,Any}(), methods=Dict{String,Any}(),kwargs...)
+function page(comp::VueStruct,kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []

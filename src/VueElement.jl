@@ -153,6 +153,3 @@ macro el(args...)
         $(esc(varname))=$(esc(newexpr))
     end
 end
-
-
-using Base

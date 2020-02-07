@@ -1,6 +1,16 @@
+mutable struct EventHandler
+    
+    kind::String
+    id::String
+    args::Vector{String}
+    script::String
+    function_script::String
+    
+end
 
 mutable struct VueStruct
 
+<<<<<<< HEAD
     id::String
     grid::Array
     binds::Dict{String,Any}
@@ -21,15 +31,36 @@ function VueStruct(
     computed=Dict{String, Any}(),
     watched=Dict{String, Any}(),
     kwargs...)
+=======
+     id::String
+     grid::Array
+     binds::Dict{String,Any}
+     cols::Union{Nothing,Int64}
+     data::Dict{String,Any}
+     def_data::Dict{String,Any}
+     events::Vector{EventHandler}
+
+end
+
+function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),computed=Dict{String,Any}(),watched=Dict{String,Any}(),kwargs...)
+>>>>>>> 64041f72472cf14607659b5a5d11128483770872
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
-
+    
+    events=create_events((methods=methods,computed=computed,watched=watched))
+    
     scope=[]
+<<<<<<< HEAD
     garr=element_path(garr, scope)
     comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),methods, computed, watched)
     element_binds!(comp, binds=comp.binds)
+=======
+    garr=element_path(garr,scope)
+    comp=VueStruct(id,garr,VueJS.trf_binds(binds),cols,data,Dict{String,Any}(),events)
+    element_binds!(comp,binds=comp.binds)
+>>>>>>> 64041f72472cf14607659b5a5d11128483770872
     update_data!(comp,data)
 
     ## Cols
@@ -95,7 +126,7 @@ function dom_scripts(el::VueStruct)
     push!(comp_script,"vuetify: new Vuetify()")
     push!(comp_script,"data: app_state")
 
-    push!(comp_script, VueJS.methods_script(el))
+    push!(comp_script, events_script(el))
 
     comp_script="var app = new Vue({"*join(comp_script,",")*"})"
     push!(scripts,comp_script)

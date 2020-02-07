@@ -46,7 +46,7 @@ htmlstring(a::Vector)=join(htmlstring.(a))
 
 function htmlstring(el::HtmlElement)
     tag=el.tag
-    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k='$(string(v))' " for (k,v) in el.attrs])
+    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k=\"$(replace(string(v),"\""=>"'"))\" " for (k,v) in el.attrs])
     value=htmlstring(el.value)
 
     if value==nothing

@@ -114,7 +114,7 @@ function update_validate!(vuel::VueElement,args::Dict)
     end
     
     ## Events
-    events=intersect(keys(vuel.dom.attrs),["click","mouseover"])
+    events=intersect(keys(vuel.dom.attrs),KNOWN_JS_EVENTS)
     for e in events
         event_js=vuel.dom.attrs[e]
         delete!(vuel.dom.attrs,e)

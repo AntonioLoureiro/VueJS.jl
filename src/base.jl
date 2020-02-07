@@ -10,3 +10,5 @@ HEAD=HtmlElement("head",
 
     FRAMEWORK="vuetify"
     VIEWPORT="md"
+
+const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]

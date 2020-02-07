@@ -1,8 +1,8 @@
 module VueJS
 
-using JSON,Dates,DataFrames
+using JSON,Dates,DataFrames,HTTP
 
-export HtmlElement,htmlstring,VueElement,VueStruct,grid,page,@el
+export HtmlElement,htmlstring,VueElement,VueStruct,grid,page,@el,response
 
 include("HtmlElement.jl")
 include("base.jl")

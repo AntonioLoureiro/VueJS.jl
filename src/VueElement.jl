@@ -111,7 +111,7 @@ function update_validate!(vuel::VueElement,args::Dict)
     end
 
     ## Events
-    events=intersect(keys(vuel.dom.attrs),["click","mouseover"])
+    events=intersect(keys(vuel.dom.attrs),KNOWN_JS_EVENTS)
     for e in events
         event_js=vuel.dom.attrs[e]
         delete!(vuel.dom.attrs,e)
@@ -127,19 +127,6 @@ function update_validate!(vuel::VueElement,args::Dict)
     end
 
     return nothing
-end
-
-function VueElement(id::String, tag::String; kwargs...)
-
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    ## Args for Vue
-    haskey(args, "cols")  ? cols = args["cols"] : cols=nothing
-
-    vuel=VueElement(id, HtmlElement(tag, args, ""),"",Dict(), "value", Dict(), cols)
-    update_validate!(vuel, args)
-
-    return vuel
 end
 
 """

@@ -46,7 +46,7 @@ htmlstring(a::Vector)=join(htmlstring.(a))
 
 function htmlstring(el::HtmlElement)
     tag=el.tag
-    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k='$(string(v))' " for (k,v) in el.attrs])
+    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k=\"$(replace(string(v),"\""=>"'"))\" " for (k,v) in el.attrs])
     value=htmlstring(el.value)
 
     if value==nothing
@@ -56,31 +56,32 @@ function htmlstring(el::HtmlElement)
     end
 end
 
-"""
-```julia
-example = VueElement("teste", HtmlElement("v-text-field", Dict{String,Any}("label"=>"R1","value"=>"JValue"), 3, ""), "", Dict("value"=>"teste.value"), "value", Dict{String,Any}(), 3)
-body=HtmlElement("body",
-        HtmlElement("div",Dict("id"=>"app"),
-            HtmlElement("v-app",
-                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
+## Keys that only receive JS Functions
+const JS_FUNCTION_KEYS=["rules"]
 
-page_inst=Page(
-        deepcopy(HEAD),
-        [],
-        [],
-        body,
-        "")
+function vue_json(d::Dict)
+    els=[]
+    
+    for (k,v) in d
+          
+        if k in JS_FUNCTION_KEYS
+            if v isa Array
+               els2=[]
+               for r in v
+                push!(els2,r)
+               end
+                j="\"$k\":[$(join(els2,","))]"
+            else
+                j="\"$k\":"*(v)
+            end
+        elseif v isa Dict
+            j="\"$k\":"*vue_json(v)
+        else
+            j="\"$k\":"*JSON.json(v)
+        end
 
-htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
-
-@show htmlstring([htmlpage])
-```
-
-"""
-mutable struct Page
-    head::HtmlElement
-    include_scripts::Array
-    include_styles::Array
-    body::HtmlElement
-    scripts::String
+        push!(els,j)
+    end
+        
+    return "{$(join(els,","))}"
 end

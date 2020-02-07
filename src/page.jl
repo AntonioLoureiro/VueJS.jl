@@ -72,7 +72,7 @@ function page(comp::VueStruct,kwargs...)
     return page_inst
 end
 
-function htmlstring(page_inst::Page)
+function htmlstring(page_inst::VueJS.Page)
     
     include_scripts=map(x->HtmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
     include_styles=map(x->HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x)),page_inst.include_styles)
@@ -80,13 +80,14 @@ function htmlstring(page_inst::Page)
     append!(page_inst.head.value,include_scripts)
     append!(page_inst.head.value,include_styles)
     
-    nt=dom_scripts(page_inst.vuestruct::VueStruct)
+    nt=VueJS.dom_scripts(page_inst.vuestruct::VueStruct)
+    render_scripts=deepcopy(page_inst.scripts)
     body_dom=nt.dom
-    append!(page_inst.scripts,nt.scripts)
+    append!(render_scripts,nt.scripts)
     
     htmlpage=HtmlElement("html",[page_inst.head,HtmlElement("body",body_dom)])
 
-    return join([htmlstring(htmlpage), """<script>$(join(page_inst.scripts,"\n"))</script>"""],"")
+    return join([htmlstring(htmlpage), """<script>$(join(render_scripts,"\n"))</script>"""],"")
 end
 
 function response(page::VueJS.Page)

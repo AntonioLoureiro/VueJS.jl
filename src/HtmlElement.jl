@@ -1,10 +1,10 @@
 """
 ### Arguments
 
- * tag      :: String              :: HTML tag (e.g: "input")
+ * tag      :: String              :: Vuetify tag (e.g: "v-text-field")
  * attrs    :: Dict{String, Any}   :: HTML element attributes (e.g: Dict("placeholder"=>"username"))
  * cols     :: Union{Nothing, Int} :: Number of columns the element should occupy
- * value    :: Any                 :: Element content, will be assigned in between opening and closing tags. Defaults to ""
+ * value    :: Any                 :: Element content, will be assigned in between opening and closing tags. Defaults to nothing
 
 ### Examples
 
@@ -38,7 +38,7 @@ Shortcut constructs
 HtmlElement(tag::String, value::Union{String, Vector, HtmlElement}) = HtmlElement(tag, Dict(), nothing, value)
 HtmlElement(tag::String, attrs::Dict, value::Union{String, Array, HtmlElement}) =
         HtmlElement(tag, attrs, nothing, value)
-HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, "")
+HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, nothing)
 
 htmlstring(s::String)=s
 htmlstring(n::Nothing)=nothing
@@ -46,7 +46,7 @@ htmlstring(a::Vector)=join(htmlstring.(a))
 
 function htmlstring(el::HtmlElement)
     tag=el.tag
-    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k='$(string(v))' " for (k,v) in el.attrs])
+    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k=\"$(replace(string(v),"\""=>"'"))\" " for (k,v) in el.attrs])
     value=htmlstring(el.value)
 
     if value==nothing
@@ -56,31 +56,30 @@ function htmlstring(el::HtmlElement)
     end
 end
 
-"""
-```julia
-example = VueElement("teste", HtmlElement("v-text-field", Dict{String,Any}("label"=>"R1","value"=>"JValue"), 3, ""), "", Dict("value"=>"teste.value"), "value", Dict{String,Any}(), 3)
-body=HtmlElement("body",
-        HtmlElement("div",Dict("id"=>"app"),
-            HtmlElement("v-app",
-                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
+## Keys that only receive JS Functions
+const JS_FUNCTION_KEYS=["rules"]
 
-page_inst=Page(
-        deepcopy(HEAD),
-        [],
-        [],
-        body,
-        "")
+function vue_json(d::Dict)
+    els=[]
 
-htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
+    for (k,v) in d
+        if k in JS_FUNCTION_KEYS
+            if v isa Array
+               els2=[]
+               for r in v
+                push!(els2,r)
+               end
+                j="\"$k\":[$(join(els2,","))]"
+            else
+                j="\"$k\":"*(v)
+            end
+        elseif v isa Dict
+            j="\"$k\":"*vue_json(v)
+        else
+            j="\"$k\":"*JSON.json(v)
+        end
 
-@show htmlstring([htmlpage])
-```
-
-"""
-mutable struct Page
-    head::HtmlElement
-    include_scripts::Array
-    include_styles::Array
-    body::HtmlElement
-    scripts::String
+        push!(els,j)
+    end
+    return "{$(join(els,","))}"
 end

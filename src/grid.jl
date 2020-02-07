@@ -56,6 +56,8 @@ function grid(arr::Array;rows=true)
             ## Array Elements/Components
             elseif r isa Array
                 domvalue=grid(r,rows=(rows ? false : true))
+            elseif r isa HtmlElement
+                domvalue=r
             elseif r isa String
                 domvalue=HtmlElement("div",Dict(),12,r)
             else

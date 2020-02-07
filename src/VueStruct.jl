@@ -4,6 +4,7 @@ mutable struct EventHandler
     id::String
     args::Vector{String}
     script::String
+    path::String
     function_script::String
     
 end
@@ -30,10 +31,16 @@ function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{Str
     
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,VueJS.trf_binds(binds),cols,data,Dict{String,Any}(),events)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
-
+    new_es=Vector{EventHandler}()
+    update_events!(comp,new_es)
+    sort!(new_es,by=x->length(x.path),rev=true)
+    new_es=unique(x->x.id,new_es)
+    comp.events=new_es
+    function_script!.(comp.events)
+    
     ## Cols
     m_cols=maximum(max_cols.(grid(garr)))
     m_cols>12 ? m_cols=12 : nothing
@@ -108,5 +115,22 @@ function dom_scripts(el::VueStruct)
                  HtmlElement("v-container",Dict("fluid"=>true),arr_dom)))
 
     return (dom=dom,scripts=scripts)
+    
+end
+
+update_events!(vs,new_es::Vector{EventHandler},scope="")=new_es=new_es
+function update_events!(vs::Array,new_es::Vector{EventHandler},scope="")
+    for r in vs
+        if r isa VueStruct
+        scope=(scope=="" ? r.id : scope*"."*r.id)
+        end
+        update_events!(r,new_es,scope)
+    end
+end
+function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
+    events=deepcopy(vs.events)
+    map(x->x.path=scope,events)
+    append!(new_es,events)
+    update_events!(vs.grid,new_es,scope)
     
 end

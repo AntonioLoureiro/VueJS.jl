@@ -65,7 +65,7 @@ function element_binds!(el::VueElement;binds=Dict())
     ## update binds in element due to be binded to other element
     if haskey(binds,full_path)
         for (k,v) in binds[full_path]
-                el.binds[k]=collect(keys(v))[1]*"."*collect(values(v))[1]
+            el.binds[k]=collect(keys(v))[1]*"."*collect(values(v))[1]
         end
     end
 

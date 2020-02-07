@@ -1,30 +1,30 @@
 
+function EventHandlers(kind::String, d::Dict)
 
-function EventHandlers(kind::String,d::Dict)
    hs=[]
    for (k,v) in d
      push!(hs,EventHandler(kind,k,[],v,"",""))
    end
    function_script!.(hs)
-   return hs 
+   return hs
 end
 
 function create_events(events::NamedTuple)
     hs=[]
-    append!(hs,EventHandlers("methods",events.methods))
-    append!(hs,EventHandlers("computed",events.computed))
-    append!(hs,EventHandlers("watched",events.watched))
+    append!(hs, EventHandlers("methods", events.methods))
+    append!(hs, EventHandlers("computed",events.computed))
+    append!(hs, EventHandlers("watched", events.watched))
     return hs
 end
 
 function function_script!(eh::EventHandler)
-        
+       
         if eh.path==""
             scope="app_state"
         else
             scope="app_state."*eh.path
         end
-    
+
         str="""$(eh.id) :(function(event) {
         for (key of Object.keys(@scope@)) {
         eval("var "+key+" = @scope@."+key)
@@ -39,7 +39,7 @@ function function_script!(eh::EventHandler)
     str=replace(str,"@scope@"=>scope)
     
     eh.function_script=str
-    
+
     return nothing
 end
 

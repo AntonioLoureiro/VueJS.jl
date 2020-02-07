@@ -1,12 +1,12 @@
 mutable struct EventHandler
-    
+
     kind::String
     id::String
     args::Vector{String}
     script::String
     path::String
     function_script::String
-    
+
 end
 
 mutable struct VueStruct
@@ -26,9 +26,9 @@ function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{Str
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
-    
+
     events=create_events((methods=methods,computed=computed,watched=watched))
-    
+
     scope=[]
     garr=element_path(garr,scope)
     comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events)
@@ -94,7 +94,7 @@ function element_path(arr::Array,scope::Array)
 end
 
 function dom_scripts(el::VueStruct)
-    
+
     scripts=[]
     push!(scripts,"const app_state = $(vue_json(el.def_data))")
 
@@ -115,6 +115,7 @@ function dom_scripts(el::VueStruct)
                  HtmlElement("v-container",Dict("fluid"=>true),arr_dom)))
 
     return (dom=dom,scripts=scripts)
+
     
 end
 

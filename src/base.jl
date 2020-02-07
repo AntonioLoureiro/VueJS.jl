@@ -12,3 +12,21 @@ HEAD=HtmlElement("head",
     VIEWPORT="md"
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
+
+using Base
+
+#=
+HTMLElement interfaces
+=#
+Base.getproperty(el::HtmlElement, prop::String) = Base.getproperty(el, Symbol(prop))
+function Base.getproperty(el::HtmlElement, prop::Symbol)
+    return getfield(el, prop)
+end
+#=
+VueElement interfaces
+=#
+function Base.getindex(v::VueElement, i::String)
+    if i in string.(fieldnames(typeof(v.dom)))
+        return getproperty(v.dom, Symbol(i))
+    end
+end

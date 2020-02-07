@@ -1,10 +1,10 @@
 """
 ### Arguments
 
- * tag      :: String              :: HTML tag (e.g: "input")
+ * tag      :: String              :: Vuetify tag (e.g: "v-text-field")
  * attrs    :: Dict{String, Any}   :: HTML element attributes (e.g: Dict("placeholder"=>"username"))
  * cols     :: Union{Nothing, Int} :: Number of columns the element should occupy
- * value    :: Any                 :: Element content, will be assigned in between opening and closing tags. Defaults to ""
+ * value    :: Any                 :: Element content, will be assigned in between opening and closing tags. Defaults to nothing
 
 ### Examples
 
@@ -38,7 +38,7 @@ Shortcut constructs
 HtmlElement(tag::String, value::Union{String, Vector, HtmlElement}) = HtmlElement(tag, Dict(), nothing, value)
 HtmlElement(tag::String, attrs::Dict, value::Union{String, Array, HtmlElement}) =
         HtmlElement(tag, attrs, nothing, value)
-HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, "")
+HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, nothing)
 
 htmlstring(s::String)=s
 htmlstring(n::Nothing)=nothing
@@ -61,9 +61,8 @@ const JS_FUNCTION_KEYS=["rules"]
 
 function vue_json(d::Dict)
     els=[]
-    
+
     for (k,v) in d
-          
         if k in JS_FUNCTION_KEYS
             if v isa Array
                els2=[]
@@ -82,6 +81,5 @@ function vue_json(d::Dict)
 
         push!(els,j)
     end
-        
     return "{$(join(els,","))}"
 end

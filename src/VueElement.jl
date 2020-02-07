@@ -67,41 +67,38 @@ SPECIFIC_UPDATE_VALIDATION=Dict(
             end
         end
     end
-        
 end,
 
 "v-switch"=>(x)->begin
     x.value_attr="input-value"
-end,   
-    
+end,
+
 "v-btn"=>(x)->begin
     x.value_attr=nothing
 end,
-    
+
 "v-select"=>(x)->begin
     @assert haskey(x.dom.attrs,"items") "Vuetify Select element with no arg items!"
     @assert typeof(x.dom.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
 end
-    
+
 )
 
 function update_validate!(vuel::VueElement,args::Dict)
-     
-   
+
     ### Specific Validations and updates
     tag=vuel.dom.tag
-    if haskey(SPECIFIC_UPDATE_VALIDATION,tag)
+    if haskey(SPECIFIC_UPDATE_VALIDATION, tag)
         SPECIFIC_UPDATE_VALIDATION[tag](vuel)
     end
-    
+
      ## Bindig of non html accepted values => Arrays/Dicts
     for (k,v) in vuel.dom.attrs
        if !(v isa String || v isa Date || v isa Number)
           vuel.binds[k]=vuel.id.*"."*k
-       end 
+       end
     end
-    
-    
+
     ## Default Binding value_attr
     if vuel.value_attr==nothing
         if haskey(vuel.dom.attrs,"value")
@@ -112,7 +109,7 @@ function update_validate!(vuel::VueElement,args::Dict)
         ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
         vuel.binds[vuel.value_attr]=vuel.id.*".value"
     end
-    
+
     ## Events
     events=intersect(keys(vuel.dom.attrs),KNOWN_JS_EVENTS)
     for e in events
@@ -120,7 +117,7 @@ function update_validate!(vuel::VueElement,args::Dict)
         delete!(vuel.dom.attrs,e)
         vuel.dom.attrs["@$e"]=event_js isa Array ? join(event_js) : event_js
     end
-   
+
     ## cols
     if vuel.cols==nothing
         vuel.cols=3
@@ -128,7 +125,7 @@ function update_validate!(vuel::VueElement,args::Dict)
     else
         vuel.dom.cols=vuel.cols
     end
-    
+
     return nothing
 end
 

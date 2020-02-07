@@ -17,7 +17,7 @@ using VueJS
 
 
 @el(r1,"v-text-field",value="JJJ",label="R1")
-r2 = VueElement("r2", "v-text-field", label="label", value="testeBatata")
+r2 = VueElement("r2", "v-text-field", label="r2 label", value="testeBatata")
 @el(r3,"v-slider",value=20,label="Slider 3")
 @el(r4,"v-text-field",value="R4 Value",label="R4")
 @el(r5,"v-slider",value=20,label="Slider")
@@ -31,7 +31,7 @@ user = HtmlElement("input", Dict("class"=>"form-control","type"=>"text", "placeh
 c1=VueStruct("c1",[r1,r2],data=Dict("vuet"=>"Cebola"),binds=Dict("r1.label"=>"r2.value"))
 c2=VueStruct("c2",[r4,c1, VueElement(user.tag, user.tag)],data=Dict("vuet"=>"Cebola"));
 
- p1=page([[r1,r2,r3],[[c2,r7,r6]]],data=Dict("r1"=>"r1 data","r2"=>"r2 data","c2"=>Dict("r4"=>"R4 Dataaaaaa")),
+ p1=page([[r1,r2,r3],[[c2,r7,r6]]],data=Dict("r1"=>"r1 data","r2"=>"Updated from r2 data","c2"=>Dict("r4"=>"R4 Dataaaaaa")),
 
     binds=Dict("r1.label"=>"r2.value","r1.value"=>"r3.value")
 
@@ -45,3 +45,20 @@ router = HTTP.Router()
 HTTP.@register(router, "GET", "/", index)
 
 @async HTTP.serve(router, "127.0.0.1" , 8888)
+
+
+
+vuel = VueElement("r2", "v-text-field", label="r2 label", value="testeBatata", click="funtion")
+vuel.dom.attrs["@click"]
+
+function xyz(elem::Union{VueElement, HtmlElement})
+    attrs = elem isa VueElement ? vuel.dom.attrs : elem.attrs
+    matches = []
+    for entry in filter(x->startswith(first(x), "@"), attrs)
+        push!(matches, Dict(first(entry)=>last(entry)))
+    end
+    return matches
+end
+dom_events(vuel.dom)
+
+methods(dom_events)

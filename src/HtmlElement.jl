@@ -55,3 +55,33 @@ function htmlstring(el::HtmlElement)
         return """<$tag$attrs>$value</$tag>"""
     end
 end
+
+## Keys that only receive JS Functions
+const JS_FUNCTION_KEYS=["rules"]
+
+function vue_json(d::Dict)
+    els=[]
+    
+    for (k,v) in d
+          
+        if k in JS_FUNCTION_KEYS
+            if v isa Array
+               els2=[]
+               for r in v
+                push!(els2,r)
+               end
+                j="\"$k\":[$(join(els2,","))]"
+            else
+                j="\"$k\":"*(v)
+            end
+        elseif v isa Dict
+            j="\"$k\":"*vue_json(v)
+        else
+            j="\"$k\":"*JSON.json(v)
+        end
+
+        push!(els,j)
+    end
+        
+    return "{$(join(els,","))}"
+end

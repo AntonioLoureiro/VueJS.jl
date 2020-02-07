@@ -78,7 +78,7 @@ end
 function dom_scripts(el::VueStruct)
     
     scripts=[]
-    push!(scripts,"const app_state = $(JSON.json(el.def_data))")
+    push!(scripts,"const app_state = $(vue_json(el.def_data))")
 
     ## component script
     comp_script=[]

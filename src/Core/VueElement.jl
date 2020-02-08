@@ -50,46 +50,13 @@ function VueElement(id::String, tag::String; kwargs...)
     return vuel
 end
 
-SPECIFIC_UPDATE_VALIDATION=Dict(
-
-"v-data-table"=>(x)->begin
-
-    if haskey(x.dom.attrs,"items")
-        if x.dom.attrs["items"] isa DataFrame
-            df=x.dom.attrs["items"]
-            arr=[]
-            for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}(string(n)=>x),df[!,n]) : map((x,y)->y[string(n)]=x,df[!,n],arr)
-            end
-            x.dom.attrs["items"]=arr
-            if !(haskey(x.dom.attrs,"headers"))
-                x.dom.attrs["headers"]=[Dict("value"=>n,"text"=>n) for n in string.(names(df))]
-            end
-        end
-    end
-end,
-
-"v-switch"=>(x)->begin
-    x.value_attr="input-value"
-end,
-
-"v-btn"=>(x)->begin
-    x.value_attr=nothing
-end,
-
-"v-select"=>(x)->begin
-    @assert haskey(x.dom.attrs,"items") "Vuetify Select element with no arg items!"
-    @assert typeof(x.dom.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
-end
-
-)
 
 function update_validate!(vuel::VueElement,args::Dict)
 
     ### Specific Validations and updates
     tag=vuel.dom.tag
-    if haskey(SPECIFIC_UPDATE_VALIDATION, tag)
-        SPECIFIC_UPDATE_VALIDATION[tag](vuel)
+    if haskey(UPDATE_VALIDATION, tag)
+        UPDATE_VALIDATION[tag](vuel)
     end
 
      ## Bindig of non html accepted values => Arrays/Dicts

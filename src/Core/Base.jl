@@ -12,3 +12,7 @@ HEAD=HtmlElement("head",
     VIEWPORT="md"
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
+
+const JS_FUNCTION_ATTRS=["rules"]
+
+const UPDATE_VALIDATION=Dict{String,Any}()

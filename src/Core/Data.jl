@@ -20,8 +20,8 @@ function update_data!(el::VueElement,datavalue)
     for (k,v) in el.binds
         new_k=deepcopy(k)
 
-        if haskey(el.dom.attrs,k)
-           real_data=deepcopy(el.dom.attrs[k])
+        if haskey(el.attrs,k)
+           real_data=deepcopy(el.attrs[k])
         end
 
         if k==el.value_attr

@@ -2,11 +2,13 @@
 ### Arguments
 
  * id           :: String           :: Element's identifier
- * dom          :: HtmlElement      ::
+ * tag          :: String           ::
+ * attrs        :: Dict             ::
  * path         :: String           ::
  * binds        :: Dict             ::
  * value_attr   :: String           ::
  * data         :: Dict             ::
+ * slots        :: Dict             :: 
  * cols         :: Union{Nothing, Int64} :: Number of columns the element should occupy
 
 ### Examples
@@ -20,13 +22,46 @@ r2 = VueElement("r2", "v-text-field", label="label", value="testeBatata")
 """
 mutable struct VueElement
     id::String
-    dom::HtmlElement
+    tag::String
+    attrs::Dict{String, Any}
     path::String
     binds::Dict{String,String}
     value_attr::Union{Nothing,String}
     data::Dict{String,Any}
+    slots::Dict{String,T} where T<:Union{String,HtmlElement}
     cols::Union{Nothing,Int64}
 end
+
+function dom(vuel::VueElement)
+   
+    if length(vuel.slots)==0
+        value=""
+    else
+        value=[]
+        for (k,v) in vuel.slots
+            push!(value,HtmlElement("template",Dict("v-slot:$k"=>true),v))
+        end
+    end
+    
+    ## Value attr is nothing
+    if vuel.value_attr==nothing
+        if haskey(vuel.attrs,"value")
+            value=vuel.attrs["value"]
+            delete!(vuel.attrs,"value")
+        end
+    end
+    
+    ## cols
+    if vuel.cols==nothing
+        vuel.cols=3
+        cols=3
+    else
+        cols=vuel.cols
+    end
+    
+   return HtmlElement(vuel.tag, vuel.attrs, cols, value)
+end
+
 """
 Defaults to binding on `value` attribute
 
@@ -37,60 +72,42 @@ el = VueElement("e1", "v-text-field", value="Empty", label="Description")
 el = VueElement("e1", HtmlElement("v-text-field", Dict{String,Any}("label"=>"Description","value"=>"Empty"), 3, ""), "", Dict("value"=>"e1.value"), "value", Dict{String,Any}(), 3)
 ```
 """
-function VueElement(id::String, tag::String; kwargs...)
+function VueElement(id::String, tag::String; cols::Union{Nothing,Int64}=nothing, slots=Dict{String,String}(),kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    ## Args for Vue
-    haskey(args, "cols")  ? cols = args["cols"] : cols=nothing
-
-    vuel=VueElement(id, HtmlElement(tag, args, ""),"",Dict(), "value", Dict(), cols)
-    update_validate!(vuel, args)
+    
+    vuel=VueJS.VueElement(id,tag,args,"",Dict(), "value", Dict(), slots,cols)
+    VueJS.update_validate!(vuel)
 
     return vuel
 end
 
-
-function update_validate!(vuel::VueElement,args::Dict)
+function update_validate!(vuel::VueElement)
 
     ### Specific Validations and updates
-    tag=vuel.dom.tag
+    tag=vuel.tag
     if haskey(UPDATE_VALIDATION, tag)
         UPDATE_VALIDATION[tag](vuel)
     end
 
      ## Bindig of non html accepted values => Arrays/Dicts
-    for (k,v) in vuel.dom.attrs
+    for (k,v) in vuel.attrs
        if !(v isa String || v isa Date || v isa Number)
           vuel.binds[k]=vuel.id.*"."*k
        end
     end
 
-    ## Default Binding value_attr
-    if vuel.value_attr==nothing
-        if haskey(vuel.dom.attrs,"value")
-            vuel.dom.value=vuel.dom.attrs["value"]
-            delete!(vuel.dom.attrs,"value")
-        end
-    else
-        ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
+    ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
+    if vuel.value_attr!=nothing
         vuel.binds[vuel.value_attr]=vuel.id.*".value"
     end
 
     ## Events
-    events=intersect(keys(vuel.dom.attrs),KNOWN_JS_EVENTS)
+    events=intersect(keys(vuel.attrs),KNOWN_JS_EVENTS)
     for e in events
-        event_js=vuel.dom.attrs[e]
-        delete!(vuel.dom.attrs,e)
-        vuel.dom.attrs["@$e"]=event_js isa Array ? join(event_js) : event_js
-    end
-
-    ## cols
-    if vuel.cols==nothing
-        vuel.cols=3
-        vuel.dom.cols=3
-    else
-        vuel.dom.cols=vuel.cols
+        event_js=vuel.attrs[e]
+        delete!(vuel.attrs,e)
+        vuel.attrs["@$e"]=event_js isa Array ? join(event_js) : event_js
     end
 
     return nothing

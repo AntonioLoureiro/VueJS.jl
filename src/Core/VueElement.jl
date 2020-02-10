@@ -139,3 +139,26 @@ macro el(args...)
         $(esc(varname))=$(esc(newexpr))
     end
 end
+
+
+import Base.getindex
+import Base.setindex!
+
+function Base.getindex(el::HtmlElement, i::String)
+    return Base.getindex(el.attrs, i)
+end
+
+function Base.getindex(v::VueElement, i::String)
+    return Base.getindex(v.attrs, i)
+end
+
+function Base.setindex!(el::HtmlElement, v,i::String)
+    Base.setindex!(el.attrs, v,i)
+    return nothing
+end
+
+function Base.setindex!(vuel::VueElement,v, i::String)
+    Base.setindex!(vuel.attrs, v,i)
+    return nothing
+end
+

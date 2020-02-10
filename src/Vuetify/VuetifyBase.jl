@@ -9,7 +9,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict("value"=>n,"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict("value"=>n,"text"=>n,"align"=>(eltype(df[:,Symbol(n)])<:Number ? "end" : "start")) for n in string.(names(df))]
             end
         end
     end

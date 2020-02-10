@@ -28,10 +28,12 @@ mutable struct VueElement
     binds::Dict{String,String}
     value_attr::Union{Nothing,String}
     data::Dict{String,Any}
-    slots::Dict{String,T} where T<:Union{String,HtmlElement}
+    slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
 end
 
+dom(d)=d
+dom(d::Dict)=JSON.json(d)
 function dom(vuel::VueElement)
    
     if length(vuel.slots)==0
@@ -39,7 +41,7 @@ function dom(vuel::VueElement)
     else
         value=[]
         for (k,v) in vuel.slots
-            push!(value,HtmlElement("template",Dict("v-slot:$k"=>true),v))
+            push!(value,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
         end
     end
     

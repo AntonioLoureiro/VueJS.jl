@@ -74,11 +74,24 @@ el = VueElement("e1", "v-text-field", value="Empty", label="Description")
 el = VueElement("e1", HtmlElement("v-text-field", Dict{String,Any}("label"=>"Description","value"=>"Empty"), 3, ""), "", Dict("value"=>"e1.value"), "value", Dict{String,Any}(), 3)
 ```
 """
-function VueElement(id::String, tag::String; cols::Union{Nothing,Int64}=nothing, slots=Dict{String,String}(),kwargs...)
+function VueElement(id::String, tag::String, attrs::Dict)
 
-    args=Dict(string(k)=>v for (k,v) in kwargs)
+    if haskey(attrs,"slots")
+        slots=attrs["slots"]
+        delete!(attrs,"slots")
+    else
+        slots=Dict{String,String}()
+    end
     
-    vuel=VueJS.VueElement(id,tag,args,"",Dict(), "value", Dict(), slots,cols)
+    if haskey(attrs,"cols")
+        cols=attrs["cols"]
+        delete!(attrs,"cols")
+    else
+       cols=nothing
+    end
+   
+    
+    vuel=VueJS.VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots,cols)
     VueJS.update_validate!(vuel)
 
     return vuel
@@ -125,16 +138,34 @@ end
 @el(r6,"v-input",placeholder="Dummy data",label="Test")
 ```
 """
-macro el(args...)
+macro el(varname,tag,args...)
 
-    @assert typeof(args[1])==Symbol "1st arg should be Variable name"
-    @assert typeof(args[2])==String "2nd arg should be tag name"
+    @assert typeof(varname)==Symbol "1st arg should be Variable name"
+    @assert typeof(tag)==String "2nd arg should be tag name"
+    
+    newargs=[]
+    for r in (args)
+       @assert r.head==:(=) "You should input args with = indication e.g. a=1"
+       @assert length(r.args)==2 "You should input args with = indication e.g. a=1"
 
-    varname=(args[1])
-
-    newargs=join(string.(args[3:end]),",")
-
-    newexpr=(Meta.parse("""VueElement("$(string(args[1]))","$(string(args[2]))",$newargs)"""))
+        if typeof(r.args[1])==Expr
+            str=string(r)
+            lefte=split(str,"=")[1]
+            leftdst="\""*replace(lefte," "=>"")*"\"=>"
+            leftorg=lefte*"= begin"
+            str=replace(str,leftorg=>leftdst)
+            str=replace(str,"\n"=>"")
+            str=replace(str,string(r.args[2].args[1])=>"")
+            str=replace(str,"end"=>"")
+            push!(newargs,str)
+        else
+            e=replace("\""*string(r)," ="=>"\" =>")
+            push!(newargs,e)
+        end
+    end
+    
+    newargs="Dict($(join(newargs,",")))"
+    newexpr=(Meta.parse("""VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
     return quote
         $(esc(varname))=$(esc(newexpr))
     end
@@ -159,6 +190,7 @@ end
 
 function Base.setindex!(vuel::VueElement,v, i::String)
     Base.setindex!(vuel.attrs, v,i)
+    update_validate!(vuel)
     return nothing
 end
 

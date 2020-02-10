@@ -150,14 +150,12 @@ macro el(varname,tag,args...)
 
         if typeof(r.args[1])==Expr
             str=string(r)
-            lefte=split(str,"=")[1]
-            leftdst="\""*replace(lefte," "=>"")*"\"=>"
-            leftorg=lefte*"= begin"
-            str=replace(str,leftorg=>leftdst)
-            str=replace(str,"\n"=>"")
-            str=replace(str,string(r.args[2].args[1])=>"")
-            str=replace(str,"end"=>"")
-            push!(newargs,str)
+            arre=split(str,"=")
+            lefte=arre[1]
+            rigthe=string(r.args[2])
+            lefte="\""*replace(lefte," "=>"")*"\"=>"
+            righte=replace(rigthe,"quote"=>"begin",count=1)
+            push!(newargs,lefte*righte)
         else
             e=replace("\""*string(r)," ="=>"\" =>")
             push!(newargs,e)

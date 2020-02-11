@@ -1,15 +1,18 @@
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
-    
+
     if haskey(x.attrs,"items")
         if x.attrs["items"] isa DataFrame
             df=x.attrs["items"]
             arr=[]
             for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}(string(n)=>x),df[!,n]) : map((x,y)->y[string(n)]=x,df[!,n],arr)
+               length(arr)==0 ? arr=map(x->Dict{String,Any}(string(n)=>x),df[:,n]) : map((x,y)->y[string(n)]=x,df[:,n],arr)
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
                 x.attrs["headers"]=[Dict("value"=>n,"text"=>n,"align"=>(eltype(df[:,Symbol(n)])<:Number ? "end" : "start")) for n in string.(names(df))]
+            end
+            if !(haskey(x.attrs, "search")) #initialize empty search
+                x.attrs["search"] = ""
             end
         end
     end

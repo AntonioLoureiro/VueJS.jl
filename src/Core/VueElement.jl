@@ -149,15 +149,14 @@ macro el(varname,tag,args...)
        @assert length(r.args)==2 "You should input args with = indication e.g. a=1"
 
         if typeof(r.args[1])==Expr
-            str=string(r)
-            arre=split(str,"=")
+            arre=split(string(r),"=")
             lefte=arre[1]
             rigthe=string(r.args[2])
             lefte="\""*replace(lefte," "=>"")*"\"=>"
             righte=replace(rigthe,"quote"=>"begin",count=1)
             push!(newargs,lefte*righte)
         else
-            e=replace("\""*string(r)," ="=>"\" =>")
+            e=replace("\""*string(r)," ="=>"\" =>",count=1)
             push!(newargs,e)
         end
     end

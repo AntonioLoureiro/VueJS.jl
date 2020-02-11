@@ -1,9 +1,20 @@
-mutable struct EventHandler
+abstract type EventHandler end
+    
+mutable struct CustomEventHandler <:EventHandler
 
     kind::String
     id::String
     args::Vector{String}
     script::String
+    path::String
+    function_script::String
+
+end
+
+mutable struct StdEventHandler <:EventHandler
+
+    kind::String
+    id::String
     path::String
     function_script::String
 
@@ -44,7 +55,8 @@ function VueStruct(
     update_data!(comp,data)
     new_es=Vector{EventHandler}()
     update_events!(comp,new_es)
-    sort!(new_es,by=x->length(x.path),rev=true)
+    std_events!(comp,new_es)
+    sort!(new_es,by=x->length(x.path),rev=false)
     new_es=unique(x->x.id,new_es)
     comp.events=new_es
     function_script!.(comp.events)

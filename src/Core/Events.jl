@@ -7,9 +7,9 @@ function EventHandlers(kind::String, d::Dict)
            kis = keys(v)
            @assert :args in kis && :script in kis "Building EventHandler from NamedTuple requires both `args` and `script` keys"
            @assert v.args isa Vector "Function `args` must be of Type Vector{String}. `$(v.args)` of type $(typeof(v.args)) provided."
-           push!(hs, EventHandler(kind, k, v.args, v.script, "", ""))
+           push!(hs, CustomEventHandler(kind, k, v.args, v.script, "", ""))
         elseif v isa String
-           push!(hs,EventHandler(kind,k,[],v,"",""))
+           push!(hs,CustomEventHandler(kind,k,[],v,"",""))
         end
     end
     function_script!.(hs)
@@ -24,8 +24,11 @@ function create_events(events::NamedTuple)
     return hs
 end
 
-function function_script!(eh::EventHandler)
 
+function_script!(eh::EventHandler)=nothing
+
+function function_script!(eh::CustomEventHandler)
+        
         if eh.path==""
             scope="app_state"
         else
@@ -61,4 +64,31 @@ function events_script(vs::VueStruct)
         end
     end
     return join(els,",")
+end
+
+function get_json_attr(d::Dict,a::String,path="app_state")
+    out=Dict()
+    for (k,v) in d
+        if v isa Dict
+            if haskey(v,a)
+                out[k]=path*".$k.$a"
+            else
+                ret=get_json_attr(v,a,path*".$k")
+                length(ret)!=0 ? out[k]=ret : nothing
+            end
+        end
+    end
+    return out
+end
+
+function std_events!(vs::VueStruct,new_es::Vector{EventHandler})
+    
+    value_script=replace(JSON.json(VueJS.get_json_attr(vs.def_data,"value")),"\""=>"")
+    function_script="""submit : function(context) {
+        var ret=$value_script
+        console.log(ret)
+        }"""
+    
+    push!(new_es,VueJS.StdEventHandler("methods","submit","",function_script))
+    return nothing
 end

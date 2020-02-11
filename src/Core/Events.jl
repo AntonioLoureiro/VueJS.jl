@@ -1,12 +1,19 @@
 
 function EventHandlers(kind::String, d::Dict)
 
-   hs=[]
-   for (k,v) in d
-     push!(hs,EventHandler(kind,k,[],v,"",""))
-   end
-   function_script!.(hs)
-   return hs
+    hs=[]
+    for (k,v) in d
+        if v isa NamedTuple
+           kis = keys(v)
+           @assert :args in kis && :script in kis "Building EventHandler from NamedTuple requires both `args` and `script` keys"
+           @assert v.args isa Vector "Function `args` must be of Type Vector{String}. `$(v.args)` of type $(typeof(v.args)) provided."
+           push!(hs, EventHandler(kind, k, v.args, v.script, "", ""))
+        elseif v isa String
+           push!(hs,EventHandler(kind,k,[],v,"",""))
+        end
+    end
+    function_script!.(hs)
+    return hs
 end
 
 function create_events(events::NamedTuple)
@@ -18,26 +25,28 @@ function create_events(events::NamedTuple)
 end
 
 function function_script!(eh::EventHandler)
-       
+
         if eh.path==""
             scope="app_state"
         else
             scope="app_state."*eh.path
         end
 
-        str="""$(eh.id) :(function(event) {
+        args = size(args, 1) > 0 ? join(eh.args, ",") : "event"
+
+        str="""$(eh.id) :(function($args) {
         for (key of Object.keys(@scope@)) {
         eval("var "+key+" = @scope@."+key)
         };
 
-        return  function(event) {
+        return  function($args) {
           $(eh.script)
         };
         })()
         """
-    
+
     str=replace(str,"@scope@"=>scope)
-    
+
     eh.function_script=str
 
     return nothing

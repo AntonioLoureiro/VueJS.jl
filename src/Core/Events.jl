@@ -32,7 +32,7 @@ function function_script!(eh::EventHandler)
             scope="app_state."*eh.path
         end
 
-        args = size(args, 1) > 0 ? join(eh.args, ",") : "event"
+        args = size(eh.args, 1) > 0 ? join(eh.args, ",") : "event"
 
         str="""$(eh.id) :(function($args) {
         for (key of Object.keys(@scope@)) {

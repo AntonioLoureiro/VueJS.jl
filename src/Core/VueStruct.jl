@@ -21,7 +21,15 @@ mutable struct VueStruct
 
 end
 
-function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),computed=Dict{String,Any}(),watched=Dict{String,Any}(),kwargs...)
+function VueStruct(
+    id::String,
+    garr::Array;
+    binds=Dict{String,Any}(),
+    data=Dict{String,Any}(),
+    methods=Dict{String,Any}(),
+    computed=Dict{String,Any}(),
+    watched=Dict{String,Any}(),
+    kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
@@ -40,7 +48,7 @@ function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{Str
     new_es=unique(x->x.id,new_es)
     comp.events=new_es
     function_script!.(comp.events)
-    
+
     ## Cols
     m_cols=maximum(max_cols.(grid(garr)))
     m_cols>12 ? m_cols=12 : nothing
@@ -107,5 +115,5 @@ function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
     map(x->x.path=scope,events)
     append!(new_es,events)
     update_events!(vs.grid,new_es,scope)
-    
+
 end

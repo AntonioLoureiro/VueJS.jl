@@ -2,13 +2,13 @@
 ### Arguments
 
  * id           :: String           :: Element's identifier
- * tag          :: String           ::
+ * tag          :: String           :: Vuetify tag, e.g. "v-dialog", "v-text-input", "v-btn", ...
  * attrs        :: Dict             ::
  * path         :: String           ::
  * binds        :: Dict             ::
  * value_attr   :: String           ::
  * data         :: Dict             ::
- * slots        :: Dict             :: 
+ * slots        :: Dict             :: VueJS slots, e.g. append, footer, header, label, prepend, ...
  * cols         :: Union{Nothing, Int64} :: Number of columns the element should occupy
 
 ### Examples
@@ -16,9 +16,10 @@
 ```julia
 
 @el(r1,"v-text-field",value="JValue",label="R1")   :: r1 = VueElement{"r1", HtmlElement("v-textfield", Dict("value"=>"JValue","label"=>"R1")), ...}
-r2 = VueElement("r2", "v-text-field", label="label", value="testeBatata")
 @el(r3,"v-slider",value=20,label="Slider 3")
 ```
+
+[See also: Vuejs components slots](https://vuejs.org/v2/guide/components-slots.html)
 """
 mutable struct VueElement
     id::String
@@ -35,7 +36,7 @@ end
 dom(d)=d
 dom(d::Dict)=JSON.json(d)
 function dom(vuel::VueElement)
-   
+
     if length(vuel.slots)==0
         value=""
     else
@@ -44,7 +45,7 @@ function dom(vuel::VueElement)
             push!(value,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
         end
     end
-    
+
     ## Value attr is nothing
     if vuel.value_attr==nothing
         if haskey(vuel.attrs,"value")
@@ -52,7 +53,7 @@ function dom(vuel::VueElement)
             delete!(vuel.attrs,"value")
         end
     end
-    
+
     ## cols
     if vuel.cols==nothing
         vuel.cols=3
@@ -60,7 +61,7 @@ function dom(vuel::VueElement)
     else
         cols=vuel.cols
     end
-    
+
    return HtmlElement(vuel.tag, vuel.attrs, cols, value)
 end
 
@@ -82,17 +83,17 @@ function VueElement(id::String, tag::String, attrs::Dict)
     else
         slots=Dict{String,String}()
     end
-    
+
     if haskey(attrs,"cols")
         cols=attrs["cols"]
         delete!(attrs,"cols")
     else
        cols=nothing
     end
-   
-    
-    vuel=VueJS.VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots,cols)
-    VueJS.update_validate!(vuel)
+
+
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols)
+    update_validate!(vuel)
 
     return vuel
 end
@@ -131,18 +132,18 @@ end
 """
 ### Examples
 ```julia
-@el(r3,"v-slider",value=20,label="Slider 3")
+@el(r1,"v-slider",value=20,label="Slider 1")
 @el(r4,"v-text-field",value="R4 Value",label="R4")
-@el(r5,"v-slider",value=20,label="Slider")
-@el(r6,"v-slider",value=20,label="Slider")
-@el(r6,"v-input",placeholder="Dummy data",label="Test")
+@el(r2,"v-slider",value=20,label="Slider 2")
+@el(r6,"v-text-field",placeholder="Dummy data",label="Test")
+@el(element,"v-text-field", full-width=true, label="Example", solo-inverted=true)
 ```
 """
 macro el(varname,tag,args...)
 
     @assert typeof(varname)==Symbol "1st arg should be Variable name"
     @assert typeof(tag)==String "2nd arg should be tag name"
-    
+
     newargs=[]
     for r in (args)
        @assert r.head==:(=) "You should input args with = indication e.g. a=1"
@@ -153,6 +154,7 @@ macro el(varname,tag,args...)
             lefte=arre[1]
             rigthe=string(r.args[2])
             lefte="\""*replace(lefte," "=>"")*"\"=>"
+            lefte=replace(replace(lefte,"("=>""), ")"=>"") #handle cases where left side expr is similar to: a-multiple-hiphen-prop
             righte=replace(rigthe,"quote"=>"begin",count=1)
             push!(newargs,lefte*righte)
         else
@@ -160,14 +162,12 @@ macro el(varname,tag,args...)
             push!(newargs,e)
         end
     end
-    
     newargs="Dict($(join(newargs,",")))"
     newexpr=(Meta.parse("""VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
     return quote
         $(esc(varname))=$(esc(newexpr))
     end
 end
-
 
 import Base.getindex
 import Base.setindex!
@@ -190,4 +190,3 @@ function Base.setindex!(vuel::VueElement,v, i::String)
     update_validate!(vuel)
     return nothing
 end
-

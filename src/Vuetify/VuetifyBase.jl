@@ -11,9 +11,6 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             if !(haskey(x.attrs,"headers"))
                 x.attrs["headers"]=[Dict("value"=>n,"text"=>n,"align"=>(eltype(df[:,Symbol(n)])<:Number ? "end" : "start")) for n in string.(names(df))]
             end
-            if !(haskey(x.attrs, "search")) #initialize empty search
-                x.attrs["search"] = ""
-            end
         end
     end
 end

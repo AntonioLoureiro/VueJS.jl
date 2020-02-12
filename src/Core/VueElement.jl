@@ -31,25 +31,19 @@ mutable struct VueElement
     data::Dict{String,Any}
     slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
+    child
 end
 
 dom(d)=d
 dom(d::Dict)=JSON.json(d)
+dom(a::Array)=dom.(a)
 function dom(vuel::VueElement)
-
-    if length(vuel.slots)==0
-        value=""
-    else
-        value=[]
-        for (k,v) in vuel.slots
-            push!(value,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
-        end
-    end
-
+    
+    child=nothing
     ## Value attr is nothing
     if vuel.value_attr==nothing
         if haskey(vuel.attrs,"value")
-            value=vuel.attrs["value"]
+            child=vuel.attrs["value"]
             delete!(vuel.attrs,"value")
         end
     end
@@ -61,8 +55,44 @@ function dom(vuel::VueElement)
     else
         cols=vuel.cols
     end
+   
+   if vuel.child!=nothing
+       child=vuel.child
+   else
+       child=child==nothing ? "" : child
+   end
+    
+   return HtmlElement(vuel.tag, vuel.attrs, cols, update_dom(child))
+end
 
-   return HtmlElement(vuel.tag, vuel.attrs, cols, value)
+update_dom(r)=dom(r)
+function update_dom(r::VueElement)
+    
+    ## Bind el values
+    for (k,v) in r.binds
+        value=r.path=="" ? v : r.path*"."*v
+        r.attrs[":$k"]=value
+
+        ### Capture Event if tgt=src otherwise double count or if value is value attr
+        if r.id*"."*k==v || r.id*".value"==v
+
+            ## And only if value attr! Others do not change on input! I Think!
+            if r.value_attr==k
+                event=r.value_attr=="value" ? "@input" : "@change"
+                if haskey(r.attrs,event)
+                    r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
+                else
+                    r.attrs[event]="$value= \$event"
+                end
+            end
+        end
+        ### delete attribute from dom
+        if haskey(r.attrs,k)
+            delete!(r.attrs,k)
+        end
+    end
+
+    return dom(r)
 end
 
 """
@@ -91,11 +121,27 @@ function VueElement(id::String, tag::String, attrs::Dict)
        cols=nothing
     end
 
-
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols)
+    child=nothing
+    ## Slots
+    if length(slots)!=0
+        child=[]
+        for (k,v) in slots
+            push!(child,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
+        end
+    end
+    
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,child)
     update_validate!(vuel)
 
     return vuel
+end
+
+bind_child_v_for!(c)=nothing
+bind_child_v_for!(c::Array)=bind_child_v_for!.(c)
+function bind_child_v_for!(vuel::VueElement)
+    
+   vuel.binds[vuel.value_attr]="item."*vuel.id
+    
 end
 
 function update_validate!(vuel::VueElement)
@@ -106,10 +152,14 @@ function update_validate!(vuel::VueElement)
         UPDATE_VALIDATION[tag](vuel)
     end
 
-     ## Bindig of non html accepted values => Arrays/Dicts
-    for (k,v) in vuel.attrs
-       if !(v isa String || v isa Date || v isa Number)
+     for (k,v) in vuel.attrs
+       ## Bindig of non html accepted values => Arrays/Dicts
+        if !(v isa String || v isa Date || v isa Number)
           vuel.binds[k]=vuel.id.*"."*k
+       end
+       ## Bind item element
+       if k=="v-for"
+          bind_child_v_for!(vuel.child)
        end
     end
 

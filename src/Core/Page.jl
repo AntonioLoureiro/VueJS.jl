@@ -84,6 +84,7 @@ function page(
     methods=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watched=Dict{String,Any}(),
+        
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)

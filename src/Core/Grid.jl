@@ -9,34 +9,6 @@ function max_cols(v::HtmlElement)
     end
 end
 
-function update_dom(r::VueElement)
-    
-    ## Bind el values
-    for (k,v) in r.binds
-        value=r.path=="" ? v : r.path*"."*v
-        r.attrs[":$k"]=value
-
-        ### Capture Event if tgt=src otherwise double count or if value is value attr
-        if r.id*"."*k==v || r.id*".value"==v
-
-            ## And only if value attr! Others do not change on input! I Think!
-            if r.value_attr==k
-                event=r.value_attr=="value" ? "@input" : "@change"
-                if haskey(r.attrs,event)
-                    r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
-                else
-                    r.attrs[event]="$value= \$event"
-                end
-            end
-        end
-        ### delete attribute from dom
-        if haskey(r.attrs,k)
-            delete!(r.attrs,k)
-        end
-    end
-
-    return dom(r)
-end
 
 function grid(arr::Array;rows=true)
 

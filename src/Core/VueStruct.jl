@@ -81,6 +81,8 @@ function element_path(arr::Array,scope::Array)
         if typeof(r)==VueElement
 
             new_arr[i].path=scope_str
+            ## hack for v-for
+            haskey(r.attrs,"v-for") ? new_arr[i].attrs["v-for"]=replace(new_arr[i].attrs["v-for"],"@path@"=>(scope_str=="" ? "" : "$scope_str.")) : nothing
 
         ## VueStruct
         elseif r isa VueStruct

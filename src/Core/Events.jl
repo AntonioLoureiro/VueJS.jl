@@ -81,8 +81,9 @@ function get_json_attr(d::Dict,a::String,path="app_state")
     return out
 end
 
-function std_events!(vs::VueStruct,new_es::Vector{EventHandler})
+function std_events!(vs::VueStruct,new_es::Vector{VueJS.EventHandler})
     
+    ## Submit Method
     value_script=replace(JSON.json(VueJS.get_json_attr(vs.def_data,"value")),"\""=>"")
     function_script="""submit : function(context) {
         var ret=$value_script
@@ -90,5 +91,14 @@ function std_events!(vs::VueStruct,new_es::Vector{EventHandler})
         }"""
     
     push!(new_es,VueJS.StdEventHandler("methods","submit","",function_script))
+    
+    ## Open Method
+    function_script="""open : function(url,name) {
+        name = typeof name !== 'undefined' ? name : '_self';
+        window.open(url,name);
+        }"""
+    
+    push!(new_es,VueJS.StdEventHandler("methods","open_url","",function_script))
+    
     return nothing
 end

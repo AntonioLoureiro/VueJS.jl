@@ -25,6 +25,11 @@ UPDATE_VALIDATION["v-btn"]=(x)->begin
     x.value_attr=nothing
 end
 
+UPDATE_VALIDATION["v-app-bar"]=(x)->begin
+
+    x.value_attr=nothing
+end
+
 UPDATE_VALIDATION["v-select"]=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"

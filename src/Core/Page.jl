@@ -25,7 +25,7 @@ mutable struct Page
     head::HtmlElement
     include_scripts::Array
     include_styles::Array
-    vuestruct::VueStruct
+    components::Dict{String,Any}
     scripts::Vector{String}
 end
 
@@ -85,47 +85,39 @@ function page(
     computed=Dict{String,Any}(),
     watched=Dict{String,Any}(),
         
+    navigation::Union{VueElement,Nothing}=nothing,
+    bar::Union{VueElement,Nothing}=nothing,
+        
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     scripts=haskey(args,"scripts") ? args["scripts"] : []
-    comp=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched)
 
-    return page(comp::VueStruct, kwargs...)
+    return page(cont::VueStruct, navigation=navigation,bar=bar, kwargs...)
 end
 
-function page(comp::VueStruct,kwargs...)
-
+function page(cont::VueStruct;
+        navigation::Union{VueElement,Nothing}=nothing,
+        bar::Union{VueElement,Nothing}=nothing,
+        kwargs...)
+    
+    components=Dict{String,Any}("v-content"=>cont)
+    
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
-
+    navigation!=nothing ? components["v-navigation-drawer"]=navigation : nothing
+    bar!=nothing ? components["v-app-bar"]=bar : nothing
+    
     page_inst=Page(
             deepcopy(HEAD),
             INCLUDE_SCRIPTS,
             INCLUDE_STYLES,
-            comp,
+            components,
             scripts)
 
     return page_inst
-end
-
-function htmlstring(page_inst::Page)
-
-    include_scripts=map(x->HtmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
-    include_styles=map(x->HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x)),page_inst.include_styles)
-
-    append!(page_inst.head.value,include_scripts)
-    append!(page_inst.head.value,include_styles)
-
-    nt=dom_scripts(page_inst.vuestruct::VueStruct)
-    render_scripts=deepcopy(page_inst.scripts)
-    body_dom=nt.dom
-    append!(render_scripts,nt.scripts)
-
-    htmlpage=HtmlElement("html",[page_inst.head,HtmlElement("body",body_dom)])
-
-    return join([htmlstring(htmlpage), """<script>$(join(render_scripts,"\n"))</script>"""],"")
 end
 
 function response(page::Page)

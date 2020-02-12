@@ -1,2 +1,2 @@
 include("VuetifyBase.jl")
-include("VueStruct.jl")
+include("Page.jl")

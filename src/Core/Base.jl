@@ -14,6 +14,6 @@ HEAD=HtmlElement("head",
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
 
-const JS_FUNCTION_ATTRS=["rules"]
+const JS_FUNCTION_ATTRS=["rules", "filter"]
 
 const UPDATE_VALIDATION=Dict{String,Any}()

@@ -1,9 +1,21 @@
-mutable struct EventHandler
+abstract type EventHandler end
+    
+mutable struct CustomEventHandler <:EventHandler
 
     kind::String
     id::String
     args::Vector{String}
     script::String
+    path::String
+    function_script::String
+
+end
+
+mutable struct StdEventHandler <:EventHandler
+
+    kind::String
+    id::String
+    path::String
     function_script::String
 
 end
@@ -20,7 +32,15 @@ mutable struct VueStruct
 
 end
 
-function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{String,Any}(),methods=Dict{String,Any}(),computed=Dict{String,Any}(),watched=Dict{String,Any}(),kwargs...)
+function VueStruct(
+    id::String,
+    garr::Array;
+    binds=Dict{String,Any}(),
+    data=Dict{String,Any}(),
+    methods=Dict{String,Any}(),
+    computed=Dict{String,Any}(),
+    watched=Dict{String,Any}(),
+    kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
@@ -30,9 +50,16 @@ function VueStruct(id::String,garr::Array;binds=Dict{String,Any}(),data=Dict{Str
 
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,VueJS.trf_binds(binds),cols,data,Dict{String,Any}(),events)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
+    new_es=Vector{EventHandler}()
+    update_events!(comp,new_es)
+    std_events!(comp,new_es)
+    sort!(new_es,by=x->length(x.path),rev=false)
+    new_es=unique(x->x.id,new_es)
+    comp.events=new_es
+    function_script!.(comp.events)
 
     ## Cols
     m_cols=maximum(max_cols.(grid(garr)))
@@ -54,6 +81,8 @@ function element_path(arr::Array,scope::Array)
         if typeof(r)==VueElement
 
             new_arr[i].path=scope_str
+            ## hack for v-for
+            haskey(r.attrs,"v-for") ? new_arr[i].attrs["v-for"]=replace(new_arr[i].attrs["v-for"],"@path@"=>(scope_str=="" ? "" : "$scope_str.")) : nothing
 
         ## VueStruct
         elseif r isa VueStruct
@@ -86,27 +115,19 @@ function element_path(arr::Array,scope::Array)
     return new_arr
 end
 
-function dom_scripts(el::VueStruct)
-
-    scripts=[]
-    push!(scripts,"const app_state = $(vue_json(el.def_data))")
-
-    ## component script
-    comp_script=[]
-    push!(comp_script,"el: '#app'")
-    push!(comp_script,"vuetify: new Vuetify()")
-    push!(comp_script,"data: app_state")
-
-    push!(comp_script, events_script(el))
-
-    comp_script="var app = new Vue({"*join(comp_script,",")*"})"
-    push!(scripts,comp_script)
-
-    arr_dom=grid(el.grid)
-    dom=HtmlElement("div",Dict("id"=>"app"),
-             HtmlElement("v-app",
-                 HtmlElement("v-container",Dict("fluid"=>true),arr_dom)))
-
-    return (dom=dom,scripts=scripts)
+update_events!(vs,new_es::Vector{EventHandler},scope="")=new_es=new_es
+function update_events!(vs::Array,new_es::Vector{EventHandler},scope="")
+    for r in vs
+        if r isa VueStruct
+        scope=(scope=="" ? r.id : scope*"."*r.id)
+        end
+        update_events!(r,new_es,scope)
+    end
+end
+function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
+    events=deepcopy(vs.events)
+    map(x->x.path=scope,events)
+    append!(new_es,events)
+    update_events!(vs.grid,new_es,scope)
 
 end

@@ -9,6 +9,7 @@ function max_cols(v::HtmlElement)
     end
 end
 
+
 function grid(arr::Array;rows=true)
 
     arr_dom=[]
@@ -20,34 +21,9 @@ function grid(arr::Array;rows=true)
         ## update grid_data recursively
         append=false
 
-        ## Vue Element
+            ## Vue Element
             if r isa VueElement
-            ## Bind el values
-                for (k,v) in r.binds
-                    value=r.path=="" ? v : r.path*"."*v
-                    r.dom.attrs[":$k"]=value
-
-                    ### Capture Event if tgt=src otherwise double count or if value is value attr
-                    if r.id*"."*k==v || r.id*".value"==v
-
-                        ## And only if value attr! Others do not change on input! I Think!
-                        if r.value_attr==k
-                            event=r.value_attr=="value" ? "@input" : "@change"
-                            if haskey(r.dom.attrs,event)
-                                r.dom.attrs[event]=r.dom.attrs[event]*"; "*"$value= \$event;"
-                            else
-                                r.dom.attrs[event]="$value= \$event"
-                            end
-                        end
-                    end
-                    ### delete attribute from dom
-                    if haskey(r.dom.attrs,k)
-                        delete!(r.dom.attrs,k)
-                    end
-                end
-
-               domvalue=r.dom
-
+               domvalue=update_dom(r)
             ## VueStruct
             elseif r isa VueStruct
                 append=true

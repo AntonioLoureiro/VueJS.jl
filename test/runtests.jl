@@ -6,4 +6,4 @@ c1=VueStruct("c1",[r1,r2],data=Dict("vuet"=>"Cebola"),binds=Dict("r1.label"=>"r2
 
 ## Tests
 @test c1.binds==Dict("r1" => Dict("label"=>Dict("r2"=>"value")))
-@test c1.grid[1].dom.attrs==Dict("label"=>"R1","disabled" => false,"value"=> "R1 Value")
+@test c1.grid[1].attrs==Dict("label"=>"R1","disabled" => false,"value"=> "R1 Value")

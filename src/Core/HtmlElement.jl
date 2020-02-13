@@ -56,14 +56,11 @@ function htmlstring(el::HtmlElement)
     end
 end
 
-## Keys that only receive JS Functions
-const JS_FUNCTION_KEYS=["rules"]
-
 function vue_json(d::Dict)
     els=[]
 
     for (k,v) in d
-        if k in JS_FUNCTION_KEYS
+        if k in JS_FUNCTION_ATTRS
             if v isa Array
                els2=[]
                for r in v

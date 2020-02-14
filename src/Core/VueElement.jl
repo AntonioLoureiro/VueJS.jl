@@ -122,16 +122,17 @@ function VueElement(id::String, tag::String, attrs::Dict)
     end
 
     child=nothing
-    ## Slots
+ 
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,child)
+    update_validate!(vuel)
+    
+       ## Slots
     if length(slots)!=0
         child=[]
         for (k,v) in slots
             push!(child,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
         end
     end
-    
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,child)
-    update_validate!(vuel)
 
     return vuel
 end

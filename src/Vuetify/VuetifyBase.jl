@@ -5,11 +5,29 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             df=x.attrs["items"]
             arr=[]
             for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}(string(n)=>x),df[:,n]) : map((x,y)->y[string(n)]=x,df[:,n],arr)
+               length(arr)==0 ? arr=map(x->Dict{String,Any}(lowercase(string(n))=>x),df[:,n]) : map((x,y)->y[lowercase(string(n))]=x,df[:,n],arr)
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict("value"=>n,"text"=>n,"align"=>(eltype(df[:,Symbol(n)])<:Number ? "end" : "start")) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict("value"=>lowercase(n),"text"=>n) for n in string.(names(df))]
+            end
+            
+            ### Formatting
+            for (i,n) in enumerate(names(df))
+                ### Numbers
+                if eltype(df[!,i])<:Union{Missing,Number}
+                    map(x->x["align"]="end",x.attrs["headers"]) 
+                end
+            end
+            
+            if haskey(x.attrs,"col_render")
+                col_render=x.attrs["col_render"]
+                @assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
+                for (k,v) in col_render
+                    col=lowercase(k)
+                    x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,$v)"></div>"""
+                end
+                delete!(x.attrs,"col_render")
             end
         end
     end

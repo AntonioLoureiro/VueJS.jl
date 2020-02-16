@@ -13,15 +13,6 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 x.attrs["headers"]=[Dict{String,Any}("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
             end
             
-            ## Escape Col Renders
-            if haskey(x.attrs,"col_render")
-                new_col_render=Dict{String,Any}()
-                for (k,v) in x.attrs["col_render"]
-                    new_col_render[vue_escape(k)]=v
-                    x.attrs["col_render"]=new_col_render
-                end
-            end
-            
             ### Formatting
             for (i,n) in enumerate(names(df))
                 n=string(n)
@@ -38,6 +29,16 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                         
                 end
             end
+	
+            ## Escape Col Renders
+            if haskey(x.attrs,"col_render")
+                new_col_render=Dict{String,Any}()
+                for (k,v) in x.attrs["col_render"]
+                    new_col_render[vue_escape(k)]=v
+                    x.attrs["col_render"]=new_col_render
+                end
+            end	
+		
         end
         
         ## Column rendering

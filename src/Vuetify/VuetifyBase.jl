@@ -13,21 +13,27 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 x.attrs["headers"]=[Dict("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
             end
             
+            ## Escape Col Renders
+            if haskey(x.attrs,"col_render")
+                new_col_render=Dict{String,Any}()
+                for (k,v) in x.attrs["col_render"]
+                    new_col_render[vue_escape(k)]=v
+                    x.attrs["col_render"]=new_col_render
+                end
+            end
+            
             ### Formatting
             for (i,n) in enumerate(names(df))
+                n=string(n)
                 ### Numbers
                 if eltype(df[!,i])<:Union{Missing,Number}
-                    map(x->x["align"]="end",x.attrs["headers"])
+                    map(x->x["text"]==n ? x["align"]="end" : nothing ,x.attrs["headers"])
                     
-                    if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],string(n)))
-                        digits=maximum(skipmissing(df[:,n]))>=1000 ? 0 : 2
+                    ## Default Renders
+                    if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],n))
+                        digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][vue_escape(string(n))]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
-                    elseif haskey(x.attrs["col_render"],string(n))
-                        for (k,v) in x.attrs["col_render"][string(n)]
-                            x.attrs["col_render"][vue_escape(string(n))]=v
-                            delete!(x.attrs["col_render"],string(n))
-                        end
+                        x.attrs["col_render"][vue_escape(n)]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                     end
                         
                 end

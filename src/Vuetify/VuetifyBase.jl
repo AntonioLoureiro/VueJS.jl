@@ -10,7 +10,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict{String,Any}("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
             end
             
             ## Escape Col Renders

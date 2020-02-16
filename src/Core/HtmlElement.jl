@@ -44,9 +44,23 @@ htmlstring(s::String)=s
 htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))
 
+function attr_render(k,v)
+    if v isa Bool 
+        if v 
+            return " $k"
+        else
+            return ""
+        end
+    elseif k in ["v-for"]
+        return " $k=\"$(replace(string(v),"\""=>"'"))\" "
+    else
+        return " $k=\"$(replace(vue_escape(string(v)),"\""=>"'"))\" "
+    end
+end
+
 function htmlstring(el::HtmlElement)
     tag=el.tag
-    attrs=join([v isa Bool ? (v ? " $k" : "") : " $k=\"$(replace(string(v),"\""=>"'"))\" " for (k,v) in el.attrs])
+    attrs=join([attr_render(k,v) for (k,v) in el.attrs])
     value=htmlstring(el.value)
     
     if value==nothing
@@ -82,7 +96,8 @@ end
 
 function vue_escape(s::String)
    s=lowercase(s) 
-   s=replace(s," "=>"_")
+   s=replace(s," "=>"")
+   s=replace(s,"-"=>"_")
    s=replace(s,"%"=>"_perc")
     
     return s

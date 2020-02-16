@@ -18,8 +18,8 @@ function update_data!(el::VueElement,datavalue)
     real_data=nothing
     def_data=Dict{String,Any}()
     for (k,v) in el.binds
-        new_k=deepcopy(k)
-
+        new_k=vue_escape(deepcopy(k))
+        
         if haskey(el.attrs,k)
            real_data=deepcopy(el.attrs[k])
         end

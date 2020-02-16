@@ -81,6 +81,7 @@ function get_json_attr(d::Dict,a::String,path="app_state")
     return out
 end
 
+
 function std_events!(vs::VueStruct,new_es::Vector{VueJS.EventHandler})
     
     ## Submit Method
@@ -98,7 +99,14 @@ function std_events!(vs::VueStruct,new_es::Vector{VueJS.EventHandler})
         window.open(url,name);
         }"""
     
-    push!(new_es,VueJS.StdEventHandler("methods","open_url","",function_script))
+    push!(new_es,VueJS.StdEventHandler("methods","open","",function_script))
+    
+    ## Datatable Col Render
+    function_script="""datatable_col_render : function(item,render_script) {
+        return render_script(item)
+        }"""
+    
+    push!(new_es,VueJS.StdEventHandler("methods","datatable_col_render","",function_script))
     
     return nothing
 end

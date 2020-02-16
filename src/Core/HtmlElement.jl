@@ -48,7 +48,7 @@ function htmlstring(el::HtmlElement)
     tag=el.tag
     attrs=join([v isa Bool ? (v ? " $k" : "") : " $k=\"$(replace(string(v),"\""=>"'"))\" " for (k,v) in el.attrs])
     value=htmlstring(el.value)
-
+    
     if value==nothing
        return """<$tag$attrs/>"""
     else
@@ -56,26 +56,24 @@ function htmlstring(el::HtmlElement)
     end
 end
 
-function vue_json(d::Dict)
+function vue_json(v,f_mode)
+    if f_mode
+        return v
+    else
+        return JSON.json(v)
+    end
+end
+
+vue_json(a::Array,f_mode)="[$(join(vue_json.(a,f_mode),","))]"
+
+function vue_json(d::Dict,f_mode::Bool=false)
     els=[]
-
     for (k,v) in d
-        if k in JS_FUNCTION_ATTRS
-            if v isa Array
-               els2=[]
-               for r in v
-                push!(els2,r)
-               end
-                j="\"$k\":[$(join(els2,","))]"
-            else
-                j="\"$k\":"*(v)
-            end
-        elseif v isa Dict
-            j="\"$k\":"*vue_json(v)
+        if k in VueJS.JS_FUNCTION_ATTRS
+            j="\"$k\": $(vue_json(v,true))"
         else
-            j="\"$k\":"*JSON.json(v)
+            j="\"$k\":"*vue_json(v,f_mode==false ? false : true)
         end
-
         push!(els,j)
     end
     return "{$(join(els,","))}"

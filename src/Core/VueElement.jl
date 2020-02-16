@@ -34,9 +34,29 @@ mutable struct VueElement
     child
 end
 
+
+function child_path(a::Array,path::String)
+    child_path.(a,path)
+   return a 
+end
+
+function child_path(s::String,path::String)
+    if path==""
+        return replace(s,"@path@"=>"")
+    else
+        return replace(s,"@path@"=>path*".")
+    end
+end
+
+function child_path(h::HtmlElement,path::String)
+    h.value=child_path(h.value,path)
+    return h
+end
+
 dom(d)=d
 dom(d::Dict)=JSON.json(d)
 dom(a::Array)=dom.(a)
+
 function dom(vuel::VueElement)
     
     child=nothing
@@ -62,7 +82,11 @@ function dom(vuel::VueElement)
        child=child==nothing ? "" : child
    end
     
-   return HtmlElement(vuel.tag, vuel.attrs, cols, update_dom(child))
+    child_dom=update_dom(child)
+    
+    child_dom=child_path(child_dom,vuel.path)
+    
+   return HtmlElement(vuel.tag, vuel.attrs, cols, child_dom)
 end
 
 update_dom(r)=dom(r)
@@ -120,20 +144,19 @@ function VueElement(id::String, tag::String, attrs::Dict)
     else
        cols=nothing
     end
-
-    child=nothing
  
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,child)
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing)
     update_validate!(vuel)
     
        ## Slots
-    if length(slots)!=0
+    if length(vuel.slots)!=0
         child=[]
-        for (k,v) in slots
+        for (k,v) in vuel.slots
             push!(child,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
         end
+        vuel.child=child
     end
-
+    
     return vuel
 end
 
@@ -156,7 +179,11 @@ function update_validate!(vuel::VueElement)
      for (k,v) in vuel.attrs
        ## Bindig of non html accepted values => Arrays/Dicts
         if !(v isa String || v isa Date || v isa Number)
-          vuel.binds[k]=vuel.id.*"."*k
+          if k==vuel.value_attr
+             vuel.binds[k]=vuel.id.*".value"
+          else
+             vuel.binds[k]=vuel.id.*"."*k
+          end
        end
        ## Bind item element
        if k=="v-for"

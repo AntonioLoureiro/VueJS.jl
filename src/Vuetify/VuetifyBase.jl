@@ -1,5 +1,6 @@
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
+    x.value_attr=nothing
     if haskey(x.attrs,"items")
         if x.attrs["items"] isa DataFrame
             df=x.attrs["items"]
@@ -16,20 +17,28 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             for (i,n) in enumerate(names(df))
                 ### Numbers
                 if eltype(df[!,i])<:Union{Missing,Number}
-                    map(x->x["align"]="end",x.attrs["headers"]) 
+                    map(x->x["align"]="end",x.attrs["headers"])
+                    
+                    if !(haskey(x.attrs["col_render"],string(n)))
+                        digits=maximum(skipmissing(df[:,n]))>=1000 ? 0 : 2
+                        x.attrs["col_render"][string(n)]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"                       
+                        
+                    end
+                    
                 end
-            end
-            
-            if haskey(x.attrs,"col_render")
-                col_render=x.attrs["col_render"]
-                @assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
-                for (k,v) in col_render
-                    col=lowercase(k)
-                    x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,$v)"></div>"""
-                end
-                delete!(x.attrs,"col_render")
             end
         end
+        
+        ## Column rendering
+		if haskey(x.attrs,"col_render")
+			col_render=x.attrs["col_render"]
+			@assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
+			for (k,v) in col_render
+				col=lowercase(k)                                        
+				x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,@path@d1.col_render.$k)"></div>"""
+			end
+		end
+        
     end
 end
 

@@ -22,7 +22,12 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],string(n)))
                         digits=maximum(skipmissing(df[:,n]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][vue_escape(string(n))]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"                       
+                        x.attrs["col_render"][vue_escape(string(n))]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                    elseif haskey(x.attrs["col_render"],string(n))
+                        for (k,v) in x.attrs["col_render"][string(n)]
+                            x.attrs["col_render"][vue_escape(string(n))]=v
+                            delete!(x.attrs["col_render"],string(n))
+                        end
                     end
                         
                 end

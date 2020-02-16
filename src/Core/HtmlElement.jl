@@ -78,3 +78,12 @@ function vue_json(d::Dict,f_mode::Bool=false)
     end
     return "{$(join(els,","))}"
 end
+
+
+function vue_escape(s::String)
+   s=lowercase(s) 
+   s=replace(s," "=>"_")
+   s=replace(s,"%"=>"_perc")
+    
+    return s
+end

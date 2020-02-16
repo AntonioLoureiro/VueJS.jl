@@ -6,11 +6,11 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             df=x.attrs["items"]
             arr=[]
             for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}(lowercase(string(n))=>x),df[:,n]) : map((x,y)->y[lowercase(string(n))]=x,df[:,n],arr)
+               length(arr)==0 ? arr=map(x->Dict{String,Any}(vue_escape(string(n))=>x),df[:,n]) : map((x,y)->y[vue_escape(string(n))]=x,df[:,n],arr)
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict("value"=>lowercase(n),"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
             end
             
             ### Formatting
@@ -22,7 +22,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],string(n)))
                         digits=maximum(skipmissing(df[:,n]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][string(n)]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"                       
+                        x.attrs["col_render"][vue_escape(string(n))]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"                       
                     end
                         
                 end
@@ -34,8 +34,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 			col_render=x.attrs["col_render"]
 			@assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
 			for (k,v) in col_render
-				col=lowercase(k)                                        
-				x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,@path@d1.col_render.$k)"></div>"""
+				col=vue_escape(k)
+				x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,@path@$(x.id).col_render.$col)"></div>"""
 			end
 		end
         

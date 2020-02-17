@@ -6,11 +6,11 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             df=x.attrs["items"]
             arr=[]
             for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}(vue_escape(string(n))=>x),df[:,n]) : map((x,y)->y[vue_escape(string(n))]=x,df[:,n],arr)
+               length(arr)==0 ? arr=map(x->Dict{String,Any}("c"*VueJS.vue_escape(string(n))=>x),df[:,n]) : map((x,y)->y["c"*VueJS.vue_escape(string(n))]=x,df[:,n],arr)
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict{String,Any}("value"=>vue_escape(n),"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict{String,Any}("value"=>"c"*VueJS.vue_escape(n),"text"=>n) for n in string.(names(df))]
             end
             
             ### Formatting
@@ -24,30 +24,28 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],n))
                         digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][vue_escape(n)]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                        x.attrs["col_render"][n]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                     end
                         
                 end
             end
-	
-            ## Escape Col Renders
-            if haskey(x.attrs,"col_render")
-                new_col_render=Dict{String,Any}()
-                for (k,v) in x.attrs["col_render"]
-                    new_col_render[vue_escape(k)]=v
-                    x.attrs["col_render"]=new_col_render
-                end
-            end	
-		
         end
         
+        ## Escape Col Renders
+        if haskey(x.attrs,"col_render")
+            new_col_render=Dict{String,Any}()
+            for (k,v) in x.attrs["col_render"]
+                new_col_render["c"*vue_escape(k)]=v
+                x.attrs["col_render"]=new_col_render
+            end
+        end	
+
         ## Column rendering
 		if haskey(x.attrs,"col_render")
 			col_render=x.attrs["col_render"]
 			@assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
 			for (k,v) in col_render
-				col=vue_escape(k)
-				x.slots["item.$col='{item}'"]="""<div v-html="datatable_col_render(item.$col,@path@$(x.id).col_render.$col)"></div>"""
+				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_render(item.$k,@path@$(x.id).col_render.$k)"></div>"""
 			end
 		end
         

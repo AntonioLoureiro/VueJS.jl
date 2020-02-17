@@ -16,4 +16,14 @@ const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
 
 const JS_FUNCTION_ATTRS=["rules", "filter","col_render"]
 
+LIBRARY_RULES =
+    Dict("maxchars"=> (x->return """ value => value.length <= $x || 'Max $x characters' """),
+         "minchars"=> (x->return """ value => value.length > $x  || 'Min $x characters' """),
+         "required"=> (x->return " value => !!value || 'Required' "),
+         "min"=>(x->return " value => value >= $x || 'Minimum  value is $x' "),
+         "max"=>(x->return " value => value <= $x || 'Maximum  value is $x' "),
+         "type"=>(x->return "value => typeof(value) === '$x' || 'Please provide a $x'"),
+         "in"=>(x->return """ value => $x.includes(value) || 'Value not in $x' """)
+    )
+
 const UPDATE_VALIDATION=Dict{String,Any}()

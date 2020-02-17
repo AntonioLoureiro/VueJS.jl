@@ -33,6 +33,8 @@ function htmlstring(page_inst::Page)
                  comp_el=update_dom(v)
                  comp_el.attrs["app"]=true
                  push!(components_dom,comp_el)
+            elseif k=="v-navigation-drawer"
+                push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true,"width"=>200),update_dom(v)))
             else
                 push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true),update_dom(v)))
             end

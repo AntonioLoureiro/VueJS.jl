@@ -51,7 +51,7 @@ function attr_render(k,v)
         else
             return ""
         end
-    elseif k in ["v-for"]
+    elseif k in ["v-for","src"]
         return " $k=\"$(replace(string(v),"\""=>"'"))\" "
     else
         return " $k=\"$(replace(vue_escape(string(v)),"\""=>"'"))\" "

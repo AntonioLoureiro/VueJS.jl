@@ -84,10 +84,11 @@ function page(
     methods=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watched=Dict{String,Any}(),
-        
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueElement,Nothing}=nothing,
-        
+    sysbar::Union{VueElement, Nothing}=nothing,
+    footer::Union{VueElement, Nothing}=nothing,
+    bottom::Union{VueElement, Nothing}=nothing,
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
@@ -95,21 +96,29 @@ function page(
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched)
 
-    return page(cont::VueStruct, navigation=navigation,bar=bar, kwargs...)
+    return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end
 
-function page(cont::VueStruct;
-        navigation::Union{VueElement,Nothing}=nothing,
+function page(
+        cont::VueStruct;
+        sysbar::Union{VueElement, Nothing}=nothing,
         bar::Union{VueElement,Nothing}=nothing,
+        navigation::Union{VueElement,Nothing}=nothing,
+        footer::Union{VueElement, Nothing}=nothing,
+        bottom::Union{VueElement, Nothing}=nothing,
         kwargs...)
     
     components=Dict{String,Any}("v-content"=>cont)
-    
+
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
-    navigation!=nothing ? components["v-navigation-drawer"]=navigation : nothing
+
+    sysbar!=nothing ? components["v-system-bar"]=sysbar : nothing
     bar!=nothing ? components["v-app-bar"]=bar : nothing
-    
+    navigation!=nothing ? components["v-navigation-drawer"]=navigation : nothing
+    footer!=nothing ? components["v-footer"]=footer : nothing
+    bottom!=nothing ? components["v-bottom-navigation"] : nothing
+
     page_inst=Page(
             deepcopy(HEAD),
             INCLUDE_SCRIPTS,

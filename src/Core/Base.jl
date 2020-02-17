@@ -27,3 +27,6 @@ LIBRARY_RULES =
     )
 
 const UPDATE_VALIDATION=Dict{String,Any}()
+
+includeJS!(a::Vector{String})=INCLUDE_SCRIPTS=a
+includeCSS!(a::Vector{String})=INCLUDE_STYLES=a

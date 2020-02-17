@@ -24,7 +24,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],n))
                         digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][n]="x=> x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                        x.attrs["col_render"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                     end
                         
                 end

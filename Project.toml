@@ -1,7 +1,7 @@
 name = "VueJS"
 uuid = "dd23b82c-c6e2-490f-8a36-5dab9c7f2253"
 authors = ["Antonio Loureiro <ajose.loureiro@gmail.com>"]
-version = "0.1.3"
+version = "0.1.4"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

@@ -120,14 +120,20 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
     function_script="""submit : function(context, url, method, async, success, error) {
         var ret=$value_script
         $(js_closure(scope="app"))
-        if (context && context.length > 0) {
-            out = {}
-            for (key in ret) {
-                if (context.includes(key)) {
-                    out[key] = ret[key]
-                }
-            }
-            ret = out
+
+        var search = function(obj, arr) {
+            let result = {};
+            for(key in obj) {
+                if (arr.includes(key)) {
+                    result[key] = obj[key];
+                } else if (typeof(obj[key]) === 'object') { // if its object - lets search inside it
+                    Object.assign(result, search(obj[key], arr));
+               	}
+    	    }
+            return result;
+        }
+        if (context && context.length) {
+            ret = search(ret, context);
         }
         return xhr(JSON.stringify(ret), url, method, async, success, error)
     }"""
@@ -169,10 +175,14 @@ function submit(
     async::Bool=true,
     success::Vector=[],
     error::Vector=[],
-    context::Union{Nothing, Vector}=nothing,
-    )
+    context::Vector=[])
     success = size(success, 1) > 0 ? """(function(xhr) {$(join(success,""))})""" : "null"
     error = size(error, 1) > 0 ? """(function(xhr) {$(join(error,""))})""" : "null"
-    contents = context != nothing ? [x.id for x in context] : []
-    return "submit($(contents != [] ? replace(JSON.json(contents), "\""=>"'") : "null"), '$url', '$method', $async, $success, $error)"
+    if context != []
+        ids = [x.id for x in context] #Html or Vue Element `id`
+        contents = replace(JSON.json(ids), "\""=>"'")
+    else
+        contents = "null"
+    end
+    return "submit($contents, '$url', '$method', $async, $success, $error)"
 end

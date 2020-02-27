@@ -126,7 +126,7 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
             for(key in obj) {
                 if (arr.includes(key)) {
                     result[key] = obj[key];
-                } else if (typeof(obj[key]) === 'object') { // if its object - lets search inside it
+                } else if (typeof(obj[key]) === 'object') {
                     Object.assign(result, search(obj[key], arr));
                	}
     	    }

@@ -27,8 +27,9 @@ mutable struct Page
     include_styles::Array
     components::Dict{String,Any}
     scripts::Vector{String}
+    cookiejar::Dict{String, Any}
 end
-
+Page(head, sc, styles, comps, scripts) = return Page(head, sc, styles, comps, scripts, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -93,8 +94,8 @@ function page(
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
-    scripts=haskey(args,"scripts") ? args["scripts"] : []
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched)
+    cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched,cookies=cookies)
 
     return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end
@@ -107,11 +108,12 @@ function page(
         footer::Union{VueElement, Nothing}=nothing,
         bottom::Union{VueElement, Nothing}=nothing,
         kwargs...)
-    
+
     components=Dict{String,Any}("v-content"=>cont)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
+    cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
 
     sysbar!=nothing ? components["v-system-bar"]=sysbar : nothing
     bar!=nothing ? components["v-app-bar"]=bar : nothing
@@ -124,12 +126,17 @@ function page(
             INCLUDE_SCRIPTS,
             INCLUDE_STYLES,
             components,
-            scripts)
+            scripts,
+            cookiejar)
 
     return page_inst
 end
 
 function response(page::Page)
-
-    return HTTP.Response(200,htmlstring(page))
+    response = HTTP.Response(200, htmlstring(page))
+    if length(page.cookiejar) > 0
+        [HTTP.Messages.appendheader(response, SubString("Set-Cookie")=>SubString("$k=$v"))
+            for (k,v) in page.cookiejar]
+    end
+    return response
 end

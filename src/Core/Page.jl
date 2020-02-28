@@ -1,3 +1,11 @@
+struct WebDependency
+    path::String
+    kind::String
+    components::Dict{String,String}
+end
+
+dependency(path::String,kind::String,components::Dict)=WebDependency(path,kind,components)
+
 """
 ```julia
 @el(example,"v-text-field",value="Example Value",label="Example label",rules=["v => v.length >= 8 || 'Min 8 characters'"])
@@ -6,7 +14,6 @@ body=HtmlElement("body",
             HtmlElement("v-app",
                 HtmlElement("v-container",Dict("fluid"=>true),[example]))))
 
-INCLUDE_STYLES=["https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css", "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"]
 
 page_inst=Page(
         deepcopy(HEAD),
@@ -23,8 +30,7 @@ htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
 """
 mutable struct Page
     head::HtmlElement
-    include_scripts::Array
-    include_styles::Array
+    dependencies::Vector{WebDependency}
     components::Dict{String,Any}
     scripts::Vector{String}
 end
@@ -121,8 +127,7 @@ function page(
 
     page_inst=Page(
             deepcopy(HEAD),
-            INCLUDE_SCRIPTS,
-            INCLUDE_STYLES,
+            DEPENDENCIES,
             components,
             scripts)
 

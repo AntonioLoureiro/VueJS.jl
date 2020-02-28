@@ -4,10 +4,16 @@ HEAD=HtmlElement("head",
     HtmlElement("meta", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
     ])
 
+
     #Production scripts INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"]
-    INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","https://cdn.jsdelivr.net/npm/tiptap-vuetify"]
-    INCLUDE_STYLES=["https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css",
-    "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"]
+DEPENDENCIES=[dependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
+                dependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),  
+                dependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
+                dependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
+                dependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css","css",Dict()),
+                dependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","js",Dict("VueEditor"=>"vue2editor.components.VueEditor")),
+                dependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","js",Dict()),
+]
 
     FRAMEWORK="vuetify"
     VIEWPORT="md"
@@ -28,12 +34,22 @@ LIBRARY_RULES =
 
 const UPDATE_VALIDATION=Dict{String,Any}()
 
-function includeJS!(a::Vector{String})
-    global INCLUDE_SCRIPTS=a
-    return nothing
-end
+# function jsLibraries!(a::Vector{String})
+#     global INCLUDE_SCRIPTS=a
+#     return nothing
+# end
 
-function includeCSS!(a::Vector{String})
-    global INCLUDE_STYLES=a
-    return nothing
-end
+# function includeJS!(s::String)
+#     push!(INCLUDE_SCRIPTS,s)
+#     return nothing
+# end
+
+# function cssLibraries!(a::Vector{String})
+#     global INCLUDE_STYLES=a
+#     return nothing
+# end
+
+# function includeCSS!(s::String)
+#     push!(INCLUDE_STYLES,s)
+#     return nothing
+# end

@@ -1,11 +1,22 @@
 function htmlstring(page_inst::Page)
+    includes=[]
+    for d in page_inst.dependencies
+        if d.kind=="js"
+            push!(includes,HtmlElement("script",Dict("src"=>d.path),""))
+        elseif d.kind=="css"
+            push!(includes,HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>d.path)))
+        end
+    end
 
-    include_scripts=map(x->HtmlElement("script",Dict("src"=>x),""),page_inst.include_scripts)
-    include_styles=map(x->HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>x)),page_inst.include_styles)
-
-    append!(page_inst.head.value,include_scripts)
-    append!(page_inst.head.value,include_styles)
+    append!(page_inst.head.value,includes)
     scripts=deepcopy(page_inst.scripts)
+    push!(scripts,"const vuetify = new Vuetify()")
+    components=Dict{String,String}()
+    for d in page_inst.dependencies
+        length(d.components)!=0 ? merge!(components,d.components) : nothing
+    end
+    
+    push!(scripts,"""const components = $(replace(JSON.json(components),"\""=>""))""")
     
     components_dom=[]
     app_state=Dict{String,Any}()
@@ -15,7 +26,8 @@ function htmlstring(page_inst::Page)
             ## component script
             comp_script=[]
             push!(comp_script,"el: '#app'")
-            push!(comp_script,"vuetify: new Vuetify()")
+            push!(comp_script,"vuetify: vuetify")
+            push!(comp_script,"components:components")
             push!(comp_script,"data: app_state")
             merge!(app_state,v.def_data)
             

@@ -35,7 +35,7 @@ mutable struct Page
     scripts::Vector{String}
     cookiejar::Dict{String, Any}
 end
-Page(head, sc, styles, comps, scripts) = return Page(head, sc, styles, comps, scripts, Dict{String, Any}())
+Page(head, deps, comps, scripts) = return Page(head, deps, comps, scripts, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization

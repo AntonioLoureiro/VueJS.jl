@@ -46,7 +46,10 @@ function update_dom(r::VueElement)
     return r
 end
 
+
 dom_child(d;rows=true)=dom(d)
+dom_child(d::HtmlElement;rows=true)=d
+dom_child(d::String;rows=true)=d
 dom_child(a::Array;rows=true)=dom_child.(a)
 dom(d;rows=true)=d
 dom(d::Dict;rows=true)=JSON.json(d)
@@ -108,6 +111,11 @@ function max_cols(v::HtmlElement)
 end
 
 
+dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
+dom(r::HtmlElement;rows=true)=r
+dom(r::VueHolder;rows=true)=dom(r.elements,rows=rows)
+dom(r::VueStruct;rows=true)=dom(r.grid,rows=rows)
+
 function dom(arr::Array;rows=true)
 
     arr_dom=[]
@@ -118,28 +126,13 @@ function dom(arr::Array;rows=true)
 
         ## update grid_data recursively
         append=false
-
-            ## Vue Element
-            if r isa VueElement
-               domvalue=dom(r)
-            ## VueStruct
-            elseif r isa VueStruct
-                append=true
-                domvalue=dom(r.grid,rows=true)
-            ## VueHolder
-            elseif r isa VueHolder
-                domvalue=dom(r.elements,rows=rows)
-            ## Array Elements/Components
-            elseif r isa Array
-                domvalue=dom(r,rows=(rows ? false : true))
-            elseif r isa HtmlElement
-                domvalue=r
-            elseif r isa String
-                domvalue=HtmlElement("div",Dict(),12,r)
-            else
-                error("$string(r) with invalid type for Grid!")
-            end
-
+        new_rows=deepcopy(rows)
+        r isa VueStruct ? append=true : nothing
+        r isa VueStruct ? new_rows=true : nothing
+        r isa Array ? (rows ? new_rows=false : new_rows=true) : nothing
+        
+        domvalue=dom(r,rows=new_rows)
+        
         grid_rows="v-row"
         grid_cols="v-col"
         grid_class=rows ? grid_rows : grid_cols

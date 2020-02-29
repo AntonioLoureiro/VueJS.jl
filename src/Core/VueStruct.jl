@@ -23,7 +23,7 @@ end
 mutable struct VueStruct
 
      id::String
-     grid::Array
+     grid::Union{Array,VueHolder}
      binds::Dict{String,Any}
      cols::Union{Nothing,Int64}
      data::Dict{String,Any}
@@ -34,7 +34,7 @@ end
 
 function VueStruct(
     id::String,
-    garr::Array;
+    garr::Union{Array,VueHolder};
     binds=Dict{String,Any}(),
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),
@@ -62,7 +62,7 @@ function VueStruct(
     function_script!.(comp.events)
 
     ## Cols
-    m_cols=maximum(max_cols.(grid(garr)))
+    m_cols=maximum(max_cols.(dom(garr)))
     m_cols>12 ? m_cols=12 : nothing
     if comp.cols==nothing
         comp.cols=m_cols
@@ -70,6 +70,8 @@ function VueStruct(
     return comp
 end
 
+element_path(v::VueHolder,scope::Array)=element_path(v.elements,scope)
+    
 function element_path(arr::Array,scope::Array)
 
     new_arr=deepcopy(arr)
@@ -106,7 +108,10 @@ function element_path(arr::Array,scope::Array)
                 end
             end
         new_arr[i].binds=new_binds
-
+        
+        ## VueHolder
+        elseif r isa VueHolder    
+            new_arr[i]=element_path(r,scope)
         ## Array Elements/Components
         elseif r isa Array
             new_arr[i]=element_path(r,scope)

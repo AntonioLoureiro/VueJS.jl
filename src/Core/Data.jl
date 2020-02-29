@@ -70,3 +70,5 @@ function update_data!(el::VueStruct,datavalue=Dict{String,Any}())
 
     return Dict(el.id=>new_def_data)
 end
+
+update_data!(vueh::VueHolder,datavalue::Dict)=update_data!(vueh.elements,datavalue)

@@ -34,91 +34,6 @@ mutable struct VueElement
     child
 end
 
-
-function child_path(a::Array,path::String)
-    child_path.(a,path)
-   return a 
-end
-
-function child_path(s::String,path::String)
-    if path==""
-        return replace(s,"@path@"=>"")
-    else
-        return replace(s,"@path@"=>path*".")
-    end
-end
-
-function child_path(h::HtmlElement,path::String)
-    h.value=child_path(h.value,path)
-    return h
-end
-
-dom(d)=d
-dom(d::Dict)=JSON.json(d)
-dom(a::Array)=dom.(a)
-
-function dom(vuel::VueElement)
-    
-    child=nothing
-    ## Value attr is nothing
-    if vuel.value_attr==nothing
-        if haskey(vuel.attrs,"value")
-            child=vuel.attrs["value"]
-            delete!(vuel.attrs,"value")
-        end
-    end
-
-    ## cols
-    if vuel.cols==nothing
-        vuel.cols=3
-        cols=3
-    else
-        cols=vuel.cols
-    end
-   
-   if vuel.child!=nothing
-       child=vuel.child
-   else
-       child=child==nothing ? "" : child
-   end
-    
-    child_dom=update_dom(child)
-    
-    child_dom=child_path(child_dom,vuel.path)
-    
-   return HtmlElement(vuel.tag, vuel.attrs, cols, child_dom)
-end
-
-update_dom(r)=dom(r)
-function update_dom(r::VueElement)
-    
-    ## Bind el values
-    for (k,v) in r.binds
-        value=r.path=="" ? v : r.path*"."*v
-        r.attrs[":$k"]=value
-
-        ### Capture Event if tgt=src otherwise double count or if value is value attr
-        if r.id*"."*k==v || r.id*".value"==v
-
-            ## And only if value attr! Others do not change on input! I Think!
-            if r.value_attr==k
-                event=r.value_attr=="value" ? "@input" : "@change"
-                if haskey(r.attrs,event)
-                    r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
-                else
-                    r.attrs[event]="$value= \$event"
-                end
-            end
-        end
-        ### delete attribute from dom
-        if haskey(r.attrs,k)
-            delete!(r.attrs,k)
-        end
-    end
-
-    return dom(r)
-end
-
 """
 Defaults to binding on `value` attribute
 
@@ -160,13 +75,6 @@ function VueElement(id::String, tag::String, attrs::Dict)
     return vuel
 end
 
-bind_child_v_for!(c)=nothing
-bind_child_v_for!(c::Array)=bind_child_v_for!.(c)
-function bind_child_v_for!(vuel::VueElement)
-    
-   vuel.binds[vuel.value_attr]="item."*vuel.id
-    
-end
 
 function update_validate!(vuel::VueElement)
 

@@ -85,7 +85,7 @@ when any of its dependencies changes.
 ```
 """
 function page(
-    garr::Array;
+    garr::Union{Array,VueHolder};
     binds=Dict{String,String}(),
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),

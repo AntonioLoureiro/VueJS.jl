@@ -88,3 +88,11 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
     delete!(x.attrs,"item")
     
 end
+
+UPDATE_VALIDATION["v-tabs"]=(x)->begin
+    
+    @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"
+    @assert x.attrs["names"] isa Array "Vuetify tab names should be an array"
+    @assert length(x.attrs["names"])==length(x.elements) "Vuetify Tabs elements should have the same number of names!"
+    
+end

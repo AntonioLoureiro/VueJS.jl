@@ -36,19 +36,19 @@ function htmlstring(page_inst::Page)
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
                    
-            push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),grid(v.grid))))
+            push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),dom(v.grid))))
         else
             haskey(v.attrs,"items") ? app_state[v.id]=Dict("value"=>v.attrs["items"]) : nothing
             v=VueJS.element_path([v],[])[1]
             
             if v.tag==k
-                 comp_el=update_dom(v)
+                 comp_el=dom(v)
                  comp_el.attrs["app"]=true
                  push!(components_dom,comp_el)
             elseif k=="v-navigation-drawer"
-                push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true,"width"=>200),update_dom(v)))
+                push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true,"width"=>200),dom(v)))
             else
-                push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true),update_dom(v)))
+                push!(components_dom,HtmlElement(k,Dict("app"=>true,"clipped"=>true),dom(v)))
             end
         end
     end

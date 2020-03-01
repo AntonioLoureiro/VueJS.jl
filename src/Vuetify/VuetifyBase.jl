@@ -90,9 +90,18 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
 end
 
 UPDATE_VALIDATION["v-tabs"]=(x)->begin
-    
+
     @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"
     @assert x.attrs["names"] isa Array "Vuetify tab names should be an array"
     @assert length(x.attrs["names"])==length(x.elements) "Vuetify Tabs elements should have the same number of names!"
-    
+
+    x.render_func=y->begin
+       content=[]
+       for (i,r) in enumerate(y.elements)
+           push!(content,HtmlElement("v-tab",Dict(),nothing,y.attrs["names"][i]))
+           value=r isa Array ? VueJS.dom(r) : VueJS.dom([r])
+           push!(content,HtmlElement("v-tab-item",Dict(),12,value))
+       end
+       HtmlElement("v-tabs",y.attrs,12,content)
+    end
 end

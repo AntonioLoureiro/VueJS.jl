@@ -2,7 +2,7 @@ module VueJS
 
 using JSON,Dates,DataFrames,HTTP
 
-export HtmlElement,htmlstring,VueElement,VueStruct,grid,page,@el,response, submit
+export HtmlElement,htmlstring,VueElement,VueStruct,grid,page,@el,response, submit,tabs
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

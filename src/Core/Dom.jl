@@ -113,8 +113,17 @@ end
 
 dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;rows=true)=r
-dom(r::VueHolder;rows=true)=dom(r.elements,rows=rows)
 dom(r::VueStruct;rows=true)=dom(r.grid,rows=rows)
+
+function dom(r::VueHolder;rows=true)
+    
+    if r.render_func==nothing
+        return dom(r.elements,rows=rows)
+    else
+        return r.render_func(r)
+    end
+    
+end
 
 function dom(arr::Array;rows=true)
 
@@ -137,15 +146,17 @@ function dom(arr::Array;rows=true)
         grid_cols="v-col"
         grid_class=rows ? grid_rows : grid_cols
 
-        ## one row only must have a single col
-        domvalue=(rows && typeof(r) in [VueElement,String]) ? HtmlElement(grid_cols,Dict(),domvalue.cols,domvalue) : domvalue
 
         cols=domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue)
-
+        
         ## New Element
         cols_attrs=rows ? Dict() : Dict(VIEWPORT=>cols)
-        new_el=HtmlElement(grid_class,cols_attrs,cols,domvalue)
 
+        ## one row only must have a single col
+        domvalue=(rows && typeof(r) in [VueElement,String]) ? HtmlElement(grid_cols,Dict(),domvalue.cols,domvalue) : domvalue
+        
+        new_el=HtmlElement(grid_class,cols_attrs,cols,domvalue)
+        
         if ((i!=1 && i_rows[i-1]) || (rows)) && append
             append!(arr_dom,domvalue)
         else

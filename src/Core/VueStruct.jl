@@ -62,7 +62,7 @@ function VueStruct(
     function_script!.(comp.events)
 
     ## Cols
-    m_cols=maximum(max_cols.(dom(garr)))
+    m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
     m_cols>12 ? m_cols=12 : nothing
     if comp.cols==nothing
         comp.cols=m_cols
@@ -70,7 +70,10 @@ function VueStruct(
     return comp
 end
 
-element_path(v::VueHolder,scope::Array)=element_path(v.elements,scope)
+function element_path(v::VueHolder,scope::Array)
+    v.elements=element_path(v.elements,scope)
+    return v
+end
     
 function element_path(arr::Array,scope::Array)
 

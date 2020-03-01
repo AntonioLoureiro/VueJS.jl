@@ -105,3 +105,29 @@ UPDATE_VALIDATION["v-tabs"]=(x)->begin
        HtmlElement("v-tabs",y.attrs,12,content)
     end
 end
+
+UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
+
+    @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
+    @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
+    
+    item_names=collect(keys(x.attrs["items"][1]))
+    x.tag="v-list"
+    x.attrs["item"]="""<v-list-item dense link @click="open(item.href)">
+            $("icon" in item_names ? "<v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>" : "")
+            <v-list-item-content><v-list-item-title>{{ item.title }}</v-list-item-title></v-list-item-content></v-list-item"""
+    update_validate!(x)
+    
+    x.render_func=y->begin
+    
+        dom_nav=dom(y,prevent_render_func=true)
+        
+        nav_attrs=Dict()
+        
+        for (k,v) in Dict("clipped"=>true,"width"=>200)
+            haskey(y.attrs,k) ? nav_attrs[k]=y.attrs[k] : nav_attrs[k]=v
+        end
+        
+        HtmlElement("v-navigation-drawer",nav_attrs,12,dom_nav)
+    end
+end

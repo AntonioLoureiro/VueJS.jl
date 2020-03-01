@@ -18,8 +18,14 @@ mutable struct VueHolder
     
 end
 
-function tabs(elements::Array,names::Array;cols=nothing,kwargs...)
-    
+function tabs(ts::Array;cols=nothing,kwargs...)
+   names=[]
+   elements=[]
+   for t in ts
+        @assert t isa Pair "tabs should use Pair of String (name of Tab) and Elements"
+        push!(names,t[1])
+        push!(elements,t[2])
+   end
    attrs=Dict{String,Any}("names"=>names)
     for (k,v) in kwargs
        attrs[string(k)]=v 

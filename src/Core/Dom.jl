@@ -55,10 +55,14 @@ dom(d;rows=true)=d
 dom(d::Dict;rows=true)=JSON.json(d)
 
 
-function dom(vuel::VueElement;rows=true)
+function dom(vuel::VueElement;rows=true,prevent_render_func=false)
+    
+    if vuel.render_func!=nothing && prevent_render_func==false
+       return vuel.render_func(vuel)
+    end
     
     vuel=update_dom(vuel)
-    
+        
     child=nothing
     ## Value attr is nothing
     if vuel.value_attr==nothing

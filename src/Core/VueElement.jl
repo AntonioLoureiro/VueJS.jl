@@ -31,6 +31,7 @@ mutable struct VueElement
     data::Dict{String,Any}
     slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
+    render_func::Union{Nothing,Function}
     child
 end
 
@@ -60,7 +61,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
        cols=nothing
     end
  
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing)
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,nothing)
     update_validate!(vuel)
     
        ## Slots

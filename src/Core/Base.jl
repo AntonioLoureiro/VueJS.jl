@@ -34,6 +34,11 @@ LIBRARY_RULES =
 
 const UPDATE_VALIDATION=Dict{String,Any}()
 
+UPDATE_VALIDATION["vue-editor"]=(x)->begin
+
+    x.cols=6
+end
+
 # function jsLibraries!(a::Vector{String})
 #     global INCLUDE_SCRIPTS=a
 #     return nothing

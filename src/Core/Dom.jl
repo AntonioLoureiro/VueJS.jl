@@ -110,6 +110,19 @@ function max_cols(v::HtmlElement)
     end
 end
 
+update_cols!(h::Array;context_cols=12)=update_cols!.(h;context_cols=context_cols)
+function update_cols!(h::HtmlElement;context_cols=12)
+    
+    if h.tag=="v-row"
+        update_cols!(h.value,context_cols=context_cols)
+    elseif h.tag=="v-col"
+        cols=h.value isa Array ? maximum(max_cols.(h.value)) : max_cols(h.value)
+        h.attrs[VIEWPORT]=Int(round(cols/context_cols*12))
+        update_cols!(h.value,context_cols=cols)
+    end
+    
+    return nothing
+end
 
 dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;rows=true)=r
@@ -142,20 +155,13 @@ function dom(arr::Array;rows=true)
         
         domvalue=dom(r,rows=new_rows)
         
-        grid_rows="v-row"
-        grid_cols="v-col"
-        grid_class=rows ? grid_rows : grid_cols
-
-
-        cols=domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue)
-        
-        ## New Element
-        cols_attrs=rows ? Dict() : Dict(VIEWPORT=>cols)
+        grid_class=rows ? "v-row" : "v-col"
 
         ## one row only must have a single col
-        domvalue=(rows && typeof(r) in [VueElement,String]) ? HtmlElement(grid_cols,Dict(),domvalue.cols,domvalue) : domvalue
+        domvalue=(rows && typeof(r) in [VueElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
         
-        new_el=HtmlElement(grid_class,cols_attrs,cols,domvalue)
+        ## New Element
+        new_el=HtmlElement(grid_class,Dict(),domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue),domvalue)
         
         if ((i!=1 && i_rows[i-1]) || (rows)) && append
             append!(arr_dom,domvalue)
@@ -165,6 +171,7 @@ function dom(arr::Array;rows=true)
 
     push!(i_rows,rows)
     end
+    update_cols!(arr_dom)
     return arr_dom
 
 end

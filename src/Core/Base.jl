@@ -39,22 +39,29 @@ UPDATE_VALIDATION["vue-editor"]=(x)->begin
     x.cols=6
 end
 
-# function jsLibraries!(a::Vector{String})
-#     global INCLUDE_SCRIPTS=a
-#     return nothing
-# end
+function library(s::String)
+    kind=String(split(s,".")[end])
+    return VueJS.WebDependency(s,kind,Dict())
+end
 
-# function includeJS!(s::String)
-#     push!(INCLUDE_SCRIPTS,s)
-#     return nothing
-# end
+function library(s::String,kind::String)
+    return VueJS.WebDependency(s,kind,Dict())
+end
+function library(s::String,d::Dict)
+    kind=String(split(s,".")[end])
+    return VueJS.WebDependency(s,kind,Dict())
+end
+function library(s::String,kind::String,d::Dict)
+    return VueJS.WebDependency(s,kind,Dict())
+end
 
-# function cssLibraries!(a::Vector{String})
-#     global INCLUDE_STYLES=a
-#     return nothing
-# end
-
-# function includeCSS!(s::String)
-#     push!(INCLUDE_STYLES,s)
-#     return nothing
-# end
+function libraries!(a::Vector)    
+    deps_arr=[]
+    for r in a
+        r isa String ? push!(deps_arr,library(r)) : nothing
+        r isa Tuple ? push!(deps_arr,library(r...)) : nothing
+    end
+    
+    global DEPENDENCIES=deps_arr
+    return nothing
+end

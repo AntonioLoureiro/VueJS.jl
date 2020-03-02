@@ -9,7 +9,7 @@ function htmlstring(page_inst::Page)
     end
 
     head_dom=deepcopy(HEAD)
-    head_dom.value=includes
+    append!(head_dom.value,includes)
     
     scripts=deepcopy(page_inst.scripts)
     push!(scripts,"const vuetify = new Vuetify()")

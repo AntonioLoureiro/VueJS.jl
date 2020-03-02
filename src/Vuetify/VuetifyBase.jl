@@ -62,11 +62,6 @@ UPDATE_VALIDATION["v-btn"]=(x)->begin
     x.value_attr=nothing
 end
 
-UPDATE_VALIDATION["v-app-bar"]=(x)->begin
-
-    x.value_attr=nothing
-end
-
 UPDATE_VALIDATION["v-select"]=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
@@ -111,15 +106,18 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
     @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
     @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
     
+    x.value_attr="items"
+    
     item_names=collect(keys(x.attrs["items"][1]))
     x.tag="v-list"
     x.attrs["item"]="""<v-list-item dense link @click="open(item.href)">
             $("icon" in item_names ? "<v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>" : "")
             <v-list-item-content><v-list-item-title>{{ item.title }}</v-list-item-title></v-list-item-content></v-list-item"""
+    
     update_validate!(x)
     
     x.render_func=y->begin
-    
+        
         dom_nav=dom(y,prevent_render_func=true)
         
         nav_attrs=Dict()
@@ -129,5 +127,20 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
         end
         
         HtmlElement("v-navigation-drawer",nav_attrs,12,dom_nav)
+    end
+end
+
+UPDATE_VALIDATION["v-card"]=(x)->begin
+
+    @assert haskey(x.attrs,"names") "Vuetify card with no names, please define names array!"
+    @assert x.attrs["names"] isa Array "Vuetify card names should be an array"
+    @assert length(x.attrs["names"])==length(x.elements) "Vuetify card elements should have the same number of names!"
+
+    x.render_func=y->begin
+       content=[]
+       for (i,r) in enumerate(y.elements)
+           push!(content,HtmlElement(y.attrs["names"][i],Dict(),12,dom(r)))
+       end
+       HtmlElement("v-card",y.attrs,y.cols,content)
     end
 end

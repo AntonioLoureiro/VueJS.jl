@@ -71,7 +71,7 @@ function VueStruct(
 end
 
 function element_path(v::VueHolder,scope::Array)
-    v.elements=element_path(v.elements,scope)
+    v.elements=deepcopy(element_path(v.elements,scope))
     return v
 end
     

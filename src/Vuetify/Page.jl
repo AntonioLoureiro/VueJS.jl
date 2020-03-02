@@ -8,7 +8,9 @@ function htmlstring(page_inst::Page)
         end
     end
 
-    append!(page_inst.head.value,includes)
+    head_dom=deepcopy(HEAD)
+    head_dom.value=includes
+    
     scripts=deepcopy(page_inst.scripts)
     push!(scripts,"const vuetify = new Vuetify()")
     components=Dict{String,String}()
@@ -38,8 +40,15 @@ function htmlstring(page_inst::Page)
                    
             push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),dom(v.grid))))
         else
-            haskey(v.attrs,"items") ? app_state[v.id]=Dict("value"=>v.attrs["items"]) : nothing
-            v=VueJS.element_path([v],[])[1]
+            
+            if v isa VueHolder
+                vh_name=vue_escape(k)
+                merge!(app_state,update_data!(v,nothing,vh_name))
+                v=element_path(v,[vh_name])
+            else
+                merge!(app_state,VueJS.update_data!(v,nothing))         
+                v=VueJS.element_path([v],[])[1]
+            end
             
             comp_el=dom(v)
             comp_el.attrs["app"]=true
@@ -53,7 +62,7 @@ function htmlstring(page_inst::Page)
                         HtmlElement("div",Dict("id"=>"app"),
                                  HtmlElement("v-app",components_dom)))
     
-    htmlpage=HtmlElement("html",[page_inst.head,body_dom])
+    htmlpage=HtmlElement("html",[head_dom,body_dom])
 
     return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""],"")
 end

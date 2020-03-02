@@ -4,8 +4,6 @@ struct WebDependency
     components::Dict{String,String}
 end
 
-dependency(path::String,kind::String,components::Dict)=WebDependency(path,kind,components)
-
 """
 ```julia
 @el(example,"v-text-field",value="Example Value",label="Example label",rules=["v => v.length >= 8 || 'Min 8 characters'"])
@@ -16,7 +14,6 @@ body=HtmlElement("body",
 
 
 page_inst=Page(
-        deepcopy(HEAD),
         [],
         INCLUDE_STYLES,
         body,
@@ -29,13 +26,12 @@ htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
 
 """
 mutable struct Page
-    head::HtmlElement
     dependencies::Vector{WebDependency}
     components::Dict{String,Any}
     scripts::Vector{String}
     cookiejar::Dict{String, Any}
 end
-Page(head, deps, comps, scripts) = return Page(head, deps, comps, scripts, Dict{String, Any}())
+Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -92,7 +88,7 @@ function page(
     computed=Dict{String,Any}(),
     watched=Dict{String,Any}(),
     navigation::Union{VueElement,Nothing}=nothing,
-    bar::Union{VueElement,Nothing}=nothing,
+    bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
     footer::Union{VueElement, Nothing}=nothing,
     bottom::Union{VueElement, Nothing}=nothing,
@@ -109,7 +105,7 @@ end
 function page(
         cont::VueStruct;
         sysbar::Union{VueElement, Nothing}=nothing,
-        bar::Union{VueElement,Nothing}=nothing,
+        bar::Union{VueHolder,Nothing}=nothing,
         navigation::Union{VueElement,Nothing}=nothing,
         footer::Union{VueElement, Nothing}=nothing,
         bottom::Union{VueElement, Nothing}=nothing,
@@ -128,7 +124,6 @@ function page(
     bottom!=nothing ? components["v-bottom-navigation"] : nothing
 
     page_inst=Page(
-            deepcopy(HEAD),
             DEPENDENCIES,
             components,
             scripts,

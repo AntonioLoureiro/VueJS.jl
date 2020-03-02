@@ -55,8 +55,9 @@ dom(d;rows=true)=d
 dom(d::Dict;rows=true)=JSON.json(d)
 
 
-function dom(vuel::VueElement;rows=true,prevent_render_func=false)
+function dom(vuel_orig::VueElement;rows=true,prevent_render_func=false)
     
+    vuel=deepcopy(vuel_orig)
     if vuel.render_func!=nothing && prevent_render_func==false
        return vuel.render_func(vuel)
     end
@@ -132,14 +133,13 @@ dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;rows=true)=r
 dom(r::VueStruct;rows=true)=dom(r.grid,rows=rows)
 
-function dom(r::VueHolder;rows=true)
+function dom(r::VueJS.VueHolder;rows=true)
     
     if r.render_func==nothing
-        return dom(r.elements,rows=rows)
+        return HtmlElement(r.tag,r.attrs,r.cols,map(x->deepcopy(dom(x)),r.elements))
     else
         return r.render_func(r)
     end
-    
 end
 
 function dom(arr::Array;rows=true)
@@ -162,7 +162,7 @@ function dom(arr::Array;rows=true)
         grid_class=rows ? "v-row" : "v-col"
 
         ## one row only must have a single col
-        domvalue=(rows && typeof(r) in [VueElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
+        domvalue=(rows && typeof(r) in [VueHolder,VueElement,HtmlElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
         
         ## New Element
         new_el=HtmlElement(grid_class,Dict(),domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue),domvalue)

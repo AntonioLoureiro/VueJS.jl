@@ -13,6 +13,15 @@ function merge_def_data!(a::Dict,b::Dict)
     end
 end
 
+update_data!(el,datavalue)=Dict()
+function update_data!(el::VueHolder,datavalue,name::String)
+     ret=Dict()   
+     for e in el.elements
+         merge!(ret,update_data!(e,datavalue))
+    end
+    return Dict(name=>ret)
+end
+
 function update_data!(el::VueElement,datavalue)
 
     real_data=nothing

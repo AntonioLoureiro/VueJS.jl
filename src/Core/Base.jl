@@ -6,13 +6,13 @@ HEAD=HtmlElement("head",
 
 
     #Production scripts INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"]
-DEPENDENCIES=[dependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
-                dependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),  
-                dependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
-                dependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
-                dependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css","css",Dict()),
-                dependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","js",Dict("VueEditor"=>"vue2editor.components.VueEditor")),
-                dependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","js",Dict()),
+DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
+                WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),  
+                WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
+                WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
+                WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css","css",Dict()),
+                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","js",Dict("VueEditor"=>"vue2editor.components.VueEditor")),
+                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","js",Dict()),
 ]
 
     FRAMEWORK="vuetify"

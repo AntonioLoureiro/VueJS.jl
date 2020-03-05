@@ -11,6 +11,9 @@ function htmlstring(page_inst::Page)
     head_dom=deepcopy(HEAD)
     append!(head_dom.value,includes)
     
+    default_style="[v-cloak] {display: none}"
+    push!(head_dom.value,HtmlElement("style",default_style))
+    
     scripts=deepcopy(page_inst.scripts)
     push!(scripts,"const vuetify = new Vuetify()")
     components=Dict{String,String}()
@@ -59,7 +62,7 @@ function htmlstring(page_inst::Page)
     scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
         
     body_dom=HtmlElement("body",
-                        HtmlElement("div",Dict("id"=>"app"),
+                        HtmlElement("div",Dict("id"=>"app","v-cloak"=>true),
                                  HtmlElement("v-app",components_dom)))
     
     htmlpage=HtmlElement("html",[head_dom,body_dom])

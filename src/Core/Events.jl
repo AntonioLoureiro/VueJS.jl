@@ -147,12 +147,12 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
 
     push!(new_es,StdEventHandler("methods","open","",function_script))
 
-    ## Datatable Col Render
-    function_script="""datatable_col_render : function(item,render_script) {
-        return render_script(item)
+    ## Datatable Col Format
+    function_script="""datatable_col_format : function(item,format_script) {
+        return format_script(item)
         }"""
 
-    push!(new_es,StdEventHandler("methods","datatable_col_render","",function_script))
+    push!(new_es,StdEventHandler("methods","datatable_col_format","",function_script))
 
     return nothing
 end

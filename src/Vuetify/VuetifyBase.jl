@@ -1,19 +1,30 @@
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
-
+    trf_col=x->"c"*VueJS.vue_escape(string(x))
+    trf_dom=x->begin
+    x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
+    x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
+    end
+    
     x.value_attr=nothing
+    
     if haskey(x.attrs,"items")
         if x.attrs["items"] isa DataFrame
             df=x.attrs["items"]
             arr=[]
             for n in names(df)
-               length(arr)==0 ? arr=map(x->Dict{String,Any}("c"*VueJS.vue_escape(string(n))=>x),df[:,n]) : map((x,y)->y["c"*VueJS.vue_escape(string(n))]=x,df[:,n],arr)
+                col_arr=df[:,n]
+               if length(arr)==0
+                    arr=map(x->Dict{String,Any}(trf_col(n)=>x),col_arr)
+                else 
+                    map((x,y)->y[trf_col(n)]=x,col_arr,arr)
+                end
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict{String,Any}("value"=>"c"*VueJS.vue_escape(n),"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict{String,Any}("value"=>trf_col(n),"text"=>n) for n in string.(names(df))]
             end
             
-            ### Formatting
+            ### Default Formatting
             for (i,n) in enumerate(names(df))
                 n=string(n)
                 ### Numbers
@@ -21,36 +32,55 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     map(x->x["text"]==n ? x["align"]="end" : nothing ,x.attrs["headers"])
                     
                     ## Default Renders
-                    if !haskey(x.attrs,"col_render") || (haskey(x.attrs,"col_render") && !haskey(x.attrs["col_render"],n))
+                    if !haskey(x.attrs,"col_format") || (haskey(x.attrs,"col_format") && !haskey(x.attrs["col_format"],n))
                         digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
-                        haskey(x.attrs,"col_render") ? nothing : x.attrs["col_render"]=Dict{String,Any}()
-                        x.attrs["col_render"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                        haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
+                        x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                     end
-                        
                 end
             end
         end
         
-        ## Escape Col Renders
-        if haskey(x.attrs,"col_render")
-            new_col_render=Dict{String,Any}()
-            for (k,v) in x.attrs["col_render"]
-                new_col_render["c"*vue_escape(k)]=v
-                x.attrs["col_render"]=new_col_render
+        ## Col Format
+        if haskey(x.attrs,"col_format")
+            @assert x.attrs["col_format"] isa Dict "col_format should be a Dict of cols and anonymous js function!"
+            new_col_format=Dict{String,Any}()
+            for (k,v) in x.attrs["col_format"]
+                new_col_format[trf_col(k)]=v
+                x.attrs["col_format"]=new_col_format
             end
+            
+            for (k,v) in x.attrs["col_format"]
+				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_format(item.$k,@path@$(x.id).col_format.$k)"></div>"""
+			end
         end	
 
-        ## Column rendering
-		if haskey(x.attrs,"col_render")
-			col_render=x.attrs["col_render"]
-			@assert col_render isa Dict "col_render should be a Dict of cols and anonymous js function!"
-			for (k,v) in col_render
-				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_render(item.$k,@path@$(x.id).col_render.$k)"></div>"""
+        ## Col Template
+        if haskey(x.attrs,"col_template")
+            @assert x.attrs["col_template"] isa Dict "col_template should be a Dict of cols and anonymous js function!"
+            new_col_template=Dict{String,Any}()
+            for (k,v) in x.attrs["col_template"]
+                new_col_template[trf_col(k)]=v
+                x.attrs["col_template"]=new_col_template
+            end
+            
+            for (k,v) in x.attrs["col_template"]
+                value_dom=nothing
+                v isa HtmlElement ? value_dom=v : nothing
+                v isa VueElement ? value_dom=VueJS.dom(v) : nothing
+                value_dom!=nothing ? trf_dom(value_dom) : nothing
+                value_dom!=nothing ? value_str=VueJS.htmlstring(value_dom) : nothing
+                
+                v isa String ? value_str=VueJS.vue_escape(v) : nothing
+                
+                value_str=replace(value_str,"item."=>"item.c")
+                x.slots["item.$k='{item}'"]=value_str
 			end
-		end
-        
+        end	
+          
     end
 end
+
 
 UPDATE_VALIDATION["v-switch"]=(x)->begin
     
@@ -144,3 +174,4 @@ UPDATE_VALIDATION["v-card"]=(x)->begin
        HtmlElement("v-card",y.attrs,y.cols,content)
     end
 end
+

@@ -11,8 +11,11 @@ DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","
                 WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css","css",Dict()),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","css",Dict()),
                 WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","js",Dict("VueEditor"=>"vue2editor.components.VueEditor")),
                 WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","js",Dict()),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","js",Dict()),
+                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js","js",Dict("HotTable"=>"Handsontable.vue.HotTable"))
 ]
 
     FRAMEWORK="vuetify"
@@ -20,7 +23,7 @@ DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
 
-const JS_FUNCTION_ATTRS=["rules", "filter","col_render"]
+const JS_FUNCTION_ATTRS=["rules", "filter","col_format"]
 
 LIBRARY_RULES =
     Dict("maxchars"=> (x->return """ value => value.length <= $x || 'Max $x characters' """),
@@ -33,11 +36,6 @@ LIBRARY_RULES =
     )
 
 const UPDATE_VALIDATION=Dict{String,Any}()
-
-UPDATE_VALIDATION["vue-editor"]=(x)->begin
-
-    x.cols=6
-end
 
 function library(s::String)
     kind=String(split(s,".")[end])
@@ -64,4 +62,15 @@ function libraries!(a::Vector)
     
     global DEPENDENCIES=deps_arr
     return nothing
+end
+
+
+UPDATE_VALIDATION["vue-editor"]=(x)->begin
+
+    x.cols=6
+end
+
+UPDATE_VALIDATION["hot-table"]=(x)->begin
+    
+    x.value_attr="data"
 end

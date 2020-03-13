@@ -54,6 +54,7 @@ function reverse_binds(binds::Dict)
 end
 
 element_binds!(comp::String;binds=Dict())=nothing
+element_binds!(comp::HtmlElement;binds=Dict())=nothing
 element_binds!(comp::VueStruct;binds=Dict())=element_binds!(comp.grid,binds=binds)
 element_binds!(comp::VueHolder;binds=Dict())=element_binds!(comp.elements,binds=binds)
 

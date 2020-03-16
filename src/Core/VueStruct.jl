@@ -29,6 +29,7 @@ mutable struct VueStruct
      data::Dict{String,Any}
      def_data::Dict{String,Any}
      events::Vector{EventHandler}
+     styles::Dict{String,String}
 
 end
 
@@ -47,10 +48,11 @@ function VueStruct(
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
     events=create_events((methods=methods,computed=computed,watched=watched))
-
+    styles=Dict()
+    update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,styles)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
     new_es=Vector{EventHandler}()
@@ -138,4 +140,16 @@ function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
     append!(new_es,events)
     update_events!(vs.grid,new_es,scope)
 
+end
+
+update_styles!(st_dict::Dict,v)=nothing
+update_styles!(st_dict::Dict,a::Array)=map(x->update_styles!(st_dict,x),a)
+update_styles!(st_dict::Dict,v::VueHolder)=map(x->update_styles!(st_dict,x),v.elements)
+function update_styles!(st_dict::Dict,vs::VueStruct)
+   merge!(st_dict,vs.styles) 
+end
+
+function update_styles!(st_dict::Dict,v::VueElement)
+    length(v.style)!=0 ? st_dict[v.id]=join(v.style) : nothing
+    return nothing
 end

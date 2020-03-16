@@ -66,6 +66,6 @@ function htmlstring(page_inst::Page)
                                  HtmlElement("v-app",components_dom)))
     
     htmlpage=HtmlElement("html",[head_dom,body_dom])
-
-    return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""],"")
+    styles=join([".$k {$v}" for (k,v) in page_inst.styles])
+    return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>""","""<style>$styles</style>"""])
 end

@@ -73,6 +73,11 @@ function dom(vuel_orig::VueElement;rows=true,prevent_render_func=false)
         end
     end
 
+    ## styles
+    if length(vuel.style)!=0
+       vuel.attrs["class"]=vuel.id
+    end
+    
     ## cols
     if vuel.cols==nothing
         vuel.cols=3

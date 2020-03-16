@@ -29,9 +29,10 @@ mutable struct Page
     dependencies::Vector{WebDependency}
     components::Dict{String,Any}
     scripts::Vector{String}
+    styles::Dict{String,String}
     cookiejar::Dict{String, Any}
 end
-Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}())
+Page(deps, comps, scripts,styles) = return Page(deps, comps, scripts,styles, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -112,7 +113,8 @@ function page(
         kwargs...)
 
     components=Dict{String,Any}("v-content"=>cont)
-
+    styles=Dict()
+    update_styles!(styles,cont)
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
@@ -127,6 +129,7 @@ function page(
             DEPENDENCIES,
             components,
             scripts,
+            styles,
             cookiejar)
 
     return page_inst

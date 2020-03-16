@@ -36,7 +36,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                         digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                         haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
                         x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
-                    end
+                    end                    
                 end
             end
         end

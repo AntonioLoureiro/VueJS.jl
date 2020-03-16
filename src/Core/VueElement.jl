@@ -32,6 +32,7 @@ mutable struct VueElement
     slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
+    style::Vector{String}
     child
 end
 
@@ -61,7 +62,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
        cols=nothing
     end
  
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,nothing)
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],nothing)
     update_validate!(vuel)
     
        ## Slots
@@ -128,31 +129,46 @@ end
 """
 macro el(varname,tag,args...)
 
-    @assert typeof(varname)==Symbol "1st arg should be Variable name"
-    @assert typeof(tag)==String "2nd arg should be tag name"
+    @assert varname isa Symbol "1st arg should be Variable name"
+    tag_type=typeof(tag)
+    
+    @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
+    
+        newargs=[]
+        for r in (args)
+           @assert r.head==:(=) "You should input args with = indication e.g. a=1"
+           @assert length(r.args)==2 "You should input args with = indication e.g. a=1"
 
-    newargs=[]
-    for r in (args)
-       @assert r.head==:(=) "You should input args with = indication e.g. a=1"
-       @assert length(r.args)==2 "You should input args with = indication e.g. a=1"
-
-        if typeof(r.args[1])==Expr
-            arre=split(string(r),"=")
-            lefte=arre[1]
-            rigthe=string(r.args[2])
-            lefte="\""*replace(lefte," "=>"")*"\"=>"
-            lefte=replace(replace(lefte,"("=>""), ")"=>"") #handle cases where left side expr is similar to: a-multiple-hiphen-prop
-            righte=replace(rigthe,"quote"=>"begin",count=1)
-            push!(newargs,lefte*righte)
-        else
-            e=replace("\""*string(r)," ="=>"\" =>",count=1)
-            push!(newargs,e)
+            if typeof(r.args[1])==Expr
+                arre=split(string(r),"=")
+                lefte=arre[1]
+                rigthe=string(r.args[2])
+                lefte="\""*replace(lefte," "=>"")*"\"=>"
+                lefte=replace(replace(lefte,"("=>""), ")"=>"") #handle cases where left side expr is similar to: a-multiple-hiphen-prop
+                righte=replace(rigthe,"quote"=>"begin",count=1)
+                push!(newargs,lefte*righte)
+            else
+                e=replace("\""*string(r)," ="=>"\" =>",count=1)
+                push!(newargs,e)
+            end
         end
-    end
-    newargs="Dict($(join(newargs,",")))"
-    newexpr=(Meta.parse("""VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
-    return quote
-        $(esc(varname))=$(esc(newexpr))
+        newargs="Dict($(join(newargs,",")))"
+    
+    ## Special Building Condition (EChart)
+    if tag_type==Symbol
+        
+        newexpr=(Meta.parse("""VueElement("$(string(varname))",$(tag),$newargs)"""))
+        return quote
+            $(esc(varname))=$(esc(newexpr))
+        end
+        
+    ## Normal condition    
+    elseif tag_type==String 
+        
+        newexpr=(Meta.parse("""VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
+        return quote
+            $(esc(varname))=$(esc(newexpr))
+        end
     end
 end
 

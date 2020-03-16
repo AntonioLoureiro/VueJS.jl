@@ -15,7 +15,9 @@ DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","
                 WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","js",Dict("VueEditor"=>"vue2editor.components.VueEditor")),
                 WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","js",Dict()),
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","js",Dict()),
-                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js","js",Dict("HotTable"=>"Handsontable.vue.HotTable"))
+                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js","js",Dict("HotTable"=>"Handsontable.vue.HotTable")),
+                WebDependency("https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","js",Dict()),
+                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","js",Dict("vuechart"=>"VueECharts"))
 ]
 
     FRAMEWORK="vuetify"

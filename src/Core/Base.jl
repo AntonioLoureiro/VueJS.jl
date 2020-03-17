@@ -25,7 +25,7 @@ DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
 
-const JS_FUNCTION_ATTRS=["rules", "filter","col_format"]
+const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is a Echarts Tag
 
 LIBRARY_RULES =
     Dict("maxchars"=> (x->return """ value => value.length <= $x || 'Max $x characters' """),

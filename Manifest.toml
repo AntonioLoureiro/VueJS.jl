@@ -124,6 +124,14 @@ version = "0.4.3"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[Namtso]]
+deps = ["Dates", "JSON", "Random"]
+git-tree-sha1 = "fddc408fde493262e369f69d803b39974241fd45"
+repo-rev = "master"
+repo-url = "https://github.com/AntonioLoureiro/Namtso.jl"
+uuid = "14fc9687-df25-4852-9e56-61a08c6e8132"
+version = "0.1.0"
+
 [[OrderedCollections]]
 deps = ["Random", "Serialization", "Test"]
 git-tree-sha1 = "c4c13474d23c60d20a67b217f1d7f22a40edf8f1"

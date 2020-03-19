@@ -1,3 +1,5 @@
+import Pkg
+Pkg.add(Pkg.PackageSpec(url="https://github.com/AntonioLoureiro/Namtso.jl"))
 using Test, VueJS
 
 @el(r1,"v-text-field",value="R1 Value",label="R1",disabled=false)

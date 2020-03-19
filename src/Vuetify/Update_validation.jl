@@ -163,7 +163,7 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
         
         nav_attrs=Dict()
         
-        for (k,v) in Dict("clipped"=>true,"width"=>200)
+        for (k,v) in Dict("clipped"=>true,"width"=>200, "expand-on-hover"=>true, "permanent"=>true, "right"=>false)
             haskey(y.attrs,k) ? nav_attrs[k]=y.attrs[k] : nav_attrs[k]=v
         end
         

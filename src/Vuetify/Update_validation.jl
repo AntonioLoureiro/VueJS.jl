@@ -7,10 +7,13 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     
     x.value_attr=nothing
     
+    ## Has Items
     if haskey(x.attrs,"items")
         if x.attrs["items"] isa DataFrame
             df=x.attrs["items"]
             arr=[]
+            col_idx=Dict{String,Int64}()
+            i=1
             for n in names(df)
                 col_arr=df[:,n]
                if length(arr)==0
@@ -18,6 +21,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 else 
                     map((x,y)->y[trf_col(n)]=x,col_arr,arr)
                 end
+                col_idx[trf_col(string(n))]=i
+                i+=1
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
@@ -34,7 +39,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     ## Default Renders
                     if !haskey(x.attrs,"col_format") || (haskey(x.attrs,"col_format") && !haskey(x.attrs["col_format"],n))
                         digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
-			eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
+                        eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
                         haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
                         x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                     end                    
@@ -58,7 +63,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
         ## Col Template
         if haskey(x.attrs,"col_template")
-            @assert x.attrs["col_template"] isa Dict "col_template should be a Dict of cols and anonymous js function!"
+            @assert x.attrs["col_template"] isa Dict "col_template should be a Dict of cols and HtmlElement!"
             new_col_template=Dict{String,Any}()
             for (k,v) in x.attrs["col_template"]
                 new_col_template[trf_col(k)]=v
@@ -68,7 +73,11 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             for (k,v) in x.attrs["col_template"]
                 value_dom=nothing
                 v isa HtmlElement ? value_dom=v : nothing
-                v isa VueElement ? value_dom=VueJS.dom(v) : nothing
+                if v isa VueElement 
+                    vd=deepcopy(v)
+                    vd.template=true
+                    value_dom=VueJS.dom(vd)
+                end
                 value_dom!=nothing ? trf_dom(value_dom) : nothing
                 value_dom!=nothing ? value_str=VueJS.htmlstring(value_dom) : nothing
                 
@@ -76,12 +85,13 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 
                 value_str=replace(value_str,"item."=>"item.c")
                 x.slots["item.$k='{item}'"]=value_str
+                
+                x.attrs["headers"][col_idx[k]]["align"]="center" 
 			end
         end	
           
     end
 end
-
 
 UPDATE_VALIDATION["v-switch"]=(x)->begin
     

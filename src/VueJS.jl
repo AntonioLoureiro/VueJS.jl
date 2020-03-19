@@ -16,6 +16,7 @@ include("Core/Data.jl")
 include("Core/Dom.jl")
 include("Core/Page.jl")
 include("Core/Base.jl")
+include("Core/Update_validation.jl")
 include("Vuetify/Vuetify.jl")
 include("Echarts/EchartsBase.jl")
 

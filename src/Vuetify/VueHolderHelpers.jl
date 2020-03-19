@@ -30,11 +30,11 @@ function bar(elements::Vector;kwargs...)
     
 end
 
-htmlTypes=Union{Nothing,String,HtmlElement,VueElement,VueStruct,VueJS.VueHolder}
-card(text::htmlTypes;cols=3,kwargs...)=card(text=text,cols=cols;kwargs...)    
-function card(;title::htmlTypes=nothing,subtitle::htmlTypes=nothing,text::htmlTypes=nothing,actions::htmlTypes=nothing,cols=3,kwargs...)
+card(text::htmlTypes;cols=3,kwargs...)=card(text=[text],cols=cols;kwargs...) 
+card(text::Vector;cols=3,kwargs...)=card(text=text,cols=cols;kwargs...) 
+function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=nothing,cols=3,kwargs...)
     #elements=>title,subtitle,text,actions
-    
+
     real_attrs=Dict(string(k)=>v for (k,v) in kwargs)
     ## Defaults and merge with real
     attrs=Dict()
@@ -44,6 +44,7 @@ function card(;title::htmlTypes=nothing,subtitle::htmlTypes=nothing,text::htmlTy
     names=[]
     for (k,v) in [title=>"v-card-title",subtitle=>"v-card-subtitle",text=>"v-card-text",actions=>"v-card-actions"]
        if k!=nothing
+       assert_html_types(k)
        push!(elements,k)
        push!(names,v) 
        end

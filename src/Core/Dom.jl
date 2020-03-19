@@ -17,30 +17,55 @@ function child_path(h::HtmlElement,path::String)
     return h
 end
 
+function update_template(r::VueElement)
+    
+    ## Only change value attr
+    if haskey(r.attrs,"value") && r.value_attr!=nothing
+        r.attrs[r.value_attr]=r.attrs["value"]
+        delete!(r.attrs,"value")
+    end
+    new_d=Dict{String,Any}()
+    ## bind attrs(: notation) linked to item
+    for (k,v) in r.attrs
+       if startswith(v,"item.")
+            new_d[":$k"]=v
+       else
+            new_d["$k"]=v  
+       end
+    end
+    r.attrs=new_d
+    return r
+end
+
+
 function update_dom(r::VueElement)
     
-    ## Bind el values
-    for (k,v) in r.binds
-        value=r.path=="" ? v : r.path*"."*v
-        r.attrs[":$k"]=value
+    ## Bind element values to js (only if not template)
+    if r.template==false
+        for (k,v) in r.binds
+            value=r.path=="" ? v : r.path*"."*v
+            r.attrs[":$k"]=value
 
-        ### Capture Event if tgt=src otherwise double count or if value is value attr
-        if r.id*"."*k==v || r.id*".value"==v
+            ### Capture Event if tgt=src otherwise double count or if value is value attr
+            if r.id*"."*k==v || r.id*".value"==v
 
-            ## And only if value attr! Others do not change on input! I Think!
-            if r.value_attr==k
-                event=r.value_attr=="value" ? "@input" : "@change"
-                if haskey(r.attrs,event)
-                    r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
-                else
-                    r.attrs[event]="$value= \$event"
+                ## And only if value attr! Others do not change on input! I Think!
+                if r.value_attr==k
+                    event=r.value_attr=="value" ? "@input" : "@change"
+                    if haskey(r.attrs,event)
+                        r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
+                    else
+                        r.attrs[event]="$value= \$event"
+                    end
                 end
             end
+            ### delete attribute from dom
+            if haskey(r.attrs,k)
+                delete!(r.attrs,k)
+            end
         end
-        ### delete attribute from dom
-        if haskey(r.attrs,k)
-            delete!(r.attrs,k)
-        end
+    else
+       r=update_template(r)
     end
 
     return r

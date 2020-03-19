@@ -93,7 +93,7 @@ function vue_json(d::Dict,f_mode::Bool=false)
     return "{$(join(els,","))}"
 end
 
-
+vue_escape(s)=s
 function vue_escape(s::String)
    s=lowercase(s) 
    s=replace(s," "=>"")

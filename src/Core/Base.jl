@@ -67,12 +67,15 @@ function libraries!(a::Vector)
 end
 
 
-UPDATE_VALIDATION["vue-editor"]=(x)->begin
+htmlTypes=Union{Nothing,String,HtmlElement,VueElement,VueStruct,VueJS.VueHolder}
 
-    x.cols=6
+function assert_html_types(v::Vector)
+    for r in v
+        if r isa Vector
+           assert_html_types(r) 
+        else
+            @assert r isa htmlTypes "$r is not an acceptable HtmlType"
+        end
+    end
 end
 
-UPDATE_VALIDATION["hot-table"]=(x)->begin
-    
-    x.value_attr="data"
-end

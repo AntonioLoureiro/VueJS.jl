@@ -33,6 +33,7 @@ mutable struct VueElement
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
     style::Vector{String}
+    template::Bool
     child
 end
 
@@ -62,7 +63,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
        cols=nothing
     end
  
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],nothing)
+    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,nothing)
     update_validate!(vuel)
     
        ## Slots

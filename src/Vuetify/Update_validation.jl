@@ -108,12 +108,8 @@ UPDATE_VALIDATION["v-select"]=(x)->begin
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
     
-    if !haskey(x.attrs,"multiple")
-       x.attrs["multiple"]=false
-    end
-    
     if !haskey(x.attrs,"value")
-       x.attrs["value"]=x.attrs["multiple"] ? [] : nothing
+        x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
     end
 end
 

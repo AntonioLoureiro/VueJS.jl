@@ -98,17 +98,6 @@ UPDATE_VALIDATION["v-switch"]=(x)->begin
     x.value_attr="input-value"
 end
 
-UPDATE_VALIDATION["v-alert"]=(x)->begin
-    
-    ## Validations
-    haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
-    
-    ## attr alias of content
-    haskey(x.attrs,"text") ? (x.attrs["content"]=x.attrs["text"];delete!(x.attrs,"text")) : nothing
-    
-    x.value_attr=nothing
-end
-
 UPDATE_VALIDATION["v-btn"]=(x)->begin
     
     ## attr alias of content

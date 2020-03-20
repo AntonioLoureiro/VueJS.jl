@@ -45,12 +45,10 @@ htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))
 
 function attr_render(k,v)
-    if v isa Bool 
-        if v 
-            return " $k"
-        else
-            return ""
-        end
+    if (v isa Bool && v) || v isa Missing  #either true or explicitly missing
+        return " $k"
+    elseif v isa Bool && !v   #false
+        return ""
     elseif startswith(k,":")
         return " $k=\"$(replace(vue_escape(string(v)),"\""=>"'"))\" "
     else

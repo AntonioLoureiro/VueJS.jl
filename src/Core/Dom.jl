@@ -27,7 +27,7 @@ function update_template(r::VueElement)
     new_d=Dict{String,Any}()
     ## bind attrs(: notation) linked to item
     for (k,v) in r.attrs
-       if startswith(v,"item.")
+       if occursin("item.",v)
             new_d[":$k"]=v
        else
             new_d["$k"]=v  
@@ -92,9 +92,9 @@ function dom(vuel_orig::VueElement;rows=true,prevent_render_func=false)
     child=nothing
     ## Value attr is nothing
     if vuel.value_attr==nothing
-        if haskey(vuel.attrs,"value")
-            child=vuel.attrs["value"]
-            delete!(vuel.attrs,"value")
+        if haskey(vuel.attrs,"content")
+            child=vuel.attrs["content"]
+            delete!(vuel.attrs,"content")
         end
     end
 

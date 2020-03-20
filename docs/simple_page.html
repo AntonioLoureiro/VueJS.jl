@@ -1,0 +1,64 @@
+<html><head><meta charset="UTF-8" /><meta name="viewport"  content="width=device-width, initial-scale=1" /><script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><style>[v-cloak] {display: none}</style></head><body><style type="text/css" ></style><div v-cloak id="app" ><v-app><v-content><v-container fluid><v-card>
+  <v-card-title>
+  Code:
+  </v-card-title>
+  <v-card-text>
+  @el(r1,"v-text-field",value="R1 Value",label="R1",disabled=true)<br>@el(r2,"v-text-field",value="R2 Value",label="R2",disabled=false)<br>page([r1,r2])
+  </v-card-text>
+</v-card><v-row><v-col md="3" ><v-text-field label="R1"  :value="r1.value"  @input="r1.value= $event"  disabled></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r1":{"value":"R1 Value"},"r2":{"value":"R2 Value"}}
+const vuetify = new Vuetify()
+const components = {vuechart:VueECharts,VueEditor:vue2editor.components.VueEditor,HotTable:Handsontable.vue.HotTable}
+var app = new Vue({el: '#app',vuetify: vuetify,components:components,data: app_state,methods : {xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
+
+console.log(contents)
+var xhr = new XMLHttpRequest();
+if (!error) {
+    xhr.onerror = function(){console.log('Error! Request failed with status ' + xhr.status + ' ' + xhr.responseText);}
+}
+else if (typeof(error) === 'function') {
+    xhr.onerror = function(xhr) {error(xhr);}
+} else {
+    xhr.onerror = function() {return error;}
+}
+xhr.onreadystatechange = function() {
+    if (this.readyState == 4) {
+        if (this.status == 200 && this.responseText) {
+            if (success) {
+                return typeof(success) === 'function' ? success(xhr) : success
+            } else {
+                console.log(this.responseText);
+            }
+        } else {
+            xhr.onerror;
+        }
+    }
+}
+xhr.open(method, url, async);
+xhr.send(contents);
+},submit : function(context, url, method, async, success, error) {
+    var ret={r1:app_state.r1.value,r2:app_state.r2.value}
+     for (key of Object.keys(app)) {
+eval("var "+key+" = app."+key)
+};
+
+    var search = function(obj, arr) {
+        let result = {};
+        for(key in obj) {
+            if (arr.includes(key)) {
+                result[key] = obj[key];
+            } else if (typeof(obj[key]) === 'object') {
+                Object.assign(result, search(obj[key], arr));
+           	}
+	    }
+        return result;
+    }
+    if (context && context.length) {
+        ret = search(ret, context);
+    }
+    return xhr(JSON.stringify(ret), url, method, async, success, error)
+},open : function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+},datatable_col_format : function(item,format_script) {
+return format_script(item)
+}}})</script>

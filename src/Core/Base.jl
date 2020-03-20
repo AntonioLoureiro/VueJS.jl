@@ -79,3 +79,14 @@ function assert_html_types(v::Vector)
     end
 end
 
+function update_boolean_values(x)
+    ##boolean props
+    for (k,v) in x.attrs
+        if v isa Bool
+            x.attrs["v-bind:$k"]="$v"
+            delete!(x.attrs, k)
+        elseif v isa Missing
+            x.attrs[k] = true #later `attr_render` call will remove the boolean value and keep only the key
+        end
+    end
+end

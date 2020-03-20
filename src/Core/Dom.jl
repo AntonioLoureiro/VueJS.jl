@@ -161,7 +161,14 @@ end
 
 dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;rows=true)=r
-dom(r::VueStruct;rows=true)=dom(r.grid,rows=rows)
+function dom(r::VueStruct;rows=true)
+    
+    if r.render_func!=nothing
+       return r.render_func(r)
+    else
+       return dom(r.grid,rows=rows) 
+    end
+end
 
 function dom(r::VueJS.VueHolder;rows=true)
     

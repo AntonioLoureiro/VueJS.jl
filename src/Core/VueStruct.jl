@@ -22,15 +22,16 @@ end
 
 mutable struct VueStruct
 
-     id::String
-     grid::Union{Array,VueHolder}
-     binds::Dict{String,Any}
-     cols::Union{Nothing,Int64}
-     data::Dict{String,Any}
-     def_data::Dict{String,Any}
-     events::Vector{EventHandler}
-     styles::Dict{String,String}
-
+    id::String
+    grid::Union{Array,VueHolder}
+    binds::Dict{String,Any}
+    cols::Union{Nothing,Int64}
+    data::Dict{String,Any}
+    def_data::Dict{String,Any}
+    events::Vector{EventHandler}
+    render_func::Union{Nothing,Function}
+    styles::Dict{String,String}
+    
 end
 
 function VueStruct(
@@ -52,7 +53,7 @@ function VueStruct(
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,styles)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,nothing,styles)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
     new_es=Vector{EventHandler}()

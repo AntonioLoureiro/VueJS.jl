@@ -6,7 +6,8 @@ HEAD=HtmlElement("head",
 
 
     #Production scripts INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"]
-DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
+DEPENDENCIES=[
+                WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),  
                 WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
@@ -17,7 +18,9 @@ DEPENDENCIES=[WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","js",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js","js",Dict("HotTable"=>"Handsontable.vue.HotTable")),
                 WebDependency("https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","js",Dict()),
-                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","js",Dict("vuechart"=>"VueECharts"))
+                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","js",Dict("vuechart"=>"VueECharts")),
+                
+    
 ]
 
     FRAMEWORK="vuetify"

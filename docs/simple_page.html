@@ -3,7 +3,7 @@
   Code:
   </v-card-title>
   <v-card-text>
-  @el(r1,"v-text-field",value="R1 Value",label="R1",disabled=true)<br>@el(r2,"v-text-field",value="R2 Value",label="R2",disabled=false)<br>page([r1,r2])
+  <code>@el(r1,"v-text-field",value="R1 Value",label="R1",disabled=true)<br>@el(r2,"v-text-field",value="R2 Value",label="R2",disabled=false)<br>page([r1,r2])</code>
   </v-card-text>
 </v-card><v-row><v-col md="3" ><v-text-field label="R1"  :value="r1.value"  @input="r1.value= $event"  disabled></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r1":{"value":"R1 Value"},"r2":{"value":"R2 Value"}}
 const vuetify = new Vuetify()

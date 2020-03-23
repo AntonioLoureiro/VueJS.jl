@@ -56,6 +56,8 @@ function VueStruct(
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
     events=create_events((methods=methods,computed=computed,watched=watched))
+    hooks = []
+    try hooks=create_hooks(garr) catch; end
     styles=Dict()
     update_styles!(styles,garr)
     scope=[]
@@ -72,7 +74,6 @@ function VueStruct(
     function_script!.(comp.events)
     
     try
-        hooks=create_hooks(garr)
         new_hs=Vector{HookHandler}()
         update_events!(comp,new_hs)
         sort!(new_hs,by=x->length(x.path),rev=false)

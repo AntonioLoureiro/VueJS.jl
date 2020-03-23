@@ -20,7 +20,7 @@ function create_events(events::NamedTuple)
     hs=[]
     append!(hs, EventHandlers("methods", events.methods))
     append!(hs, EventHandlers("computed",events.computed))
-    append!(hs, EventHandlers("watched", events.watched))
+    append!(hs, EventHandlers("watch", events.watched))
     return hs
 end
 
@@ -62,6 +62,12 @@ function events_script(vs::VueStruct)
         ef=filter(x->x.kind==e,vs.events)
         if length(ef)!=0
             push!(els,"$e : {"*join(map(y->y.function_script,ef),",")*"}")
+        end
+    end
+    for hook in KNOWN_HOOKS
+        hf=filter(x->x.kind==hook, vs.hooks)
+        if length(hf) > 0
+            push!(els,"$hook() {"*join(map(y->y.function_script, hf),";")*"}")
         end
     end
     return join(els,",")

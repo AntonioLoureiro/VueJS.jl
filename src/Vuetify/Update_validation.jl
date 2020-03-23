@@ -203,13 +203,34 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
     haskey(x.attrs,"content") ? nothing : x.attrs["content"]=""
     haskey(x.attrs,"type") ? nothing : x.attrs["type"]="success"
     haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
-    
+
     ## 3 Basic Bindings
     x.binds["content"]=x.id*".content"
     x.binds["type"]=x.id*".type"
-    x.binds["value"]=x.id*".value"
-    
-    x.child="{{$(x.id).content}}"
-    
-    x.value_attr=nothing
+    x.binds["value"] = x.id*".value"
+
+    dismissible = get(x.attrs, "dismissible", false)
+    timeout = get(x.attrs, "timeout", 0)
+    delay = get(x.attrs, "delay", 0)
+
+    x.child = "{{$(x.id).content}}"
+
+    hook = false
+    if !haskey(x.slots, "close") && (dismissible || timeout > 0)
+	icon = get(x.attrs, "close-icon", "mdi-close")
+	tmp = Dict("close='{toggle}'"=>"""<v-icon @click="this.window.setTimeout(()=>{ {{toggle()}} }, $delay)">$icon</v-icon>""")
+	length(x.slots) != 0 ? merge!(x.slots, tmp) : x.slots = tmp
+	hook = true
+     end
+     if hook
+	timeout_hook = """setTimeout(()=>{this.$(x.id).value=false}, $timeout)"""
+	if haskey(x.attrs, "created")
+		x.attrs["created"] isa Vector ?
+			append!(x.attrs["created"], timeout_hook) :
+			x.attrs["created"] = [x.attrs["created"], timeout_hook]
+	else
+		x.attrs["created"] = [timeout_hook]
+	end
+      end
+     x.value_attr=nothing
 end

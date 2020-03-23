@@ -215,10 +215,22 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
 
     x.child = "{{$(x.id).content}}"
 
+    hook = false
     if !haskey(x.slots, "close") && (dismissible || timeout > 0)
 	icon = get(x.attrs, "close-icon", "mdi-close")
 	tmp = Dict("close='{toggle}'"=>"""<v-icon @click="this.window.setTimeout(()=>{ {{toggle()}} }, $delay)">$icon</v-icon>""")
 	length(x.slots) != 0 ? merge!(x.slots, tmp) : x.slots = tmp
-    end
-    x.value_attr=nothing
+	hook = true
+     end
+     if hook
+	timeout_hook = """setTimeout(()=>{this.$(x.id).value=false}, $timeout)"""
+	if haskey(x.attrs, "created")
+		x.attrs["created"] isa Vector ?
+			append!(x.attrs["created"], timeout_hook) :
+			x.attrs["created"] = [x.attrs["created"], timeout_hook]
+	else
+		x.attrs["created"] = [timeout_hook]
+	end
+      end
+     x.value_attr=nothing
 end

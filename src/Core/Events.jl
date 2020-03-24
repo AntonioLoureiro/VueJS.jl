@@ -58,7 +58,7 @@ end
 
 function events_script(vs::VueStruct)
     els=[]
-    for e in ["methods","computed","watched"]
+    for e in ["methods","computed","watch"]
         ef=filter(x->x.kind==e,vs.events)
         if length(ef)!=0
             push!(els,"$e : {"*join(map(y->y.function_script,ef),",")*"}")

@@ -119,6 +119,10 @@ end
 
 UPDATE_VALIDATION["v-list"]=(x)->begin
     
+    mark_template!(v)=nothing
+    mark_template!(v::Array)=mark_template.(v)
+    mark_template!(v::VueElement)=v.template=true
+    
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
     @assert haskey(x.attrs,"item") "Vuetify List element with no arg item!"
@@ -129,6 +133,7 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
     x.attrs["v-bind:key"]="item.id"
     
     x.child=x.attrs["item"]
+    mark_template!(x.child)
     delete!(x.attrs,"item")
     
 end

@@ -126,9 +126,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[Namtso]]
 deps = ["Dates", "JSON", "Random"]
-git-tree-sha1 = "fddc408fde493262e369f69d803b39974241fd45"
-repo-rev = "master"
-repo-url = "https://github.com/AntonioLoureiro/Namtso.jl"
+git-tree-sha1 = "f9ddf0f57dcb1e41aaf4f009c7c3d78c6aa2a3c1"
 uuid = "14fc9687-df25-4852-9e56-61a08c6e8132"
 version = "0.1.0"
 
@@ -145,7 +143,7 @@ uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "0.3.12"
 
 [[Pkg]]
-deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
+deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Test", "UUIDs"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PooledArrays]]

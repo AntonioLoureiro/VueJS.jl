@@ -20,19 +20,24 @@ end
 function update_template(r::VueElement)
     
     ## Only change value attr
-    if haskey(r.attrs,"value") && r.value_attr!=nothing
-        r.attrs[r.value_attr]=r.attrs["value"]
-        delete!(r.attrs,"value")
+    if haskey(r.attrs,"value") && r.value_attr!=nothing && r.value_attr!="value"
+            r.attrs[r.value_attr]=deepcopy(r.attrs["value"])
+            delete!(r.attrs,"value")
     end
     new_d=Dict{String,Any}()
+    
+    ## Delete all binds
+    r.binds=Dict()
+    
     ## bind attrs(: notation) linked to item
     for (k,v) in r.attrs
-       if occursin("item.",v)
+       if !startswith(k,"@") && v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
        else
             new_d["$k"]=v  
        end
     end
+    
     r.attrs=new_d
     return r
 end
@@ -122,15 +127,6 @@ function dom(vuel_orig::VueElement;rows=true,prevent_render_func=false)
     child_dom=child_path(child_dom,vuel.path)
     
    return HtmlElement(vuel.tag, vuel.attrs, cols, child_dom)
-end
-
-
-bind_child_v_for!(c)=nothing
-bind_child_v_for!(c::Array)=bind_child_v_for!.(c)
-function bind_child_v_for!(vuel::VueElement)
-    
-   vuel.binds[vuel.value_attr]="item."*vuel.id
-    
 end
 
 

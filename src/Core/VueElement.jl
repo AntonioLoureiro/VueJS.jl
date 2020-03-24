@@ -96,10 +96,6 @@ function update_validate!(vuel::VueElement)
              vuel.binds[k]=vuel.id.*"."*k
           end
        end
-       ## Bind item element
-       if k=="v-for"
-          bind_child_v_for!(vuel.child)
-       end
     end
 
     ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input

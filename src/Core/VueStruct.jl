@@ -20,12 +20,6 @@ mutable struct StdEventHandler <:EventHandler
 
 end
 
-mutable struct HookHandler <: EventHandler
-    kind::String
-    path::String
-    function_script::String
-end
-
 mutable struct VueStruct
 
     id::String
@@ -37,7 +31,6 @@ mutable struct VueStruct
     events::Vector{EventHandler}
     render_func::Union{Nothing,Function}
     styles::Dict{String,String}
-    hooks::Vector{EventHandler}
     
 end
 
@@ -56,13 +49,11 @@ function VueStruct(
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
     events=create_events((methods=methods,computed=computed,watched=watched))
-    hooks = []
-    try hooks=create_hooks(garr) catch; end
     styles=Dict()
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,nothing,styles, hooks)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,nothing,styles)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
     new_es=Vector{EventHandler}()
@@ -72,16 +63,7 @@ function VueStruct(
     new_es=unique(x->x.id,new_es)
     comp.events=new_es
     function_script!.(comp.events)
-    
-    try
-        new_hs=Vector{HookHandler}()
-        update_events!(comp,new_hs)
-        sort!(new_hs,by=x->length(x.path),rev=false)
-        comp.hooks=new_hs
-    catch err
-        
-    end
-        
+
     ## Cols
     m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
     m_cols>12 ? m_cols=12 : nothing
@@ -144,8 +126,8 @@ function element_path(arr::Array,scope::Array)
     return new_arr
 end
 
-update_events!(vs,new_es::Vector{T} where T<:EventHandler,scope="")=new_es=new_es
-function update_events!(vs::Array,new_es::Vector{T} where T<:EventHandler, scope="")
+update_events!(vs,new_es::Vector{EventHandler},scope="")=new_es=new_es
+function update_events!(vs::Array,new_es::Vector{EventHandler},scope="")
     for r in vs
         if r isa VueStruct
         scope=(scope=="" ? r.id : scope*"."*r.id)
@@ -158,12 +140,7 @@ function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
     map(x->x.path=scope,events)
     append!(new_es,events)
     update_events!(vs.grid,new_es,scope)
-end
-function update_events!(vs::VueStruct,new_hs::Vector{HookHandler}, scope="")
-    hooks=deepcopy(vs.hooks)
-    map(x->x.path=scope,hooks)
-    append!(new_hs,hooks)
-    update_events!(vs.grid,new_hs,scope)
+
 end
 
 update_styles!(st_dict::Dict,v)=nothing

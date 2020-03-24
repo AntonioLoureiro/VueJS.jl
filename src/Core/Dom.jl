@@ -49,8 +49,9 @@ function update_dom(r::VueElement)
     if r.template==false
         for (k,v) in r.binds
             value=r.path=="" ? v : r.path*"."*v
-            r.attrs[":$k"]=value
-
+            ## bind to target (small white list )
+            k in DIRECTIVES ? r.attrs[k]=value : r.attrs[":$k"]=value
+            
             ### Capture Event if tgt=src otherwise double count or if value is value attr
             if r.id*"."*k==v || r.id*".value"==v
 
@@ -65,7 +66,7 @@ function update_dom(r::VueElement)
                 end
             end
             ### delete attribute from dom
-            if haskey(r.attrs,k)
+            if haskey(r.attrs,k) && !(k in DIRECTIVES)
                 delete!(r.attrs,k)
             end
         end

@@ -214,7 +214,7 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
     x.binds["type"]=x.id*".type"
     x.binds["value"]=x.id*".value"
     
-    x.child="{{$(x.id).content}}"
-    
+#     x.child="{{$(x.id).content}}"
+    x.binds["v-html"]=x.id*".content"
     x.value_attr=nothing
 end

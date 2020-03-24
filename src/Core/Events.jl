@@ -20,7 +20,7 @@ function create_events(events::NamedTuple)
     hs=[]
     append!(hs, EventHandlers("methods", events.methods))
     append!(hs, EventHandlers("computed",events.computed))
-    append!(hs, EventHandlers("watched", events.watched))
+    append!(hs, EventHandlers("watch", events.watched))
     return hs
 end
 

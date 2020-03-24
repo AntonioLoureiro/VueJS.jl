@@ -72,13 +72,9 @@ function VueElement(id::String, tag::String, attrs::Dict)
         for (k,v) in vuel.slots
             push!(child,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
         end
-        if !(vuel.child isa Nothing)
-            !(vuel.child isa Vector) ? vuel.child = [vuel.child] : nothing
-            vuel.child=[vuel.child..., child...]
-        else
-            vuel.child = child
-        end
+        vuel.child=child
     end
+    
     return vuel
 end
 

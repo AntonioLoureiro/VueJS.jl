@@ -1,5 +1,6 @@
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
-    trf_col=x->"c"*VueJS.vue_escape(string(x))
+    col_pref="c__"
+    trf_col=x->col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
     x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
@@ -47,14 +48,19 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             end
         end
         
+        ## normalize Headers if not internally built
+        if !(sum(map(c->startswith(c["value"],col_pref),x.attrs["headers"]))==length(x.attrs["headers"]))
+            map(c->c["value"]=trf_col(c["value"]),x.attrs["headers"])
+        end
+        
         ## Col Format
         if haskey(x.attrs,"col_format")
             @assert x.attrs["col_format"] isa Dict "col_format should be a Dict of cols and anonymous js function!"
             new_col_format=Dict{String,Any}()
             for (k,v) in x.attrs["col_format"]
                 new_col_format[trf_col(k)]=v
-                x.attrs["col_format"]=new_col_format
             end
+            x.attrs["col_format"]=new_col_format
             
             for (k,v) in x.attrs["col_format"]
 				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_format(item.$k,@path@$(x.id).col_format.$k)"></div>"""
@@ -67,8 +73,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             new_col_template=Dict{String,Any}()
             for (k,v) in x.attrs["col_template"]
                 new_col_template[trf_col(k)]=v
-                x.attrs["col_template"]=new_col_template
             end
+            x.attrs["col_template"]=new_col_template
             
             for (k,v) in x.attrs["col_template"]
                 value_dom=nothing
@@ -83,7 +89,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 
                 v isa String ? value_str=VueJS.vue_escape(v) : nothing
                 
-                value_str=replace(value_str,"item."=>"item.c")
+                value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
                 
                 x.attrs["headers"][col_idx[k]]["align"]="center" 
@@ -214,7 +220,6 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
     x.binds["type"]=x.id*".type"
     x.binds["value"]=x.id*".value"
     
-#     x.child="{{$(x.id).content}}"
     x.binds["v-html"]=x.id*".content"
     x.value_attr=nothing
 end

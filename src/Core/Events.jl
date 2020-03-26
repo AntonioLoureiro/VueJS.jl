@@ -155,7 +155,6 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
     push!(new_es,StdEventHandler("methods","datatable_col_format","",function_script))
     
     ##### Run in closure #####
-    closure_funcs=map(id->id.id,filter(m->m.kind=="methods",new_es))
     function_script="""run_in_closure : (function(context, fn) {    
     path=context=='' ? 'app_state' : 'app_state.'+context
     for (key of Object.keys(eval(path))) {

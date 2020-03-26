@@ -1,11 +1,183 @@
-<html><head><meta charset="UTF-8" /><meta name="viewport"  content="width=device-width, initial-scale=1" /><script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><style>[v-cloak] {display: none}</style></head><body><style type="text/css" ></style><div v-cloak id="app" ><v-app><v-content><v-container fluid><v-card>
-  <v-card-title>
-  Code:
-  </v-card-title>
-  <v-card-text>
-  <code>@el(r1,"v-text-field",value="R1 Value",label="R1",disabled=true)<br>@el(r2,"v-text-field",value="R2 Value",label="R2",disabled=false)<br>page([r1,r2])</code>
-  </v-card-text>
-</v-card><v-row><v-col md="3" ><v-text-field label="R1"  :value="r1.value"  @input="r1.value= $event"  disabled></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r1":{"value":"R1 Value"},"r2":{"value":"R2 Value"}}
+<html><head><meta charset="UTF-8" /><meta name="viewport"  content="width=device-width, initial-scale=1" /><script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><style>[v-cloak] {display: none}</style>
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+</head><body><style type="text/css" ></style>
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+<div v-cloak id="app" ><v-app><v-content><v-container fluid><pre class='hljl'>
+<span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>disabled</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r2</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R2 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R2&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>disabled</span><span class='hljl-oB'>=</span><span class='hljl-kc'>false</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nf'>page</span><span class='hljl-p'>([</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-n'>r2</span><span class='hljl-p'>])</span>
+</pre>
+<v-row><v-col md="3" ><v-text-field label="R1"  :disabled="r1.disabled"  :value="r1.value"  @input="r1.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :disabled="r2.disabled"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r1":{"disabled":true,"value":"R1 Value"},"r2":{"disabled":false,"value":"R2 Value"}}
 const vuetify = new Vuetify()
 const components = {vuechart:VueECharts,VueEditor:vue2editor.components.VueEditor,HotTable:Handsontable.vue.HotTable}
 var app = new Vue({el: '#app',vuetify: vuetify,components:components,data: app_state,methods : {xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
@@ -61,4 +233,13 @@ name = typeof name !== 'undefined' ? name : '_self';
 window.open(url,name);
 },datatable_col_format : function(item,format_script) {
 return format_script(item)
-}}})</script>
+},run_in_closure : (function(context, fn) {    
+path=context=='' ? 'app_state' : 'app_state.'+context
+for (key of Object.keys(eval(path))) {
+    eval("var "+key+" = "+path+"."+key)
+}
+
+fnstr=fn.toString();
+fnstr=fnstr.replace('()=>','');
+eval(fnstr);
+})}})</script>

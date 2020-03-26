@@ -39,8 +39,8 @@ function htmlstring(page_inst::Page)
 
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
-                   
-            push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),dom(v.grid))))
+            
+            push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),dom(v))))
         else
             
             if v isa VueHolder

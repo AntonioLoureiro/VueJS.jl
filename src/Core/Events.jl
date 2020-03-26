@@ -84,7 +84,7 @@ end
 
 function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
 
-    ##xhr
+    #### xhr #####
     function_script = """xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
 
     console.log(contents)
@@ -115,7 +115,7 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
     }"""
     push!(new_es,StdEventHandler("methods","xhr","",function_script))
 
-    ## Submit Method
+    #### Submit Method ####
     value_script=replace(JSON.json(get_json_attr(vs.def_data,"value")),"\""=>"")
     function_script="""submit : function(context, url, method, async, success, error) {
         var ret=$value_script
@@ -139,7 +139,7 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
     }"""
     push!(new_es,StdEventHandler("methods","submit","",function_script))
 
-    ## Open Method
+    ##### Open Method #####
     function_script="""open : function(url,name) {
         name = typeof name !== 'undefined' ? name : '_self';
         window.open(url,name);
@@ -153,7 +153,22 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
         }"""
 
     push!(new_es,StdEventHandler("methods","datatable_col_format","",function_script))
+    
+    ##### Run in closure #####
+    closure_funcs=map(id->id.id,filter(m->m.kind=="methods",new_es))
+    function_script="""run_in_closure : (function(context, fn) {    
+    path=context=='' ? 'app_state' : 'app_state.'+context
+    for (key of Object.keys(eval(path))) {
+        eval("var "+key+" = "+path+"."+key)
+    }
 
+    fnstr=fn.toString();
+    fnstr=fnstr.replace('()=>','');
+    eval(fnstr);
+    })"""
+    push!(new_es,StdEventHandler("methods","run_in_closure","",function_script))
+
+   
     return nothing
 end
 

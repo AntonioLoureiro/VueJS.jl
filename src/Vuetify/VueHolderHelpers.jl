@@ -61,20 +61,20 @@ function dialog(id::String,elements::Vector;kwargs...)
     
     real_attrs=Dict(string(k)=>v for (k,v) in kwargs)
         
-    haskey(real_attrs,"value") ? (@assert real_attrs["value"] isa Bool "Value Attr in Dialog must be a Bool") : nothing
-    haskey(real_attrs,"value") ? nothing : real_attrs["value"]=false
+    haskey(real_attrs,"active") ? (@assert real_attrs["active"] isa Bool "Value Attr in Dialog must be a Bool") : nothing
+    haskey(real_attrs,"active") ? nothing : real_attrs["active"]=false
     
     ## Defaults and merge with real
     dial_attrs=Dict("persistent"=>true,"max-width"=>"600")
     merge!(dial_attrs,real_attrs)
     
     vs_dial=VueStruct(id,elements)
-    vs_dial.def_data["value"]=dial_attrs["value"]    
-    dial_attrs[":value"]=id*".value"
+    vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
+    dial_attrs[":value"]=id*".active.value"
     
     vs_dial.render_func=(x)->begin
         
-        child_dom=VueJS.dom(x.grid,rows=true)
+        child_dom=VueJS.dom(x.grid,opts=Opts())
         [HtmlElement("v-dialog",dial_attrs,12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
     end
     

@@ -45,6 +45,22 @@ end
 
 function update_dom(r::VueElement)
     
+    ## Update @path@
+    for (k,v) in r.attrs
+        if k in DIRECTIVES
+            r.attrs[k]=replace(v,"@path@"=>(r.path=="" ? "" : "$(r.path)."))
+        end
+    end
+    
+    ### Dom Events =>@ ####
+    events=intersect(keys(r.attrs),KNOWN_JS_EVENTS)
+    for e in events
+        event_js=r.attrs[e]
+        delete!(r.attrs,e)
+        r.attrs["@$e"]=event_js
+    end
+
+    
     ## Bind element values to js (only if not template)
     if r.template==false
         for (k,v) in r.binds
@@ -74,6 +90,7 @@ function update_dom(r::VueElement)
        r=update_template(r)
     end
 
+    
     return r
 end
 
@@ -82,16 +99,32 @@ dom_child(d;rows=true)=dom(d)
 dom_child(d::HtmlElement;rows=true)=d
 dom_child(d::String;rows=true)=d
 dom_child(a::Array;rows=true)=dom_child.(a)
-dom(d;rows=true)=d
-dom(d::Dict;rows=true)=JSON.json(d)
+dom(d;opts=Opts())=d
+dom(d::Dict;opts=Opts())=JSON.json(d)
 
 
-function dom(vuel_orig::VueElement;rows=true,prevent_render_func=false)
+function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
     
     vuel=deepcopy(vuel_orig)
     if vuel.render_func!=nothing && prevent_render_func==false
        return vuel.render_func(vuel)
     end
+    
+    ### Update Dom Events ## Scope Issue
+    for (k,v) in vuel.attrs
+        if k in KNOWN_JS_EVENTS
+            new_js=v
+            for o in opts.closure_funcs
+                if new_js==o
+                   new_js="app."*o
+                else
+                    new_js=replace(new_js,o*"("=>"app.$o(")
+                end
+            end
+            new_js=""" run_in_closure("$(vuel.path)", ()=>$new_js) """
+            vuel.attrs[k]=new_js
+        end
+    end   
     
     vuel=update_dom(vuel)
         
@@ -156,18 +189,20 @@ function update_cols!(h::HtmlElement;context_cols=12)
     return nothing
 end
 
-dom(r::String;rows=true)=HtmlElement("div",Dict(),12,r)
-dom(r::HtmlElement;rows=true)=r
-function dom(r::VueStruct;rows=true)
+dom(r::String;opts=Opts())=HtmlElement("div",Dict(),12,r)
+dom(r::HtmlElement;opts=Opts())=r
+function dom(r::VueStruct;opts=Opts())
+    
+    opts.closure_funcs=filter(r->!(r in ["run_in_closure"]),map(id->id.id,filter(m->m.kind=="methods",r.events)))
     
     if r.render_func!=nothing
        return r.render_func(r)
     else
-       return dom(r.grid,rows=rows) 
+       return dom(r.grid,opts=opts)
     end
 end
 
-function dom(r::VueJS.VueHolder;rows=true)
+function dom(r::VueJS.VueHolder;opts=Opts())
     
     if r.render_func==nothing
         return HtmlElement(r.tag,r.attrs,r.cols,map(x->deepcopy(dom(x)),r.elements))
@@ -176,7 +211,7 @@ function dom(r::VueJS.VueHolder;rows=true)
     end
 end
 
-function dom(arr::Array;rows=true)
+function dom(arr::Array;opts=Opts())
 
     arr_dom=[]
     i_rows=[]
@@ -186,28 +221,28 @@ function dom(arr::Array;rows=true)
 
         ## update grid_data recursively
         append=false
-        new_rows=deepcopy(rows)
+        new_opts=deepcopy(opts)
         r isa VueStruct ? append=true : nothing
-        r isa VueStruct ? new_rows=true : nothing
-        r isa Array ? (rows ? new_rows=false : new_rows=true) : nothing
+        r isa VueStruct ? new_opts.rows=true : nothing
+        r isa Array ? (opts.rows ? new_opts.rows=false : new_opts.rows=true) : nothing
         
-        domvalue=dom(r,rows=new_rows)
+        domvalue=dom(r,opts=new_opts)
         
-        grid_class=rows ? "v-row" : "v-col"
+        grid_class=opts.rows ? "v-row" : "v-col"
 
         ## one row only must have a single col
-        domvalue=(rows && typeof(r) in [VueHolder,VueElement,HtmlElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
+        domvalue=(opts.rows && typeof(r) in [VueHolder,VueElement,HtmlElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
         
         ## New Element
         new_el=HtmlElement(grid_class,Dict(),domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue),domvalue)
         
-        if ((i!=1 && i_rows[i-1]) || (rows)) && append
+        if ((i!=1 && i_rows[i-1]) || (opts.rows)) && append
             append!(arr_dom,domvalue)
         else
             push!(arr_dom,new_el)
         end
 
-    push!(i_rows,rows)
+    push!(i_rows,opts.rows)
     end
     update_cols!(arr_dom)
     return arr_dom

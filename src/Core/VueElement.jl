@@ -66,7 +66,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
     vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,nothing)
     update_validate!(vuel)
     
-       ## Slots
+    ## Slots
     if length(vuel.slots)!=0
         child=[]
         for (k,v) in vuel.slots
@@ -86,8 +86,9 @@ function update_validate!(vuel::VueElement)
     if haskey(UPDATE_VALIDATION, tag)
         UPDATE_VALIDATION[tag](vuel)
     end
-
-     for (k,v) in vuel.attrs
+    
+    ## Binding
+    for (k,v) in vuel.attrs
        ## Bindig of non html accepted values => Arrays/Dicts
        if !(v isa String || v isa Date || v isa Missing)
           if k==vuel.value_attr
@@ -101,14 +102,6 @@ function update_validate!(vuel::VueElement)
     ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
     if vuel.value_attr!=nothing
         vuel.binds[vuel.value_attr]=vuel.id.*".value"
-    end
-
-    ## Events
-    events=intersect(keys(vuel.attrs),KNOWN_JS_EVENTS)
-    for e in events
-        event_js=vuel.attrs[e]
-        delete!(vuel.attrs,e)
-        vuel.attrs["@$e"]=event_js isa Array ? join(event_js) : event_js
     end
 
     return nothing

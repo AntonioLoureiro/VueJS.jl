@@ -31,7 +31,7 @@ mutable struct VueStruct
     events::Vector{EventHandler}
     render_func::Union{Nothing,Function}
     styles::Dict{String,String}
-    
+        
 end
 
 function VueStruct(
@@ -60,10 +60,9 @@ function VueStruct(
     update_events!(comp,new_es)
     std_events!(comp,new_es)
     sort!(new_es,by=x->length(x.path),rev=false)
-    new_es=unique(x->x.id,new_es)
-    comp.events=new_es
-    function_script!.(comp.events)
-
+    comp.events=unique(x->x.id,new_es)
+    function_script!.(comp.events)   
+    
     ## Cols
     m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
     m_cols>12 ? m_cols=12 : nothing
@@ -87,11 +86,8 @@ function element_path(arr::Array,scope::Array)
         r=deepcopy(rorig)
         ## Vue Element
         if typeof(r)==VueElement
-
             new_arr[i].path=scope_str
-            ## hack for v-for
-            haskey(r.attrs,"v-for") ? new_arr[i].attrs["v-for"]=replace(new_arr[i].attrs["v-for"],"@path@"=>(scope_str=="" ? "" : "$scope_str.")) : nothing
-
+    
         ## VueStruct
         elseif r isa VueStruct
 

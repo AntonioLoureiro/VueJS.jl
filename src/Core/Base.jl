@@ -32,6 +32,14 @@ const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
 
 const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
 
+## Dom Render Opts
+mutable struct Opts
+    rows::Bool
+    closure_funcs::Vector{String}
+end
+Opts()=Opts(true,[])
+
+
 LIBRARY_RULES =
     Dict("maxchars"=> (x->return """ value => value.length <= $x || 'Max $x characters' """),
          "minchars"=> (x->return """ value => value.length > $x  || 'Min $x characters' """),

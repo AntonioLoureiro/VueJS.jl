@@ -193,7 +193,9 @@ dom(r::String;opts=Opts())=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;opts=Opts())=r
 function dom(r::VueStruct;opts=Opts())
     
-    opts.closure_funcs=filter(r->!(r in ["run_in_closure"]),map(id->id.id,filter(m->m.kind=="methods",r.events)))
+    closure_funcs=filter(r->!(r in ["run_in_closure"]),map(id->id.id,filter(m->m.kind=="methods",r.events)))
+    append!(closure_funcs,opts.closure_funcs)
+    opts.closure_funcs=unique(closure_funcs)
     
     if r.render_func!=nothing
        return r.render_func(r)

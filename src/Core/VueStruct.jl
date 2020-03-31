@@ -113,20 +113,23 @@ function get_events(vs::VueStruct,scope="")
     return events
 end
 
-function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;data="",count=1)
-    if count<=2
-        lower_data=join(map(x->"var $x = app.$x;",collect(keys(d))))*methods_code
-    else
-        lower_data=join(map(x->"var $x = this.$x;",collect(keys(d))))*methods_code
-    end
+function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1)
+        
+    context=count==1 ? "app" : "this"
+    data=join(map(x->"var $x = $context.$x;",collect(keys(d))))*methods_code
+        
     for (k,v) in d
-        if v isa Dict
-            boiler_this!(v,methods_ids,methods_code,data=lower_data,count=count+=1)
-        elseif k in VueJS.KNOWN_JS_EVENTS && v isa String
-            v2=strip(v) in methods_ids ? strip(v)*"()" : v
-           d[k]="function(){$data $v2}" 
+        if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==length(values(v))
+            boiler_this!(v,methods_ids,methods_code,count=count+=1)
+        else
+            for (kk,vv) in v
+                if kk in VueJS.KNOWN_JS_EVENTS && vv isa String
+                    v2=strip(vv) in methods_ids ? strip(vv)*"()" : vv
+                    d[k][kk]="function(){$data $v2}" 
+                end
+            end
         end
-    end
+    end        
 end
 
 function update_events!(vs::VueStruct;methods=[],computed=[],watch=[])

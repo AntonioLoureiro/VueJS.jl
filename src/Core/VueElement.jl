@@ -147,7 +147,7 @@ macro el(varname,tag,args...)
     ## Special Building Condition (EChart)
     if tag_type==Symbol
         
-        newexpr=(Meta.parse("""VueElement("$(string(varname))",$(tag),$newargs)"""))
+        newexpr=(Meta.parse("""VueJS.VueElement("$(string(varname))",$(tag),$newargs)"""))
         return quote
             $(esc(varname))=$(esc(newexpr))
         end
@@ -155,7 +155,7 @@ macro el(varname,tag,args...)
     ## Normal condition    
     elseif tag_type==String 
         
-        newexpr=(Meta.parse("""VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
+        newexpr=(Meta.parse("""VueJS.VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
         return quote
             $(esc(varname))=$(esc(newexpr))
         end

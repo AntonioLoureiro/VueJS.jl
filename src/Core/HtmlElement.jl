@@ -40,6 +40,11 @@ HtmlElement(tag::String, attrs::Dict, value::Union{String, Array, HtmlElement}) 
         HtmlElement(tag, attrs, nothing, value)
 HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, nothing)
 
+function html(tag::String,value::String;cols=3,kwargs...)
+    attrs=Dict(string(k)=>v for (k,v) in kwargs)
+    HtmlElement(tag,attrs,cols,value)
+end
+
 htmlstring(s::String)=s
 htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))

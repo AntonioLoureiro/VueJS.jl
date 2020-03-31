@@ -29,7 +29,6 @@ DEPENDENCIES=[
 const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
 
 const KNOWN_JS_EVENTS = ["click", "mouseover", "mouseenter", "change"]
-
 const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
 
 ## Dom Render Opts

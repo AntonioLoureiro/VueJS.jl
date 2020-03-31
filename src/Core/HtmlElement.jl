@@ -81,7 +81,7 @@ vue_json(a::Array,f_mode)="[$(join(vue_json.(a,f_mode),","))]"
 function vue_json(d::Dict,f_mode::Bool=false)
     els=[]
     for (k,v) in d
-        if k in VueJS.JS_FUNCTION_ATTRS
+        if k in JS_FUNCTION_ATTRS || k in KNOWN_JS_EVENTS
             j="\"$k\": $(vue_json(v,true))"
         else
             j="\"$k\":"*vue_json(v,f_mode==false ? false : true)

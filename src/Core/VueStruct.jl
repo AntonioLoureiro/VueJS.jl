@@ -1,25 +1,3 @@
-abstract type EventHandler end
-    
-mutable struct CustomEventHandler <:EventHandler
-
-    kind::String
-    id::String
-    args::Vector{String}
-    script::String
-    path::String
-    function_script::String
-
-end
-
-mutable struct StdEventHandler <:EventHandler
-
-    kind::String
-    id::String
-    path::String
-    function_script::String
-
-end
-
 mutable struct VueStruct
 
     id::String
@@ -41,27 +19,21 @@ function VueStruct(
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),
     computed=Dict{String,Any}(),
-    watched=Dict{String,Any}(),
+    watch=Dict{String,Any}(),
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
-    events=create_events((methods=methods,computed=computed,watched=watched))
     styles=Dict()
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),events,nothing,styles)
+    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),[],nothing,styles)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
-    new_es=Vector{EventHandler}()
-    update_events!(comp,new_es)
-    std_events!(comp,new_es)
-    sort!(new_es,by=x->length(x.path),rev=false)
-    comp.events=unique(x->x.id,new_es)
-    function_script!.(comp.events)   
+    update_events!(comp,methods=methods,computed=computed,watch=watch)
     
     ## Cols
     m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
@@ -122,22 +94,75 @@ function element_path(arr::Array,scope::Array)
     return new_arr
 end
 
-update_events!(vs,new_es::Vector{EventHandler},scope="")=new_es=new_es
-function update_events!(vs::Array,new_es::Vector{EventHandler},scope="")
+get_events(vs,scope="")=[]
+get_events(vh::VueHolder,scope="")=get_events(vh.elements,scope)
+function get_events(vs::Array,scope="")
+    evs=Vector{EventHandler}()
     for r in vs
         if r isa VueStruct
         scope=(scope=="" ? r.id : scope*"."*r.id)
         end
-        update_events!(r,new_es,scope)
+        append!(evs,get_events(r,scope))
+    end
+    return evs
+end
+function get_events(vs::VueStruct,scope="")
+    events=deepcopy(vs.events)          
+    map(x->x.path=scope,events)
+    append!(events,get_events(vs.grid,scope))
+    return events
+end
+
+function boiler_this!(d::Dict,methods_code::String;data="",count=1)
+    if count<=2
+        lower_data=join(map(x->"var $x = app.$x;",collect(keys(d))))*methods_code
+    else
+        lower_data=join(map(x->"var $x = this.$x;",collect(keys(d))))*methods_code
+    end
+    for (k,v) in d
+        if v isa Dict
+            boiler_this!(v,methods_code,data=lower_data,count=count+=1)
+        elseif k in VueJS.KNOWN_JS_EVENTS && v isa String
+           d[k]="function(){$data $v}" 
+        end
     end
 end
-function update_events!(vs::VueStruct,new_es::Vector{EventHandler},scope="")
-    events=deepcopy(vs.events)
-    map(x->x.path=scope,events)
-    append!(new_es,events)
-    update_events!(vs.grid,new_es,scope)
 
+function update_events!(vs::VueStruct;methods=[],computed=[],watch=[])
+    all_events=[]
+    ### Standard Events
+    append!(all_events,STANDARD_APP_EVENTS)
+    
+    ### Events Defined in current VueStruct
+    append!(all_events, [MethodsEventHandler(k,"","function(){$v}") for (k,v) in methods])
+    append!(all_events, [ComputedEventHandler(k,"","function(){$v}") for (k,v) in computed])
+    append!(all_events, [WatchEventHandler(k,"","function(){$v}") for (k,v) in watch])
+    
+    ### Get all lower level events
+    append!(all_events,get_events(vs.grid,""))
+    
+    evs_noid=filter(x->!(x isa EventHandlerWithID),all_events)
+    evs_wids=filter(x->x isa EventHandlerWithID,all_events)
+    evs_wids_nt=[(id=r.id,i=i,len=(r.path=="" ? 0 : count(".",r.path)+1)) for (i,r) in enumerate(evs_wids)]
+    evs_dict=Dict()
+    for r in evs_wids_nt
+        if haskey(evs_dict,r.id)
+           evs_dict[r.id].len>r.len ? evs_dict[r.id]=r : nothing
+        else
+           evs_dict[r.id]=r
+        end
+    end
+    
+    unique_evs=[evs_wids[v.i] for (k,v) in evs_dict]
+    methods_code=join(map(x->"var $x = app.$x;",map(x->x.id,unique_evs)))
+    
+    append!(unique_evs,evs_noid)
+    vs.events=unique_evs
+    
+    boiler_this!(vs.def_data,methods_code)
+    return nothing
 end
+
 
 update_styles!(st_dict::Dict,v)=nothing
 update_styles!(st_dict::Dict,a::Array)=map(x->update_styles!(st_dict,x),a)
@@ -149,4 +174,22 @@ end
 function update_styles!(st_dict::Dict,v::VueElement)
     length(v.style)!=0 ? st_dict[v.id]=join(v.style) : nothing
     return nothing
+end
+
+events_script(a::Vector{MethodsEventHandler})="methods : {"*join(map(x->"$(x.id) : $(x.script)",a),",")*"}"
+events_script(a::Vector{ComputedEventHandler})="computed : {"*join(map(x->"""$(x.path=="" ? x.id : x.path*"."*x.id) : $(x.script)""",a),",")*"}"
+events_script(a::Vector{WatchEventHandler})="watch : {"*join(map(x->"""$(x.path=="" ? x.id : x.path*"."*x.id) : $(x.script)""",a),",")*"}"
+
+function events_script(vs::VueStruct)
+    
+    els=[]
+    
+    for typ in [MethodsEventHandler,ComputedEventHandler,WatchEventHandler,HookEventHandler]
+        ef=filter(x->x isa typ,vs.events)
+        if length(ef)!=0
+            ef=convert(Vector{typ},ef)
+            push!(els,events_script(ef))
+        end
+    end
+    return join(els,",")
 end

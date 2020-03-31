@@ -31,7 +31,9 @@ function update_template(r::VueElement)
     
     ## bind attrs(: notation) linked to item
     for (k,v) in r.attrs
-       if !startswith(k,"@") && v isa AbstractString && occursin("item.",v)
+       if k in KNOWN_JS_EVENTS
+            new_d["@$k"]=v
+       elseif v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
        else
             new_d["$k"]=v  
@@ -51,22 +53,19 @@ function update_dom(r::VueElement)
             r.attrs[k]=replace(v,"@path@"=>(r.path=="" ? "" : "$(r.path)."))
         end
     end
-    
-    ### Dom Events =>@ ####
-    events=intersect(keys(r.attrs),KNOWN_JS_EVENTS)
-    for e in events
-        event_js=r.attrs[e]
-        delete!(r.attrs,e)
-        r.attrs["@$e"]=event_js
-    end
-
-    
+        
     ## Bind element values to js (only if not template)
     if r.template==false
         for (k,v) in r.binds
             value=r.path=="" ? v : r.path*"."*v
             ## bind to target (small white list )
-            k in DIRECTIVES ? r.attrs[k]=value : r.attrs[":$k"]=value
+            if k in DIRECTIVES 
+                r.attrs[k]=value 
+            elseif k in KNOWN_JS_EVENTS
+                r.attrs["@$k"]=value*".call($(r.path))"
+            else
+                r.attrs[":$k"]=value
+            end
             
             ### Capture Event if tgt=src otherwise double count or if value is value attr
             if r.id*"."*k==v || r.id*".value"==v
@@ -110,21 +109,7 @@ function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
        return vuel.render_func(vuel)
     end
     
-    ### Update Dom Events ## Scope Issue
-    for (k,v) in vuel.attrs
-        if k in KNOWN_JS_EVENTS
-            new_js=v
-            for o in opts.closure_funcs
-                if new_js==o
-                   new_js="app."*o
-                else
-                    new_js=replace(new_js,o*"("=>"app.$o(")
-                end
-            end
-            new_js=""" run_in_closure("$(vuel.path)", ()=>$new_js) """
-            vuel.attrs[k]=new_js
-        end
-    end   
+    
     
     vuel=update_dom(vuel)
         
@@ -192,10 +177,6 @@ end
 dom(r::String;opts=Opts())=HtmlElement("div",Dict(),12,r)
 dom(r::HtmlElement;opts=Opts())=r
 function dom(r::VueStruct;opts=Opts())
-    
-    closure_funcs=filter(r->!(r in ["run_in_closure"]),map(id->id.id,filter(m->m.kind=="methods",r.events)))
-    append!(closure_funcs,opts.closure_funcs)
-    opts.closure_funcs=unique(closure_funcs)
     
     if r.render_func!=nothing
        return r.render_func(r)

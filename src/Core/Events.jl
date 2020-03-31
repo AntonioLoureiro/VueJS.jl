@@ -1,91 +1,59 @@
+abstract type EventHandler end
+abstract type EventHandlerWithID<:EventHandler end
 
-function EventHandlers(kind::String, d::Dict)
+abstract type EventHandlerIDWithPath<:EventHandlerWithID end
 
-    hs=[]
-    for (k,v) in d
-        if v isa NamedTuple
-           kis = keys(v)
-           @assert :args in kis && :script in kis "Building EventHandler from NamedTuple requires both `args` and `script` keys"
-           @assert v.args isa Vector "Function `args` must be of Type Vector{String}. `$(v.args)` of type $(typeof(v.args)) provided."
-           push!(hs, CustomEventHandler(kind, k, v.args, v.script, "", ""))
-        elseif v isa String
-           push!(hs,CustomEventHandler(kind,k,[],v,"",""))
-        end
-    end
-    function_script!.(hs)
-    return hs
+mutable struct MethodsEventHandler <:EventHandlerWithID
+
+    id::String
+    path::String
+    script::String
 end
 
-function create_events(events::NamedTuple)
-    hs=[]
-    append!(hs, EventHandlers("methods", events.methods))
-    append!(hs, EventHandlers("computed",events.computed))
-    append!(hs, EventHandlers("watch", events.watched))
-    return hs
+mutable struct ComputedEventHandler <:EventHandlerIDWithPath
+
+    id::String  
+    path::String
+    script::String
 end
 
-js_closure = function(;scope::String="@scope@")
-    script=""" for (key of Object.keys($scope)) {
-    eval("var "+key+" = $scope."+key)
-    };"""
-    return script
+mutable struct WatchEventHandler <:EventHandlerIDWithPath
+
+    id::String  
+    path::String
+    script::String
 end
 
-function_script!(eh::EventHandler)=nothing
-
-function function_script!(eh::CustomEventHandler)
-
-        if eh.path==""
-            scope="app_state"
-        else
-            scope="app_state."*eh.path
-        end
-
-        args = size(eh.args, 1) > 0 ? join(eh.args, ",") : "event"
-
-        str="""$(eh.id) :(function($args) {
-            $(js_closure(scope=scope))
-        return  function($args) {
-          $(eh.script)
-        };
-        })()
-        """
-
-    eh.function_script=str
-
-    return nothing
+mutable struct HookEventHandler <:EventHandler
+    
+    kind::String
+    path::String
+    script::String
 end
 
-function events_script(vs::VueStruct)
-    els=[]
-    for e in ["methods","computed","watch"]
-        ef=filter(x->x.kind==e,vs.events)
-        if length(ef)!=0
-            push!(els,"$e : {"*join(map(y->y.function_script,ef),",")*"}")
-        end
-    end
-    return join(els,",")
-end
+            
+STANDARD_APP_EVENTS=Vector{EventHandler}()
 
-function get_json_attr(d::Dict,a::String,path="app_state")
-    out=Dict()
-    for (k,v) in d
-        if v isa Dict
-            if haskey(v,a)
-                out[k]=path*".$k.$a"
-            else
-                ret=get_json_attr(v,a,path*".$k")
-                length(ret)!=0 ? out[k]=ret : nothing
-            end
-        end
-    end
-    return out
-end
+#### get_attr ####
+get_attr_script="""function (o,attr) {
+    ret={}
+    for (var k in o) {
+        if (typeof(o[k]=="object")) {
+			
+			if(attr in o[k]){
+				ret[k]=o[k][attr];
+			} else 	{
+            result=traverse(o[k],attr);
+			ret[k]==undefined ? '' : ret[k]=result
+			}
+		}
+    }
+return ret
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("get_attr","",get_attr_script))
 
-function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
-
-    #### xhr #####
-    function_script = """xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
+###### XHR #######
+xhr_script = """function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
 
     console.log(contents)
     var xhr = new XMLHttpRequest();
@@ -113,64 +81,33 @@ function std_events!(vs::VueStruct, new_es::Vector{EventHandler})
     xhr.open(method, url, async);
     xhr.send(contents);
     }"""
-    push!(new_es,StdEventHandler("methods","xhr","",function_script))
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("xhr","",xhr_script))
 
-    #### Submit Method ####
-    value_script=replace(JSON.json(get_json_attr(vs.def_data,"value")),"\""=>"")
-    function_script="""submit : function(context, url, method, async, success, error) {
-        var ret=$value_script
-        $(js_closure(scope="app"))
-
-        var search = function(obj, arr) {
-            let result = {};
-            for(key in obj) {
-                if (arr.includes(key)) {
-                    result[key] = obj[key];
-                } else if (typeof(obj[key]) === 'object') {
-                    Object.assign(result, search(obj[key], arr));
-               	}
-    	    }
-            return result;
-        }
-        if (context && context.length) {
-            ret = search(ret, context);
-        }
-        return xhr(JSON.stringify(ret), url, method, async, success, error)
-    }"""
-    push!(new_es,StdEventHandler("methods","submit","",function_script))
-
-    ##### Open Method #####
-    function_script="""open : function(url,name) {
+##### Open Method #####
+open_script=""" function(url,name) {
         name = typeof name !== 'undefined' ? name : '_self';
         window.open(url,name);
         }"""
 
-    push!(new_es,StdEventHandler("methods","open","",function_script))
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("open","",open_script))
 
-    ## Datatable Col Format
-    function_script="""datatable_col_format : function(item,format_script) {
-        return format_script(item)
-        }"""
+## Datatable Col Format
+col_format_script=""" function(item,format_script) {
+    return format_script(item)
+    }"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_format_script))
 
-    push!(new_es,StdEventHandler("methods","datatable_col_format","",function_script))
-    
-    ##### Run in closure #####
-    function_script="""run_in_closure : (function(context, fn) {    
-    path=context=='' ? 'app_state' : 'app_state.'+context
-    for (key of Object.keys(eval(path))) {
-        eval("var "+key+" = "+path+"."+key)
-    }
+#### Submit Method ####
+submit_script="""function(context, url, method, async, success, error) {
+        // var call_context should be created in run_in_closure
+        var ret=get_attr(call_context,"value")
 
-    fnstr=fn.toString();
-    fnstr=fnstr.replace('()=>','');
-    eval(fnstr);
-    })"""
-    push!(new_es,StdEventHandler("methods","run_in_closure","",function_script))
+        return xhr(JSON.stringify(ret), url, method, async, success, error)
+    }"""
 
-   
-    return nothing
-end
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("submit","",submit_script))
 
+#################################################################################################
 """
 Wrapper around submit and xhr method(s)
 Allows submissions to be defined at VueElement level as an action, `onclick`, `onchange`, etc

@@ -89,8 +89,8 @@ function update_validate!(vuel::VueElement)
     
     ## Binding
     for (k,v) in vuel.attrs
-       ## Bindig of non html accepted values => Arrays/Dicts
-       if !(v isa String || v isa Date || v isa Missing)
+       ## Bindig of non html accepted values => Arrays/Dicts or KNOWN_JS_EVENTS
+       if !(v isa String || v isa Date || v isa Missing) || k in KNOWN_JS_EVENTS
           if k==vuel.value_attr
              vuel.binds[k]=vuel.id.*".value"
           else

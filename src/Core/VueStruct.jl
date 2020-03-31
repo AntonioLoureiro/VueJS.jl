@@ -113,7 +113,7 @@ function get_events(vs::VueStruct,scope="")
     return events
 end
 
-function boiler_this!(d::Dict,methods_code::String;data="",count=1)
+function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;data="",count=1)
     if count<=2
         lower_data=join(map(x->"var $x = app.$x;",collect(keys(d))))*methods_code
     else
@@ -121,9 +121,10 @@ function boiler_this!(d::Dict,methods_code::String;data="",count=1)
     end
     for (k,v) in d
         if v isa Dict
-            boiler_this!(v,methods_code,data=lower_data,count=count+=1)
+            boiler_this!(v,methods_ids,methods_code,data=lower_data,count=count+=1)
         elseif k in VueJS.KNOWN_JS_EVENTS && v isa String
-           d[k]="function(){$data $v}" 
+            v2=strip(v) in methods_ids ? strip(v)*"()" : v
+           d[k]="function(){$data $v2}" 
         end
     end
 end
@@ -154,12 +155,13 @@ function update_events!(vs::VueStruct;methods=[],computed=[],watch=[])
     end
     
     unique_evs=[evs_wids[v.i] for (k,v) in evs_dict]
-    methods_code=join(map(x->"var $x = app.$x;",map(x->x.id,unique_evs)))
+    methods_ids=map(x->x.id,unique_evs)
+    methods_code=join(map(x->"var $x = app.$x;",methods_ids))
     
     append!(unique_evs,evs_noid)
     vs.events=unique_evs
     
-    boiler_this!(vs.def_data,methods_code)
+    boiler_this!(vs.def_data,methods_ids,methods_code)
     return nothing
 end
 

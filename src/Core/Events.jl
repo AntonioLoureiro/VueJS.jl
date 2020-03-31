@@ -43,7 +43,7 @@ get_attr_script="""function (o,attr) {
 			if(attr in o[k]){
 				ret[k]=o[k][attr];
 			} else 	{
-            result=traverse(o[k],attr);
+            result=app.get_attr(o[k],attr);
 			ret[k]==undefined ? '' : ret[k]=result
 			}
 		}
@@ -98,11 +98,11 @@ col_format_script=""" function(item,format_script) {
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_format_script))
 
 #### Submit Method ####
-submit_script="""function(context, url, method, async, success, error) {
-        // var call_context should be created in run_in_closure
-        var ret=get_attr(call_context,"value")
-
-        return xhr(JSON.stringify(ret), url, method, async, success, error)
+  submit_script="""function(url, method, async, success, error) {
+        
+        call_context=this==app ? app_state : this
+        var ret=app.get_attr(call_context,"value")
+        return app.xhr(JSON.stringify(ret), url, method, async, success, error)
     }"""
 
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("submit","",submit_script))
@@ -125,15 +125,9 @@ function submit(
     method::String="POST",
     async::Bool=true,
     success::Vector=[],
-    error::Vector=[],
-    context::Vector=[])
+    error::Vector=[])
     success = size(success, 1) > 0 ? """(function(xhr) {$(join(success,""))})""" : "null"
     error = size(error, 1) > 0 ? """(function(xhr) {$(join(error,""))})""" : "null"
-    if context != []
-        ids = [x.id for x in context] #Html or Vue Element `id`
-        contents = replace(JSON.json(ids), "\""=>"'")
-    else
-        contents = "null"
-    end
-    return "submit($contents, '$url', '$method', $async, $success, $error)"
+    
+    return "submit('$url', '$method', $async, $success, $error)"
 end

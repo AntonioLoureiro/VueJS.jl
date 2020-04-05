@@ -34,7 +34,7 @@ function VueStruct(
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
     update_events!(comp,methods=methods,computed=computed,watch=watch)
-    
+        
     ## Cols
     m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
     m_cols>12 ? m_cols=12 : nothing
@@ -113,15 +113,25 @@ function get_events(vs::VueStruct,scope="")
     return events
 end
 
-function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1)
+export submit
+function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,path="app_state")
         
     context=count==1 ? "app" : "this"
-    data=join(map(x->"var $x = $context.$x;",collect(keys(d))))*methods_code
-        
+    vars=collect(keys(d))
+    append!(vars,CONTEXT_JS_FUNCTIONS)
+    data=join(map(x->"var $x = $context.$x;",vars))*methods_code
+    s_f=[]
     for (k,v) in d
-        if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==length(values(v))
-            boiler_this!(v,methods_ids,methods_code,count=count+=1)
-        else
+        if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==(length(values(v))-length(intersect(keys(v),CONTEXT_JS_FUNCTIONS)))
+            ### Submit Function
+            push!(s_f,"$k:$path.$k.submit(url, method, async, success, error,true)")
+            boiler_this!(v,methods_ids,methods_code,count=count+=1,path=path*".$k")
+        elseif v isa Dict
+            ### Submit Function
+            if haskey(v,"value")
+                push!(s_f,"$k:$path.$k.value")
+            end
+            
             for (kk,vv) in v
                 if kk in VueJS.KNOWN_JS_EVENTS && vv isa String
                     v2=strip(vv) in methods_ids ? strip(vv)*"()" : vv
@@ -129,7 +139,14 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1)
                 end
             end
         end
-    end        
+    end   
+    d["submit"]="""function(url, method, async, success, error,no_post=false){
+     content={$(join(s_f,","))};
+     if (no_post){
+        return content
+    } else{   
+     return app.xhr(content, url, method, async, success, error)}
+    }"""
 end
 
 function update_events!(vs::VueStruct;methods=[],computed=[],watch=[])

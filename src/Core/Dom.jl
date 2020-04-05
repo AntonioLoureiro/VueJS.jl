@@ -21,8 +21,8 @@ function update_template(r::VueElement)
     
     ## Only change value attr
     if haskey(r.attrs,"value") && r.value_attr!=nothing && r.value_attr!="value"
-            r.attrs[r.value_attr]=deepcopy(r.attrs["value"])
-            delete!(r.attrs,"value")
+        r.attrs[r.value_attr]=deepcopy(r.attrs["value"])
+        delete!(r.attrs,"value")
     end
     new_d=Dict{String,Any}()
     
@@ -32,11 +32,11 @@ function update_template(r::VueElement)
     ## bind attrs(: notation) linked to item
     for (k,v) in r.attrs
        if k in KNOWN_JS_EVENTS
-            new_d["@$k"]=v
+            new_d[k]=v
        elseif v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
        else
-            new_d["$k"]=v  
+            new_d[k]=v  
        end
     end
     
@@ -47,7 +47,7 @@ end
 
 function update_dom(r::VueElement)
     
-    ## Update @path@
+    ## Update @path@ and Events
     for (k,v) in r.attrs
         if k in DIRECTIVES
             r.attrs[k]=replace(v,"@path@"=>(r.path=="" ? "" : "$(r.path)."))
@@ -62,34 +62,37 @@ function update_dom(r::VueElement)
             if k in DIRECTIVES 
                 r.attrs[k]=value 
             elseif k in KNOWN_JS_EVENTS
-                r.attrs["@$k"]=value*".call($(r.path))"
+                if haskey(r.attrs,k)
+                r.attrs[k]=r.attrs[k]*";"*value*".call($(r.path));"
+                else
+                r.attrs[k]=value*".call($(r.path))"
+                end
             else
                 r.attrs[":$k"]=value
             end
             
             ### Capture Event if tgt=src otherwise double count or if value is value attr
-            if r.id*"."*k==v || r.id*".value"==v
-
-                ## And only if value attr! Others do not change on input! I Think!
-                if r.value_attr==k
-                    event=r.value_attr=="value" ? "@input" : "@change"
-                    if haskey(r.attrs,event)
-                        r.attrs[event]=r.attrs[event]*"; "*"$value= \$event;"
-                    else
-                        r.attrs[event]="$value= \$event"
-                    end
+            ## And only if value attr! Others do not change on input! I Think!
+            if r.value_attr==k
+                event=r.value_attr=="value" ? "input" : "change"
+                if haskey(r.attrs,event)
+                    r.attrs[event]="$value= \$event;"*r.attrs[event]*";"
+                else
+                    r.attrs[event]="$value= \$event"
                 end
             end
+
+                        
             ### delete attribute from dom
-            if haskey(r.attrs,k) && !(k in DIRECTIVES)
+            if haskey(r.attrs,k) && !(k in DIRECTIVES || k in KNOWN_JS_EVENTS)
                 delete!(r.attrs,k)
             end
         end
+        
     else
        r=update_template(r)
     end
 
-    
     return r
 end
 
@@ -108,9 +111,7 @@ function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
     if vuel.render_func!=nothing && prevent_render_func==false
        return vuel.render_func(vuel)
     end
-    
-    
-    
+       
     vuel=update_dom(vuel)
         
     child=nothing
@@ -187,8 +188,13 @@ end
 
 function dom(r::VueJS.VueHolder;opts=Opts())
     
+    m_cols=r.elements isa Array ? maximum(max_cols.(dom(r.elements))) : maximum(max_cols(dom(r.elements)))
+    m_cols>12 ? m_cols=12 : nothing
+
+    r.cols=m_cols
+    
     if r.render_func==nothing
-        return HtmlElement(r.tag,r.attrs,r.cols,map(x->deepcopy(dom(x)),r.elements))
+        return HtmlElement(r.tag,r.attrs,r.cols,deepcopy(dom(r.elements)))
     else
         return r.render_func(r)
     end
@@ -213,18 +219,15 @@ function dom(arr::Array;opts=Opts())
         
         grid_class=opts.rows ? "v-row" : "v-col"
 
-        ## one row only must have a single col
         domvalue=(opts.rows && typeof(r) in [VueHolder,VueElement,HtmlElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
-        
-        ## New Element
         new_el=HtmlElement(grid_class,Dict(),domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue),domvalue)
-        
+
         if ((i!=1 && i_rows[i-1]) || (opts.rows)) && append
             append!(arr_dom,domvalue)
         else
             push!(arr_dom,new_el)
         end
-
+            
     push!(i_rows,opts.rows)
     end
     update_cols!(arr_dom)

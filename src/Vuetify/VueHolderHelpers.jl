@@ -26,7 +26,11 @@ function bar(elements::Vector;kwargs...)
     attrs=Dict("color"=>"dark-v accent-4","dense"=>true,"dark"=>true,"clipped-left"=>true)
     merge!(attrs,real_attrs)
     
-   return VueHolder("v-app-bar",attrs,elements,nothing,nothing)
+    vh=VueHolder("v-app-bar",attrs,elements,nothing,nothing)
+    
+    vh.render_func=(x)->HtmlElement(x.tag,x.attrs,x.cols,map(e->deepcopy(dom(e)),x.elements))
+    
+   return vh
     
 end
 

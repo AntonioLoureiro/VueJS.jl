@@ -44,15 +44,13 @@ function htmlstring(page_inst::Page)
         else
             
             if v isa VueHolder
-                vh_name=vue_escape(k)
-                merge!(app_state,update_data!(v,nothing,vh_name))
-                v=element_path(v,[vh_name])
+                vs=VueStruct("",[VueStruct(vue_escape(k),[v])])
             else
-                merge!(app_state,VueJS.update_data!(v,nothing))         
-                v=VueJS.element_path([v],[])[1]
+                vs=VueStruct(vue_escape(k),[v])
             end
             
-            comp_el=dom(v)
+            comp_el=VueJS.dom([vs])[1].value.value            
+            merge!(app_state,vs.def_data)
             comp_el.attrs["app"]=true
             push!(components_dom,comp_el)
         end

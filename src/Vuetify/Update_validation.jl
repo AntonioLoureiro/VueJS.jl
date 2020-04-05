@@ -8,7 +8,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     
     x.value_attr=nothing
     
-    ## Has Items
+    ####### Has Items ###########
     if haskey(x.attrs,"items")
         if x.attrs["items"] isa DataFrame
             df=x.attrs["items"]
@@ -48,12 +48,37 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             end
         end
         
-        ## normalize Headers if not internally built
+        ####### normalize Headers if not internally built #########
         if !(sum(map(c->startswith(c["value"],col_pref),x.attrs["headers"]))==length(x.attrs["headers"]))
             map(c->c["value"]=trf_col(c["value"]),x.attrs["headers"])
         end
         
-        ## Col Format
+        #### Filter and create Headers Index #####
+        x.attrs["headers_idx"]=Dict()
+        for (i,r) in enumerate(x.attrs["headers"])
+            x.attrs["headers_idx"][r["text"]]=i-1 
+            x.attrs["headers"][i]["filter_value"]=nothing
+            x.attrs["headers"][i]["filter_mode"]=""
+            x.attrs["headers"][i]["filter"]="""function(value, search, item){       
+            if (this.filter_value==null){
+              return true
+            } else if (this.filter_mode=='range'){
+              return (value>=this.filter_value[0] && value<=this.filter_value[1])
+            } else if (this.filter_mode=='>='){
+              return value>=this.filter_value
+            } else if (this.filter_mode=='>'){
+              return value>this.filter_value
+            } else if (this.filter_mode=='<='){
+              return value<=this.filter_value
+            } else if (this.filter_mode=='<'){
+              return value<this.filter_value
+            } else {
+              return value==this.filter_value
+            }}"""
+        end        
+        
+        
+        ######### Col Format #########
         if haskey(x.attrs,"col_format")
             @assert x.attrs["col_format"] isa Dict "col_format should be a Dict of cols and anonymous js function!"
             new_col_format=Dict{String,Any}()
@@ -67,7 +92,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 			end
         end	
 
-        ## Col Template
+        ###### Col Template ##########
         if haskey(x.attrs,"col_template")
             @assert x.attrs["col_template"] isa Dict "col_template should be a Dict of cols and HtmlElement!"
             new_col_template=Dict{String,Any}()
@@ -78,8 +103,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             
             for (k,v) in x.attrs["col_template"]
                 value_dom=nothing
-                v isa HtmlElement ? value_dom=v : nothing
-                if v isa VueElement 
+                v isa VueJS.HtmlElement ? value_dom=v : nothing
+                if v isa VueJS.VueElement 
                     vd=deepcopy(v)
                     vd.template=true
                     value_dom=VueJS.dom(vd)

@@ -30,27 +30,8 @@ mutable struct HookEventHandler <:EventHandler
     path::String
     script::String
 end
-
             
 STANDARD_APP_EVENTS=Vector{EventHandler}()
-
-#### get_attr ####
-get_attr_script="""function (o,attr) {
-    ret={}
-    for (var k in o) {
-        if (typeof(o[k]=="object")) {
-			
-			if(attr in o[k]){
-				ret[k]=o[k][attr];
-			} else 	{
-            result=app.get_attr(o[k],attr);
-			ret[k]==undefined ? '' : ret[k]=result
-			}
-		}
-    }
-return ret
-}"""
-push!(STANDARD_APP_EVENTS,MethodsEventHandler("get_attr","",get_attr_script))
 
 ###### XHR #######
 xhr_script = """function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
@@ -97,37 +78,12 @@ col_format_script=""" function(item,format_script) {
     }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_format_script))
 
-#### Submit Method ####
-  submit_script="""function(url, method, async, success, error) {
-        
-        call_context=this==app ? app_state : this
-        var ret=app.get_attr(call_context,"value")
-        return app.xhr(JSON.stringify(ret), url, method, async, success, error)
+#### Filter DataTable ####
+filter_dt_script="""function(cont,col,value,oper){
+      idx=cont.headers_idx[col]
+      cont.headers[idx].filter_value=value
+      oper!=undefined ? cont.headers[idx].filter_mode=oper : ""
     }"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))    
 
-push!(STANDARD_APP_EVENTS,MethodsEventHandler("submit","",submit_script))
 
-#################################################################################################
-"""
-Wrapper around submit and xhr method(s)
-Allows submissions to be defined at VueElement level as an action, `onclick`, `onchange`, etc
-### Examples
-```julia
-@el(lun,"v-text-field",value="Luanda",label="Luanda",disabled=false)
-@el(opo,"v-text-field",value="Oporto",label="Oporto")
-@el(sub, "v-btn", value="Submit All", click=submit("api", context=[lun, opo],
-    success=["this.window.alert('teste');","this.console.log('teste submissão');"],
-    error=["this.console.log('teste erro');"]))
-```
-"""
-function submit(
-    url::String;
-    method::String="POST",
-    async::Bool=true,
-    success::Vector=[],
-    error::Vector=[])
-    success = size(success, 1) > 0 ? """(function(xhr) {$(join(success,""))})""" : "null"
-    error = size(error, 1) > 0 ? """(function(xhr) {$(join(error,""))})""" : "null"
-    
-    return "submit('$url', '$method', $async, $success, $error)"
-end

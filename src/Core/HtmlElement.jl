@@ -50,6 +50,7 @@ htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))
 
 function attr_render(k,v)
+    k=k in KNOWN_JS_EVENTS ? "@$k" : k
     if (v isa Bool && v) || v isa Missing  #either true or explicitly missing
         return " $k"
     elseif v isa Bool && !v   #false
@@ -86,7 +87,7 @@ vue_json(a::Array,f_mode)="[$(join(vue_json.(a,f_mode),","))]"
 function vue_json(d::Dict,f_mode::Bool=false)
     els=[]
     for (k,v) in d
-        if k in JS_FUNCTION_ATTRS || k in KNOWN_JS_EVENTS
+        if k in JS_FUNCTION_ATTRS || k in KNOWN_JS_EVENTS || k in CONTEXT_JS_FUNCTIONS
             j="\"$k\": $(vue_json(v,true))"
         else
             j="\"$k\":"*vue_json(v,f_mode==false ? false : true)

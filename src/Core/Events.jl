@@ -85,5 +85,3 @@ filter_dt_script="""function(cont,col,value,oper){
       oper!=undefined ? cont.headers[idx].filter_mode=oper : ""
     }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))    
-
-

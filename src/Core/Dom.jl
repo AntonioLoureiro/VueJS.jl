@@ -35,6 +35,12 @@ function update_template(r::VueElement)
             new_d[k]=v
        elseif v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
+            event=r.value_attr=="value" ? "input" : "change"
+            if haskey(r.attrs,event)
+                r.attrs[event]="$v= \$event;"*r.attrs[event]*";"
+            else
+                r.attrs[event]="$v= \$event"
+            end
        else
             new_d[k]=v  
        end
@@ -62,30 +68,27 @@ function update_dom(r::VueElement)
             if k in DIRECTIVES 
                 r.attrs[k]=value 
             elseif k in KNOWN_JS_EVENTS
-                if haskey(r.attrs,k)
-                r.attrs[k]=r.attrs[k]*";"*value*".call($(r.path));"
-                else
                 r.attrs[k]=value*".call($(r.path))"
-                end
             else
                 r.attrs[":$k"]=value
             end
-            
-            ### Capture Event if tgt=src otherwise double count or if value is value attr
-            ## And only if value attr! Others do not change on input! I Think!
-            if r.value_attr==k
-                event=r.value_attr=="value" ? "input" : "change"
-                if haskey(r.attrs,event)
-                    r.attrs[event]="$value= \$event;"*r.attrs[event]*";"
-                else
-                    r.attrs[event]="$value= \$event"
-                end
-            end
-
                         
             ### delete attribute from dom
             if haskey(r.attrs,k) && !(k in DIRECTIVES || k in KNOWN_JS_EVENTS)
                 delete!(r.attrs,k)
+            end
+        end
+             
+        ### Capture Event if tgt=src otherwise double count or if value is value attr
+        ## And only if value attr! Others do not change on input! I Think!
+        if haskey(r.binds,r.value_attr)
+            v=r.binds[r.value_attr]
+            value=r.path=="" ? v : r.path*"."*v
+            event=r.value_attr=="value" ? "input" : "change"
+            if haskey(r.attrs,event)
+                r.attrs[event]="$value= \$event;"*r.attrs[event]*";"
+            else
+                r.attrs[event]="$value= \$event"
             end
         end
         

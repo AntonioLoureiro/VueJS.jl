@@ -79,8 +79,7 @@ function page(
 
     cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
     cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watch=watch,hooks=hooks,cookies=cookies)
-    update_events!(cont,methods=methods,computed=computed,watch=watch,hooks=hooks)
-
+    
     return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end
 
@@ -96,6 +95,7 @@ function page(
     components=Dict{String,Any}("v-content"=>cont)
     styles=Dict()
     update_styles!(styles,cont)
+    update_events!(cont)
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()

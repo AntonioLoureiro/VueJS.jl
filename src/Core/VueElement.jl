@@ -34,41 +34,34 @@ mutable struct VueElement
     render_func::Union{Nothing,Function}
     style::Vector{String}
     template::Bool
-    child
     events::Dict{String, Any}
+    child
 end
 
+function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
+    
+    slots=get(attrs, "slots", Dict{String,String}())
+    haskey(attrs,"slots") ? delete!(attrs,"slots") : nothing
+    
+    cols=get(attrs, "cols", nothing)
+    haskey(attrs,"cols") ? delete!(attrs,"cols") : nothing
+    
+    events=Dict{String, Any}()
+    for ev in KNOWN_HOOKS
+        haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
+    end
+    
+    return VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,events,nothing)
+    
+end
 """
 Defaults to binding on `value` attribute
 """
 function VueElement(id::String, tag::String, attrs::Dict)
 
-    if haskey(attrs,"slots")
-        slots=attrs["slots"]
-        delete!(attrs,"slots")
-    else
-        slots=Dict{String,String}()
-    end
-
-    if haskey(attrs,"cols")
-        cols=attrs["cols"]
-        delete!(attrs,"cols")
-    else
-       cols=nothing
-    end
-
-    events = get(attrs, "events", Dict{String, Vector}())
-    delete!(attrs, "events")
-    for (k,v) in attrs
-        if k in vcat(KNOWN_HOOKS, KNOWN_EVT_PROPS)
-            merge!(events, Dict(k=>v))
-            delete!(attrs, k)
-        end
-    end
-
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,nothing,events)
-    update_validate!(vuel)
-
+    vuel=create_vuel_update_attrs(id,tag,attrs)
+    update_validate!(vuel) 
+    
     ## Slots
     if length(vuel.slots)!=0
         child=[]

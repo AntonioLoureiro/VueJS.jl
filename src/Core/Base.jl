@@ -8,7 +8,7 @@ HEAD=HtmlElement("head",
     #Production scripts INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"]
 DEPENDENCIES=[
                 WebDependency("https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js","js",Dict()),
-                WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),  
+                WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js","js",Dict()),
                 WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","css",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","css",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css","css",Dict()),
@@ -18,19 +18,35 @@ DEPENDENCIES=[
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","js",Dict()),
                 WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js","js",Dict("HotTable"=>"Handsontable.vue.HotTable")),
                 WebDependency("https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","js",Dict()),
-                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","js",Dict("vuechart"=>"VueECharts")),
-                
-    
-]
+                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","js",Dict("vuechart"=>"VueECharts"))
+            ]
 
-    FRAMEWORK="vuetify"
-    VIEWPORT="md"
+FRAMEWORK="vuetify"
+VIEWPORT="md"
 
 const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
 
 const KNOWN_JS_EVENTS = ["input","click", "mouseover", "mouseenter", "change"]
 const CONTEXT_JS_FUNCTIONS=["submit"]
 const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
+
+const KNOWN_HOOKS = [
+    "beforeCreate",
+    "created",
+    "beforeMount",
+    "mounted",
+    "beforeUpdate",
+    "updated",
+    "beforeDestroy",
+    "destroyed",
+    "activated",
+    "deactivated"]
+
+const KNOWN_EVT_PROPS = [
+    "methods",
+    "computed",
+    "watch"
+]
 
 ## Dom Render Opts
 mutable struct Opts
@@ -68,13 +84,13 @@ function library(s::String,kind::String,d::Dict)
     return VueJS.WebDependency(s,kind,Dict())
 end
 
-function libraries!(a::Vector)    
+function libraries!(a::Vector)
     deps_arr=[]
     for r in a
         r isa String ? push!(deps_arr,library(r)) : nothing
         r isa Tuple ? push!(deps_arr,library(r...)) : nothing
     end
-    
+
     global DEPENDENCIES=deps_arr
     return nothing
 end
@@ -85,7 +101,7 @@ htmlTypes=Union{Nothing,String,HtmlElement,VueElement,VueStruct,VueJS.VueHolder}
 function assert_html_types(v::Vector)
     for r in v
         if r isa Vector
-           assert_html_types(r) 
+           assert_html_types(r)
         else
             @assert r isa htmlTypes "$r is not an acceptable HtmlType"
         end

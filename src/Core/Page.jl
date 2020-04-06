@@ -4,27 +4,6 @@ struct WebDependency
     components::Dict{String,String}
 end
 
-"""
-```julia
-@el(example,"v-text-field",value="Example Value",label="Example label",rules=["v => v.length >= 8 || 'Min 8 characters'"])
-body=HtmlElement("body",
-        HtmlElement("div",Dict("id"=>"app"),
-            HtmlElement("v-app",
-                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
-
-
-page_inst=Page(
-        [],
-        INCLUDE_STYLES,
-        body,
-        "")
-
-htmlpage=HtmlElement("html",[page_inst.head,page_inst.body])
-
-@show htmlstring([htmlpage])
-```
-
-"""
 mutable struct Page
     dependencies::Vector{WebDependency}
     components::Dict{String,Any}
@@ -87,7 +66,8 @@ function page(
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),
     computed=Dict{String,Any}(),
-    watched=Dict{String,Any}(),
+    watch=Dict{String,Any}(),
+    hooks=Dict{String,Any}(),
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
@@ -98,7 +78,8 @@ function page(
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watched=watched,cookies=cookies)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watch=watch,hooks=hooks,cookies=cookies)
+    update_events!(cont,methods=methods,computed=computed,watch=watch,hooks=hooks)
 
     return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end

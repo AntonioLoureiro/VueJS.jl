@@ -1,6 +1,6 @@
 module VueJS
 
-using JSON,Dates,DataFrames,HTTP,Namtso
+using JSON,Dates,DataFrames,HTTP,Main.Namtso
 
 export VueStruct,WebDependency,html
 export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog

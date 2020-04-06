@@ -100,12 +100,14 @@ function get_events(vs::Array,scope="")
     evs=Vector{EventHandler}()
     for r in vs
         if r isa VueStruct
-        scope=(scope=="" ? r.id : scope*"."*r.id)
+            append!(evs,get_events(r,(scope=="" ? r.id : scope*"."*r.id)))
+        else
+            append!(evs,get_events(r,scope))
         end
-        append!(evs,get_events(r,scope))
     end
     return evs
 end
+
 function get_events(vs::VueStruct,scope="")
     events=deepcopy(vs.events)          
     map(x->x.path=scope,events)

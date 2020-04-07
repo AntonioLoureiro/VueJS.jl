@@ -9,28 +9,58 @@ mutable struct MethodsEventHandler <:EventHandlerWithID
     path::String
     script::String
 end
+function MethodsEventHandler(id::String, path::String, script::Tuple{String, Vector})
+    args = join(last(script), ",")
+    script = "function($args){$(first(script))}"
+    return MethodsEventHandler(id, path, script)
+end
 
 mutable struct ComputedEventHandler <:EventHandlerIDWithPath
 
-    id::String  
+    id::String
     path::String
     script::String
+	function ComputedEventHandler(id, path, script::String)
+		if occursin("get", script) || occursin("set", script) &&
+			(!startswith(script,"{") && !endswith(script, "}"))
+	        script = "{$script}" #add braces for correct get, set structure
+		end
+		new(id, path, script)
+	end
+end
+function ComputedEventHandler(id::String, path::String, script::Tuple{String, Dict})
+    props = join(["$k : $v" for (k,v) in last(script)])
+    script = first(script)
+    if occursin("get", script) || occursin("set", script) #script has a get() set() structure
+        script = props != "" ? "$script, $props" : "$script"
+    end
+    return ComputedEventHandler(id, path, script)
 end
 
 mutable struct WatchEventHandler <:EventHandlerIDWithPath
 
-    id::String  
+    id::String
     path::String
     script::String
 end
+function WatchEventHandler(id::String, path::String, script::Tuple{String, Vector, Dict})
+    args = join(handler.script[2], ",")
+    props = join["$k : $v" for (k,v) in last(script)]
+    script = "function($args){$(first(script))}"
+    script = (props != "" ? "handler : $script, $props" : script)
+    return WatchEventHandler(id, path, script)
+end
 
 mutable struct HookEventHandler <:EventHandler
-    
+
     kind::String
     path::String
     script::String
 end
-            
+
+evt_map = Dict("computed"=>ComputedEventHandler, "methods"=>MethodsEventHandler, "watch"=>WatchEventHandler)
+
+###############################################################
 STANDARD_APP_EVENTS=Vector{EventHandler}()
 
 ###### XHR #######
@@ -84,4 +114,35 @@ filter_dt_script="""function(cont,col,value,oper){
       cont.headers[idx].filter_value=value
       oper!=undefined ? cont.headers[idx].filter_mode=oper : ""
     }"""
-push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))    
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))
+
+#get cookie value by cookie name
+function_script="""
+ function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("getcookie","",function_script))
+
+#set a cookie
+function_script = """
+function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("setcookie","",function_script))

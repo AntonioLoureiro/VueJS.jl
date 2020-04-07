@@ -33,9 +33,8 @@ function htmlstring(page_inst::Page)
             push!(comp_script,"vuetify: vuetify")
             push!(comp_script,"components:components")
             push!(comp_script,"data: app_state")
+            push!(comp_script, v.scripts)
             merge!(app_state,v.def_data)
-            
-            push!(comp_script, events_script(v))
 
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
@@ -49,6 +48,7 @@ function htmlstring(page_inst::Page)
                 vs=VueStruct(vue_escape(k),[v])
             end
             
+            update_events!(vs)
             comp_el=VueJS.dom([vs])[1].value.value            
             merge!(app_state,vs.def_data)
             comp_el.attrs["app"]=true

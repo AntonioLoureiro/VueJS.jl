@@ -25,6 +25,7 @@ mutable struct VueElement
     id::String
     tag::String
     attrs::Dict{String, Any}
+    no_dom_attrs::Dict{String, Any}
     path::String
     binds::Dict{String,String}
     value_attr::Union{Nothing,String}
@@ -34,37 +35,38 @@ mutable struct VueElement
     render_func::Union{Nothing,Function}
     style::Vector{String}
     template::Bool
+    events::Dict{String, Any}
     child
 end
 
+function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
+    
+    slots=get(attrs, "slots", Dict{String,String}())
+    haskey(attrs,"slots") ? delete!(attrs,"slots") : nothing
+    
+    cols=get(attrs, "cols", nothing)
+    haskey(attrs,"cols") ? delete!(attrs,"cols") : nothing
+    
+    events=Dict{String, Any}()
+    for ev in KNOWN_HOOKS
+        haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
+    end
+    
+    ## No Dom attrs
+    no_dom_attrs=Dict{String, Any}()
+    no_dom_attrs["storage"]=get(attrs, "storage", false)
+    haskey(attrs,"storage") ? delete!(attrs,"storage") : nothing
+    
+    return VueElement(id,tag,attrs,no_dom_attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,events,nothing)
+    
+end
 """
 Defaults to binding on `value` attribute
-
-### Examples
-```julia
-el = VueElement("e1", "v-text-field", value="Empty", label="Description")
-@show el
-el = VueElement("e1", HtmlElement("v-text-field", Dict{String,Any}("label"=>"Description","value"=>"Empty"), 3, ""), "", Dict("value"=>"e1.value"), "value", Dict{String,Any}(), 3)
-```
 """
 function VueElement(id::String, tag::String, attrs::Dict)
 
-    if haskey(attrs,"slots")
-        slots=attrs["slots"]
-        delete!(attrs,"slots")
-    else
-        slots=Dict{String,String}()
-    end
-
-    if haskey(attrs,"cols")
-        cols=attrs["cols"]
-        delete!(attrs,"cols")
-    else
-       cols=nothing
-    end
- 
-    vuel=VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,nothing)
-    update_validate!(vuel)
+    vuel=create_vuel_update_attrs(id,tag,attrs)
+    update_validate!(vuel) 
     
     ## Slots
     if length(vuel.slots)!=0
@@ -74,7 +76,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
         end
         vuel.child=child
     end
-    
+
     return vuel
 end
 
@@ -86,7 +88,7 @@ function update_validate!(vuel::VueElement)
     if haskey(UPDATE_VALIDATION, tag)
         UPDATE_VALIDATION[tag](vuel)
     end
-    
+
     ## Binding
     for (k,v) in vuel.attrs
        ## Bindig of non html accepted values => Arrays/Dicts or KNOWN_JS_EVENTS
@@ -121,9 +123,9 @@ macro el(varname,tag,args...)
 
     @assert varname isa Symbol "1st arg should be Variable name"
     tag_type=typeof(tag)
-    
+
     @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
-    
+
         newargs=[]
         for r in (args)
            @assert r.head==:(=) "You should input args with = indication e.g. a=1"
@@ -143,18 +145,18 @@ macro el(varname,tag,args...)
             end
         end
         newargs="Dict($(join(newargs,",")))"
-    
+
     ## Special Building Condition (EChart)
     if tag_type==Symbol
-        
+
         newexpr=(Meta.parse("""VueJS.VueElement("$(string(varname))",$(tag),$newargs)"""))
         return quote
             $(esc(varname))=$(esc(newexpr))
         end
-        
-    ## Normal condition    
-    elseif tag_type==String 
-        
+
+    ## Normal condition
+    elseif tag_type==String
+
         newexpr=(Meta.parse("""VueJS.VueElement("$(string(varname))","$(string(tag))",$newargs)"""))
         return quote
             $(esc(varname))=$(esc(newexpr))

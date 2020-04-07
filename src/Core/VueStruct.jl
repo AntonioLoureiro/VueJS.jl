@@ -111,7 +111,7 @@ end
 function get_events(vs::Array,scope="")
     evs=Vector{EventHandler}()
     for r in vs
-		if r isa VueStruct
+        if r isa VueStruct
             append!(evs,get_events(r,(scope=="" ? r.id : scope*"."*r.id)))
         else
             append!(evs,get_events(r,scope))
@@ -119,6 +119,7 @@ function get_events(vs::Array,scope="")
     end
     return evs
 end
+
 function get_events(vs::VueStruct,scope="")
     
     events=create_events(vs)

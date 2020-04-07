@@ -25,6 +25,7 @@ mutable struct VueElement
     id::String
     tag::String
     attrs::Dict{String, Any}
+    no_dom_attrs::Dict{String, Any}
     path::String
     binds::Dict{String,String}
     value_attr::Union{Nothing,String}
@@ -51,7 +52,12 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
     end
     
-    return VueElement(id,tag,attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,events,nothing)
+    ## No Dom attrs
+    no_dom_attrs=Dict{String, Any}()
+    no_dom_attrs["storage"]=get(attrs, "storage", false)
+    haskey(attrs,"storage") ? delete!(attrs,"storage") : nothing
+    
+    return VueElement(id,tag,attrs,no_dom_attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,events,nothing)
     
 end
 """

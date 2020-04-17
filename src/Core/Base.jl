@@ -22,7 +22,6 @@ DEPENDENCIES=[
             ]
 
 FRAMEWORK="vuetify"
-VIEWPORT="md"
 
 const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
 
@@ -51,9 +50,9 @@ const KNOWN_EVT_PROPS = [
 ## Dom Render Opts
 mutable struct Opts
     rows::Bool
-    closure_funcs::Vector{String}
+    attrs::Dict{String,Any}
 end
-Opts()=Opts(true,[])
+const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")))
 
 
 LIBRARY_RULES =

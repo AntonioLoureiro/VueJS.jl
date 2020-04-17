@@ -42,7 +42,11 @@ function update_data!(el::VueElement,datavalue)
         def_data[new_k]=real_data
     end
     el.data=def_data
-    return Dict(el.id=>def_data)
+    if el.id==""
+        return Dict() 
+    else
+        return Dict(el.id=>def_data)
+    end
 end
 
 function update_data!(arr::Array,datavalue::Dict)

@@ -2,9 +2,9 @@ module VueJS
 
 using JSON,Dates,DataFrames,HTTP,Namtso
 
-export VueStruct,WebDependency,html
+export VueStruct,WebDependency,html,spacer
 export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog
-export LIBRARY_RULES
+export LIBRARY_RULES,PAGE_OPTIONS
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

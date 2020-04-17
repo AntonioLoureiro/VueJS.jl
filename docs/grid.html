@@ -182,10 +182,47 @@ pre.hljl > span.hljl-gt { }
 </span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r7</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-slider&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-ni'>20</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Slider 7&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
 </span><span class='hljl-nf'>page</span><span class='hljl-p'>([</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-n'>r2</span><span class='hljl-p'>,[</span><span class='hljl-n'>r3</span><span class='hljl-p'>,</span><span class='hljl-n'>r4</span><span class='hljl-p'>,</span><span class='hljl-n'>r5</span><span class='hljl-p'>],</span><span class='hljl-n'>r6</span><span class='hljl-p'>,</span><span class='hljl-n'>r7</span><span class='hljl-p'>])</span>
 </pre>
-<v-row><v-col md="3" ><v-text-field label="R1"  :disabled="r1.disabled"  :value="r1.value"  @input="r1.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :disabled="r2.disabled"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R3"  :disabled="r3.disabled"  :value="r3.value"  @input="r3.value= $event" ></v-text-field></v-col><v-col md="3" ><v-text-field label="R4"  :disabled="r4.disabled"  :value="r4.value"  @input="r4.value= $event" ></v-text-field></v-col><v-col md="3" ><v-select label="R5"  :value="r5.value"  @input="r5.value= $event"  :items="r5.items" ></v-select></v-col></v-row><v-row><v-col md="3" ><v-select label="R6"  :value="r6.value"  @input="r6.value= $event"  :items="r6.items" ></v-select></v-col></v-row><v-row><v-col md="3" ><v-slider label="Slider 7"  :value="r7.value"  @input="r7.value= $event" ></v-slider></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r7":{"value":20},"r1":{"disabled":true,"value":"R1 Value"},"r2":{"disabled":false,"value":"R2 Value"},"r5":{"items":["A","B"],"value":null},"r6":{"items":["A","B"],"value":null},"r3":{"disabled":false,"value":"R3 Value"},"r4":{"disabled":false,"value":"R4 Value"}}
+<v-row><v-col md="3" ><v-text-field label="R1"  :disabled="r1.disabled"  :value="r1.value"  @input="r1.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R2"  :disabled="r2.disabled"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R3"  :disabled="r3.disabled"  :value="r3.value"  @input="r3.value= $event" ></v-text-field></v-col><v-col md="3" ><v-text-field label="R4"  :disabled="r4.disabled"  :value="r4.value"  @input="r4.value= $event" ></v-text-field></v-col><v-col md="3" ><v-select label="R5"  :value="r5.value"  @input="r5.value= $event"  :items="r5.items" ></v-select></v-col></v-row><v-row><v-col md="3" ><v-select label="R6"  :value="r6.value"  @input="r6.value= $event"  :items="r6.items" ></v-select></v-col></v-row><v-row><v-col md="3" ><v-slider label="Slider 7"  :value="r7.value"  @input="r7.value= $event" ></v-slider></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"r7":{"value":20},"r1":{"disabled":true,"value":"R1 Value"},"r2":{"disabled":false,"value":"R2 Value"},"r5":{"items":["A","B"],"value":null},"submit": function(url, method, async, success, error, no_post=false) {
+     content={r7:app_state.r7.value,r1:app_state.r1.value,r2:app_state.r2.value,r5:app_state.r5.value,r6:app_state.r6.value,r3:app_state.r3.value,r4:app_state.r4.value};
+	    if (no_post) {
+	        return content
+	    } else {
+     		return app.xhr(content, url, method, async, success, error)
+		}
+    },"r6":{"items":["A","B"],"value":null},"r3":{"disabled":false,"value":"R3 Value"},"r4":{"disabled":false,"value":"R4 Value"}}
 const vuetify = new Vuetify()
 const components = {vuechart:VueECharts,VueEditor:vue2editor.components.VueEditor,HotTable:Handsontable.vue.HotTable}
-var app = new Vue({el: '#app',vuetify: vuetify,components:components,data: app_state,methods : {xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
+var app = new Vue({el: '#app',vuetify: vuetify,components:components,data: app_state,methods : {open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+},datatable_col_format :  function(item,format_script) {
+return format_script(item)
+},filter_dt : function(cont,col,value,oper){
+  idx=cont.headers_idx[col]
+  cont.headers[idx].filter_value=value
+  oper!=undefined ? cont.headers[idx].filter_mode=oper : ""
+},getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+,setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+,xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
 
 console.log(contents)
 var xhr = new XMLHttpRequest();
@@ -212,39 +249,4 @@ xhr.onreadystatechange = function() {
 }
 xhr.open(method, url, async);
 xhr.send(contents);
-},submit : function(context, url, method, async, success, error) {
-    var ret={r7:app_state.r7.value,r1:app_state.r1.value,r2:app_state.r2.value,r5:app_state.r5.value,r6:app_state.r6.value,r3:app_state.r3.value,r4:app_state.r4.value}
-     for (key of Object.keys(app)) {
-eval("var "+key+" = app."+key)
-};
-
-    var search = function(obj, arr) {
-        let result = {};
-        for(key in obj) {
-            if (arr.includes(key)) {
-                result[key] = obj[key];
-            } else if (typeof(obj[key]) === 'object') {
-                Object.assign(result, search(obj[key], arr));
-           	}
-	    }
-        return result;
-    }
-    if (context && context.length) {
-        ret = search(ret, context);
-    }
-    return xhr(JSON.stringify(ret), url, method, async, success, error)
-},open : function(url,name) {
-name = typeof name !== 'undefined' ? name : '_self';
-window.open(url,name);
-},datatable_col_format : function(item,format_script) {
-return format_script(item)
-},run_in_closure : (function(context, fn) {    
-path=context=='' ? 'app_state' : 'app_state.'+context
-for (key of Object.keys(eval(path))) {
-    eval("var "+key+" = "+path+"."+key)
-}
-
-fnstr=fn.toString();
-fnstr=fnstr.replace('()=>','');
-eval(fnstr);
-})}})</script>
+}}})</script>

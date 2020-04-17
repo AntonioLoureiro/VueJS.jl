@@ -34,13 +34,7 @@ function VueStruct(
     comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
-
-    ## Cols
-    m_cols=garr isa Array ? maximum(max_cols.(dom(garr))) : maximum(max_cols(dom(garr)))
-    m_cols>12 ? m_cols=12 : nothing
-    if comp.cols==nothing
-        comp.cols=m_cols
-    end
+        
     return comp
 end
 

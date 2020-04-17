@@ -7,6 +7,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     end
 
     x.value_attr=nothing
+    x.cols==nothing ? x.cols=4 : nothing
 
     ####### Has Items ###########
     if haskey(x.attrs,"items")
@@ -130,6 +131,12 @@ UPDATE_VALIDATION["v-switch"]=(x)->begin
     x.value_attr="input-value"
 end
 
+UPDATE_VALIDATION["v-slider"]=(x)->begin
+
+    x.cols==nothing ? x.cols=3 : nothing
+end
+
+
 UPDATE_VALIDATION["v-btn"]=(x)->begin
 
     ## attr alias of content
@@ -139,11 +146,21 @@ UPDATE_VALIDATION["v-btn"]=(x)->begin
     x.value_attr=nothing
 end
 
+UPDATE_VALIDATION["v-spacer"]=(x)->begin
+    x.value_attr=nothing
+end
+
+UPDATE_VALIDATION["v-text-field"]=(x)->begin
+    x.cols==nothing ? x.cols=2 : nothing
+end
+
 UPDATE_VALIDATION["v-select"]=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
 
+    x.cols==nothing ? x.cols=2 : nothing
+    
     if !haskey(x.attrs,"value")
         x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
     end
@@ -225,14 +242,16 @@ UPDATE_VALIDATION["v-card"]=(x)->begin
     x.render_func=y->begin
        content=[]
        for (i,r) in enumerate(y.elements)
-           push!(content,HtmlElement(y.attrs["names"][i],Dict(),12,dom(r)))
+           push!(content,HtmlElement(y.attrs["names"][i],Dict(),nothing,dom(r)))
        end
        HtmlElement("v-card",y.attrs,y.cols,content)
     end
 end
 
 UPDATE_VALIDATION["v-alert"]=(x)->begin
-
+    
+    x.cols==nothing ? x.cols=12 : nothing
+    
     ## Validations
     haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
     

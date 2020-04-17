@@ -103,11 +103,11 @@ dom_child(d;rows=true)=dom(d)
 dom_child(d::HtmlElement;rows=true)=d
 dom_child(d::String;rows=true)=d
 dom_child(a::Array;rows=true)=dom_child.(a)
-dom(d;opts=Opts())=d
-dom(d::Dict;opts=Opts())=JSON.json(d)
+dom(d;opts=PAGE_OPTIONS)=d
+dom(d::Dict;opts=PAGE_OPTIONS)=JSON.json(d)
 
 
-function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
+function dom(vuel_orig::VueElement;opts=PAGE_OPTIONS,prevent_render_func=false)
 
     vuel=deepcopy(vuel_orig)
     if vuel.render_func!=nothing && prevent_render_func==false
@@ -132,10 +132,7 @@ function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
 
     ## cols
     if vuel.cols==nothing
-        vuel.cols=3
-        cols=3
-    else
-        cols=vuel.cols
+        vuel.cols=1
     end
 
    if vuel.child!=nothing
@@ -148,61 +145,93 @@ function dom(vuel_orig::VueElement;opts=Opts(),prevent_render_func=false)
 
     child_dom=child_path(child_dom,vuel.path)
 
-   return HtmlElement(vuel.tag, vuel.attrs, cols, child_dom)
+   return HtmlElement(vuel.tag, vuel.attrs, vuel.cols, child_dom)
 end
 
+function get_cols(v::Array;rows=true)
+    if rows
+        return sum(map(x->get_cols(x,rows=rows),v))
+    else
+        return maximum(map(x->get_cols(x,rows=rows),v))
+    end
+end
 
-function max_cols(v::HtmlElement)
-
+function get_cols(v::VueJS.HtmlElement;rows=true)
+    
     if v.tag=="v-row"
-        return v.value isa Array ? sum(map(x->max_cols(x),v.value)) : max_cols(v.value)
+        return get_cols(v.value,rows=true)
     elseif v.tag=="v-col"
-        return v.value isa Array ? maximum(map(x->max_cols(x),v.value)) : max_cols(v.value)
+        return get_cols(v.value,rows=false)
     else
         return v.cols
     end
 end
 
-update_cols!(h::Array;context_cols=12)=update_cols!.(h;context_cols=context_cols)
-function update_cols!(h::HtmlElement;context_cols=12)
+
+update_cols!(h::Nothing;context_cols=12,opts=PAGE_OPTIONS)=nothing
+update_cols!(h::Array;context_cols=12,opts=PAGE_OPTIONS)=update_cols!.(h,context_cols=context_cols,opts=opts)
+function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
-        update_cols!(h.value,context_cols=context_cols)
+        h.attrs=get(opts.attrs,h.tag,Dict())  
+        update_cols!(h.value,context_cols=context_cols,opts=PAGE_OPTIONS)
     elseif h.tag=="v-col"
-        cols=h.value isa Array ? maximum(max_cols.(h.value)) : max_cols(h.value)
-        h.attrs[VIEWPORT]=Int(round(cols/context_cols*12))
-        update_cols!(h.value,context_cols=cols)
+        h.attrs=get(opts.attrs,h.tag,Dict())
+        cols=VueJS.get_cols(h.value,rows=false)
+        viewport=get(opts.attrs,"viewport","md")
+        h.attrs[viewport]=Int(round(cols/context_cols*12))
+        update_cols!(h.value,context_cols=cols,opts=opts)
+    elseif h.value isa VueJS.HtmlElement || h.value isa Array
+        update_cols!(h.value,context_cols=context_cols,opts=opts)
     end
 
     return nothing
 end
 
-dom(r::String;opts=Opts())=HtmlElement("div",Dict(),12,r)
-dom(r::HtmlElement;opts=Opts())=r
-function dom(r::VueStruct;opts=Opts())
+
+dom(r::String;opts=PAGE_OPTIONS)=HtmlElement("div",Dict(),1,r)
+dom(r::HtmlElement;opts=PAGE_OPTIONS)=r
+function dom(r::VueStruct;opts=PAGE_OPTIONS)
 
     if r.render_func!=nothing
-       return r.render_func(r)
+        domvalue=r.render_func(r)
+        
+        if domvalue isa Array
+        elseif r.cols!=nothing
+            domvalue.cols=r.cols
+        end
+        
+        return domvalue
     else
        return dom(r.grid,opts=opts)
     end
 end
 
-function dom(r::VueJS.VueHolder;opts=Opts())
+function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
 
-    m_cols=r.elements isa Array ? maximum(max_cols.(dom(r.elements))) : maximum(max_cols(dom(r.elements)))
-    m_cols>12 ? m_cols=12 : nothing
-
-    r.cols=m_cols
-
-    if r.render_func==nothing
-        return HtmlElement(r.tag,r.attrs,r.cols,deepcopy(dom(r.elements)))
+    if r.render_func!=nothing
+        domvalue=r.render_func(r)
+        if r.cols!=nothing
+            domvalue.cols=r.cols
+        elseif domvalue.cols==nothing
+            domvalue.cols=get_cols(domvalue)
+        end
+        
+        return domvalue
     else
-        return r.render_func(r)
+        
+        domvalue=deepcopy(dom(r.elements,opts=opts))
+        if r.cols!=nothing
+            cols=r.cols
+        else
+            cols=get_cols(domvalue)
+        end
+                
+        return HtmlElement(r.tag,r.attrs,cols,domvalue)
     end
 end
 
-function dom(arr::Array;opts=Opts())
+function dom(arr::Array;opts=PAGE_OPTIONS)
 
     arr_dom=[]
     i_rows=[]
@@ -220,9 +249,12 @@ function dom(arr::Array;opts=Opts())
         domvalue=dom(r,opts=new_opts)
 
         grid_class=opts.rows ? "v-row" : "v-col"
-
+        
+        ## Row with single element (1 column)
         domvalue=(opts.rows && typeof(r) in [VueHolder,VueElement,HtmlElement,String]) ? HtmlElement("v-col",Dict(),domvalue.cols,domvalue) : domvalue
-        new_el=HtmlElement(grid_class,Dict(),domvalue isa Array ? maximum(max_cols.(domvalue)) : max_cols(domvalue),domvalue)
+        
+        ### New Element with row/col
+        new_el=HtmlElement(grid_class,Dict(),get_cols(domvalue),domvalue)
 
         if ((i!=1 && i_rows[i-1]) || (opts.rows)) && append
             append!(arr_dom,domvalue)
@@ -232,7 +264,7 @@ function dom(arr::Array;opts=Opts())
 
     push!(i_rows,opts.rows)
     end
-    update_cols!(arr_dom)
+    update_cols!(arr_dom,opts=opts)
     return arr_dom
 
 end

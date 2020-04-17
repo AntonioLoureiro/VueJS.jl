@@ -1,4 +1,6 @@
 
+spacer(;cols=1,rows=1)=VueJS.VueElement("","v-spacer",Dict("cols"=>cols,"content"=>join(fill("<br>",rows-1))))
+
 function tabs(ts::Array;cols=nothing,kwargs...)
    names=[]
    elements=[]
@@ -28,7 +30,7 @@ function bar(elements::Vector;kwargs...)
     
     vh=VueHolder("v-app-bar",attrs,elements,nothing,nothing)
     
-    vh.render_func=(x)->HtmlElement(x.tag,x.attrs,x.cols,map(e->deepcopy(dom(e)),x.elements))
+    vh.render_func=(x)->HtmlElement(x.tag,x.attrs,12,map(e->deepcopy(dom(e)),x.elements))
     
    return vh
     
@@ -78,7 +80,7 @@ function dialog(id::String,elements::Vector;kwargs...)
     
     vs_dial.render_func=(x)->begin
         
-        child_dom=VueJS.dom(x.grid,opts=Opts())
+        child_dom=VueJS.dom(x.grid,opts=PAGE_OPTIONS)
         [HtmlElement("v-dialog",dial_attrs,12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
     end
     

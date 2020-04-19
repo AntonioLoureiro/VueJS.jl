@@ -50,7 +50,7 @@ htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))
 
 function attr_render(k,v)
-    k=k in KNOWN_JS_EVENTS ? "@$k" : k
+    k=is_event(k) ? "@$k" : k
     if (v isa Bool && v) || v isa Missing  #either true or explicitly missing
         return " $k"
     elseif v isa Bool && !v   #false

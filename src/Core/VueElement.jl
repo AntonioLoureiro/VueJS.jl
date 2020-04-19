@@ -132,13 +132,19 @@ macro el(varname,tag,args...)
            @assert length(r.args)==2 "You should input args with = indication e.g. a=1"
 
             if typeof(r.args[1])==Expr
-                arre=split(string(r),"=")
+                str_expr=string(r)
+                arre=split(str_expr,"=")
                 lefte=arre[1]
-                rigthe=string(r.args[2])
-                lefte="\""*replace(lefte," "=>"")*"\"=>"
-                lefte=replace(replace(lefte,"("=>""), ")"=>"") #handle cases where left side expr is similar to: a-multiple-hiphen-prop
-                righte=replace(rigthe,"quote"=>"begin",count=1)
-                push!(newargs,lefte*righte)
+                if occursin("-",lefte)  ### handle cases where left side expr is similar to: a-multiple-hiphen-prop
+                    rigthe=string(r.args[2])
+                    righte=replace(rigthe,"quote"=>"begin",count=1)
+                    lefte="\""*replace(lefte," "=>"")*"\"=>"
+                    lefte=replace(replace(lefte,"("=>""), ")"=>"") 
+                    push!(newargs,lefte*righte)
+                else  ### handle cases where left side expr is similar to: dot.key
+                    str_expr=replace("\""*string(str_expr)," ="=>"\" =>",count=1)
+                    push!(newargs,str_expr)
+                end
             else
                 e=replace("\""*string(r)," ="=>"\" =>",count=1)
                 push!(newargs,e)

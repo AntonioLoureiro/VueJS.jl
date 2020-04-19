@@ -17,6 +17,8 @@ function child_path(h::HtmlElement,path::String)
     return h
 end
 
+is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(k,"keydown")
+
 function update_template(r::VueElement)
 
     ## Only change value attr
@@ -31,7 +33,7 @@ function update_template(r::VueElement)
 
     ## bind attrs(: notation) linked to item
     for (k,v) in r.attrs
-       if k in KNOWN_JS_EVENTS
+       if is_event(k)
             new_d[k]=v
        elseif v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
@@ -66,7 +68,7 @@ function update_dom(r::VueElement)
             ## bind to target (small white list )
             if k in DIRECTIVES
                 r.attrs[k]=value
-            elseif k in KNOWN_JS_EVENTS
+            elseif is_event(k)
                 r.attrs[k]=value*".call($(r.path))"
             else
                 r.attrs[":$k"]=value

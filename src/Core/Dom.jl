@@ -174,7 +174,7 @@ function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
         h.attrs=get(opts.attrs,h.tag,Dict())  
-        update_cols!(h.value,context_cols=context_cols,opts=PAGE_OPTIONS)
+        update_cols!(h.value,context_cols=context_cols,opts=opts)
     elseif h.tag=="v-col"
         h.attrs=get(opts.attrs,h.tag,Dict())
         cols=VueJS.get_cols(h.value,rows=false)
@@ -193,6 +193,9 @@ dom(r::String;opts=PAGE_OPTIONS)=HtmlElement("div",Dict(),1,r)
 dom(r::HtmlElement;opts=PAGE_OPTIONS)=r
 function dom(r::VueStruct;opts=PAGE_OPTIONS)
 
+    opts=deepcopy(opts)
+    merge!(opts.attrs,r.attrs)
+    
     if r.render_func!=nothing
         domvalue=r.render_func(r)
         

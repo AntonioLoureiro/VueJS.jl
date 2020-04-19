@@ -3,14 +3,13 @@ mutable struct VueStruct
     id::String
     grid::Union{Array,VueHolder}
     binds::Dict{String,Any}
-    cols::Union{Nothing,Int64}
     data::Dict{String,Any}
     def_data::Dict{String,Any}
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
     styles::Dict{String,String}
-    
+    attrs::Dict{String, Any}
 end
 
 function VueStruct(
@@ -21,17 +20,16 @@ function VueStruct(
     methods=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
+    attrs=Dict{String,Any}(),
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    haskey(args,"cols") ? cols=args["cols"] : cols=nothing
 
     styles=Dict()
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),cols,data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles)
+    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
         

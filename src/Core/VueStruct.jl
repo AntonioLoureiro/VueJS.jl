@@ -32,7 +32,7 @@ function VueStruct(
     comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
     element_binds!(comp,binds=comp.binds)
     update_data!(comp,data)
-        
+    
     return comp
 end
 
@@ -288,4 +288,62 @@ function events_script(events::Vector{EventHandler})
         end
     end
     return join(els,",")
+end
+
+import Base.getindex
+import Base.setindex!
+
+function get_vue(a::Array, i::String)
+    for r in a
+       
+        if r isa Array 
+            retl=get_vue(r,i)
+            if retl!=nothing
+                return retl
+            end
+        elseif r isa VueJS.VueHolder
+            retl=get_vue(r.elements,i)
+            if retl!=nothing
+                return retl
+            end
+        elseif r isa VueJS.VueElement || r isa VueStruct
+            if r.id==i
+                return r
+            end
+        end
+    end
+    
+    return nothing
+end
+
+function Base.getindex(el::VueStruct, i::String)
+    ret=get_vue(el.grid, i::String)
+    if ret==nothing
+        return error("KeyError: key \"$i\" not found")
+    else
+        return ret
+    end
+end
+
+
+function set_vue(a::Array, v, i::String)
+    for r in a
+        if r isa Array 
+            set_vue(r,v,i)
+        elseif r isa VueJS.VueHolder
+            set_vue(r.elements,v,i)
+        elseif r isa VueJS.VueElement || r isa VueStruct
+            if r.id==i
+                Base.setindex!(r,v,i)
+            end
+        end
+    end
+    
+    return error("KeyError: key \"$i\" not found")
+end
+
+function Base.setindex!(el::VueStruct,v, i::String)
+    
+    Base.setindex!(el.grid, v,i)
+    return nothing
 end

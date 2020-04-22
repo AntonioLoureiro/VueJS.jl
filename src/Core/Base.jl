@@ -1,8 +1,8 @@
-HEAD=HtmlElement("head",
+HEAD=html("head",
     [
-    HtmlElement("meta", Dict("charset"=>"UTF-8")),
-    HtmlElement("meta", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
-    ])
+    html("meta","", Dict("charset"=>"UTF-8")),
+    html("meta","", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
+    ],Dict())
 
 
     #Production scripts INCLUDE_SCRIPTS=["https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js","https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"]

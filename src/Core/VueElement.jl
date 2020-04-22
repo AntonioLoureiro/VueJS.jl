@@ -47,6 +47,9 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     cols=get(attrs, "cols", nothing)
     haskey(attrs,"cols") ? delete!(attrs,"cols") : nothing
     
+    binds=get(attrs, "binds", Dict())
+    haskey(attrs,"binds") ? delete!(attrs,"binds") : nothing
+    
     events=Dict{String, Any}()
     for ev in KNOWN_HOOKS
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
@@ -57,7 +60,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     no_dom_attrs["storage"]=get(attrs, "storage", false)
     haskey(attrs,"storage") ? delete!(attrs,"storage") : nothing
     
-    return VueElement(id,tag,attrs,no_dom_attrs,"",Dict(), "value", Dict(), slots, cols,nothing,[],false,events,nothing)
+    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],false,events,nothing)
     
 end
 """
@@ -72,7 +75,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
     if length(vuel.slots)!=0
         child=[]
         for (k,v) in vuel.slots
-            push!(child,HtmlElement("template",Dict("v-slot:$k"=>true),dom(v)))
+            push!(child,html("template",dom(v),Dict("v-slot:$k"=>true)))
         end
         vuel.child=child
     end

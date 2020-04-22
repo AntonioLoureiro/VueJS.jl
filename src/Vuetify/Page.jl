@@ -2,16 +2,16 @@ function htmlstring(page_inst::Page)
     includes=[]
     for d in page_inst.dependencies
         if d.kind=="js"
-            push!(includes,HtmlElement("script",Dict("src"=>d.path),""))
+            push!(includes,html("script","",Dict("src"=>d.path)))
         elseif d.kind=="css"
-            push!(includes,HtmlElement("link",Dict("rel"=>"stylesheet","type"=>"text/css","href"=>d.path)))
+            push!(includes,html("link",nothing,Dict("rel"=>"stylesheet","type"=>"text/css","href"=>d.path)))
         end
     end
 
     head_dom=deepcopy(HEAD)
     append!(head_dom.value,includes)   
     
-    push!(head_dom.value,HtmlElement("style","[v-cloak] {display: none}"))
+    push!(head_dom.value,html("style","[v-cloak] {display: none}"))
         
     scripts=deepcopy(page_inst.scripts)
     push!(scripts,"const vuetify = new Vuetify()")
@@ -28,6 +28,8 @@ function htmlstring(page_inst::Page)
     for (k,v) in page_inst.components
         if k=="v-content"
             ## component script
+            update_data!(v,v.data)
+            update_events!(v)
             comp_script=[]
             push!(comp_script,"el: '#app'")
             push!(comp_script,"vuetify: vuetify")
@@ -39,7 +41,7 @@ function htmlstring(page_inst::Page)
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
             
-            push!(components_dom,HtmlElement("v-content",HtmlElement("v-container",Dict("fluid"=>true),dom(v))))
+            push!(components_dom,html("v-content",html("v-container",dom(v),Dict("fluid"=>true)),Dict()))
         else
             
             if v isa VueHolder
@@ -48,6 +50,7 @@ function htmlstring(page_inst::Page)
                 vs=VueStruct(vue_escape(k),[v])
             end
             
+            update_data!(vs,vs.data)
             update_events!(vs)
             comp_el=VueJS.dom([vs])[1].value.value            
             merge!(app_state,vs.def_data)
@@ -58,13 +61,12 @@ function htmlstring(page_inst::Page)
     
     scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
         
-    styles=HtmlElement("style",Dict("type"=>"text/css"),join([".$k {$v}" for (k,v) in page_inst.styles]))
+    styles=html("style",join([".$k {$v}" for (k,v) in page_inst.styles]),Dict("type"=>"text/css"))
     
-    body_dom=HtmlElement("body",[styles,
-                        HtmlElement("div",Dict("id"=>"app","v-cloak"=>true),
-                                 HtmlElement("v-app",components_dom))])
+    body_dom=html("body",[styles,
+                        html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
     
-    htmlpage=HtmlElement("html",[head_dom,body_dom])
+    htmlpage=html("html",[head_dom,body_dom],Dict())
     
     return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""])
 end

@@ -96,7 +96,7 @@ function page(
     components=Dict{String,Any}("v-content"=>cont)
     styles=Dict()
     update_styles!(styles,cont)
-    update_events!(cont)
+
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
     cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()

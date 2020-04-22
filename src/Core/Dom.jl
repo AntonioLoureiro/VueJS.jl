@@ -194,9 +194,7 @@ end
 dom(r::String;opts=PAGE_OPTIONS)=HtmlElement("div",Dict(),1,r)
 dom(r::HtmlElement;opts=PAGE_OPTIONS)=r
 function dom(r::VueStruct;opts=PAGE_OPTIONS)
-    
-    update_data!(r,r.data)
-    
+        
     opts=deepcopy(opts)
     merge!(opts.attrs,r.attrs)
     

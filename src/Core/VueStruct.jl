@@ -31,7 +31,6 @@ function VueStruct(
     garr=element_path(garr,scope)
     comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
     element_binds!(comp,binds=comp.binds)
-    update_data!(comp,data)
     
     return comp
 end

@@ -32,18 +32,9 @@ mutable struct HtmlElement
     cols::Union{Nothing, Int64}
     value
 end
-#=
-Shortcut constructs
-=#
-HtmlElement(tag::String, value::Union{String, Vector, HtmlElement}) = HtmlElement(tag, Dict(), nothing, value)
-HtmlElement(tag::String, attrs::Dict, value::Union{String, Array, HtmlElement}) =
-        HtmlElement(tag, attrs, nothing, value)
-HtmlElement(tag::String, attrs::Dict) = HtmlElement(tag, attrs, nothing, nothing)
 
-function html(tag::String,value::String;cols=3,kwargs...)
-    attrs=Dict(string(k)=>v for (k,v) in kwargs)
-    HtmlElement(tag,attrs,cols,value)
-end
+html(tag::String,value::Union{String,HtmlElement,Array,Nothing},attrs::Dict=Dict();cols=2)=HtmlElement(tag,attrs,cols,value)
+
 
 htmlstring(s::String)=s
 htmlstring(n::Nothing)=nothing

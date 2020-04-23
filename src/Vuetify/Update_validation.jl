@@ -105,7 +105,17 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
             for (k,v) in x.attrs["col_template"]
                 value_dom=nothing
-                v isa VueJS.HtmlElement ? value_dom=v : nothing
+                if v isa VueJS.HtmlElement
+                    value_dom=v
+                     new_d=Dict{String,Any}()
+                    for (kk,vv) in value_dom.attrs
+                        if vv isa AbstractString && occursin("item.",vv)
+                            new_d[":$kk"]=vv
+                        end
+                    end
+                    value_dom.attrs=new_d
+                end
+                
                 if v isa VueJS.VueElement
                     vd=deepcopy(v)
                     vd.template=true

@@ -28,7 +28,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict{String,Any}("value"=>trf_col(n),"text"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict{String,Any}("value"=>trf_col(n),"text"=>n,"value_orig"=>n) for n in string.(names(df))]
             end
 
             ### Default Formatting
@@ -58,7 +58,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
         x.attrs["headers_idx"]=Dict()
 		x.attrs["headers"] = convert(Vector{Dict{String, Any}}, x.attrs["headers"])
         for (i,r) in enumerate(x.attrs["headers"])
-            x.attrs["headers_idx"][r["text"]]=i-1
+            x.attrs["headers_idx"][r["value_orig"]]=i-1
             x.attrs["headers"][i]["filter_value"]=nothing
             x.attrs["headers"][i]["filter_mode"]=""
             x.attrs["headers"][i]["filter"]="""function(value, search, item){
@@ -111,6 +111,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     for (kk,vv) in value_dom.attrs
                         if vv isa AbstractString && occursin("item.",vv)
                             new_d[":$kk"]=vv
+                        else
+                            new_d[kk]=vv
                         end
                     end
                     value_dom.attrs=new_d

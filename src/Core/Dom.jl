@@ -125,6 +125,10 @@ function dom(vuel_orig::VueElement;opts=PAGE_OPTIONS,prevent_render_func=false)
             child=vuel.attrs["content"]
             delete!(vuel.attrs,"content")
         end
+        if haskey(vuel.attrs,":content")
+            child="""{{$(vuel.attrs[":content"])}}"""
+            delete!(vuel.attrs,":content")
+        end
     end
 
     ## styles

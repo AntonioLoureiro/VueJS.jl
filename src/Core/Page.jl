@@ -65,6 +65,7 @@ function page(
     binds=Dict{String,String}(),
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),
+    asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
     hooks=Dict{String,Any}(),
@@ -79,7 +80,7 @@ function page(
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,computed=computed,watch=watch,hooks=hooks,attrs=attrs)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,hooks=hooks,attrs=attrs)
     
     return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end

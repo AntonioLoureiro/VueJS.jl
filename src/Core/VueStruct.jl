@@ -18,6 +18,7 @@ function VueStruct(
     binds=Dict{String,Any}(),
     data=Dict{String,Any}(),
     methods=Dict{String,Any}(),
+    asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
     attrs=Dict{String,Any}(),
@@ -29,7 +30,7 @@ function VueStruct(
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
+    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
     element_binds!(comp,binds=comp.binds)
     
     return comp
@@ -130,7 +131,7 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,p
     for (k,v) in d
         if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==(length(values(v))-length(intersect(keys(v),CONTEXT_JS_FUNCTIONS)))
             ### Submit Function
-            push!(s_f,"$k:$path.$k.submit(url, method, async, success, error,true)")
+            push!(s_f,"$k:$path.$k.submit(url, method, async,true)")
             boiler_this!(v,methods_ids,methods_code,count=count+=1,path=path*".$k")
         elseif v isa Dict
             ### Submit Function
@@ -147,12 +148,12 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,p
             end
         end
     end
-    d["submit"]="""function(url, method, async, success, error, no_post=false) {
+    d["submit"]="""function(url, method, async, no_post=false) {
      content={$(join(s_f,","))};
 	    if (no_post) {
 	        return content
 	    } else {
-     		return app.xhr(content, url, method, async, success, error)
+     		return app.xhr(content, url, method, async)
 		}
     }"""
 end
@@ -165,6 +166,7 @@ function create_events(vs::Union{VueElement,VueStruct})
     all_events=[]
     append!(all_events, [MethodsEventHandler(k,path,v) for (k,v) in (haskey(vs.events,"methods") ? vs.events["methods"] : Dict())])
     append!(all_events, [ComputedEventHandler(k,path,v) for (k,v) in (haskey(vs.events,"computed") ? vs.events["computed"] : Dict())])
+    append!(all_events, [AsyncComputedEventHandler(k,path,v) for (k,v) in (haskey(vs.events,"asynccomputed") ? vs.events["asynccomputed"] : Dict())])
     append!(all_events, [WatchEventHandler(k,path,v) for (k,v) in (haskey(vs.events,"watch") ? vs.events["watch"] : Dict())])
     
     for ev in KNOWN_HOOKS
@@ -193,7 +195,7 @@ function update_events!(vs::VueStruct)
     append!(all_events,get_events(vs.grid))
 
     #only expose methods and computed to boiler_this!
-    methods_ids=map(x->x.id, filter(y->typeof(y) in [MethodsEventHandler,ComputedEventHandler], all_events))
+    methods_ids=map(x->x.id, filter(y->typeof(y) in [MethodsEventHandler,ComputedEventHandler,AsyncComputedEventHandler], all_events))
     methods_code=join(map(x->"var $x = app.$x;",methods_ids))
 
     boiler_this!(vs.def_data,methods_ids,methods_code)
@@ -248,6 +250,14 @@ function events_script(handlers::Vector{ComputedEventHandler})
    return "computed : {"*join(map(x->"$(x.id) : $(x.script) ", handlers),",")*"}"
 end
 
+function events_script(handlers::Vector{AsyncComputedEventHandler}) 
+    
+    for handler in handlers
+        handler.path=="" ? nothing : handler.script=replace(handler.script,"this."=>"this.$(handler.path).")
+    end
+   return "asyncComputed : {"*join(map(x->"$(x.id) : $(x.script) ", handlers),",")*"}"
+end
+
 function events_script(handlers::Vector{WatchEventHandler})
     for handler in handlers
         handler.id=handler.path=="" ? handler.id : handler.path*"."*handler.id
@@ -280,7 +290,7 @@ end
 
 function events_script(events::Vector{EventHandler})
     els=[]
-    for typ in [MethodsEventHandler,ComputedEventHandler,WatchEventHandler,HookEventHandler]
+    for typ in [MethodsEventHandler,AsyncComputedEventHandler,ComputedEventHandler,WatchEventHandler,HookEventHandler]
         ef=filter(x->x isa typ,events)
         if length(ef)!=0
             push!(els,events_script(convert(Vector{typ},ef)))

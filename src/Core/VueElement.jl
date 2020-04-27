@@ -94,6 +94,8 @@ function update_validate!(vuel::VueElement)
 
     ## Binding
     for (k,v) in vuel.attrs
+       
+       haskey(vuel.binds,k) ? continue : nothing
        ## Bindig of non html accepted values => Arrays/Dicts or KNOWN_JS_EVENTS
        if !(v isa String || v isa Date || v isa Missing) || k in KNOWN_JS_EVENTS
           if k==vuel.value_attr
@@ -105,7 +107,7 @@ function update_validate!(vuel::VueElement)
     end
 
     ## Decision was to tag as value even for the cases that it's not the value attr, better generalization and some attrs can not be used as JS vars e.g. text-input
-    if vuel.value_attr!=nothing
+    if vuel.value_attr!=nothing && !(haskey(vuel.binds,vuel.value_attr))
         vuel.binds[vuel.value_attr]=vuel.id.*".value"
     end
 

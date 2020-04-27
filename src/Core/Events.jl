@@ -37,6 +37,13 @@ function ComputedEventHandler(id::String, path::String, script::Tuple{String, Di
     return ComputedEventHandler(id, path, script)
 end
 
+mutable struct AsyncComputedEventHandler <:EventHandlerIDWithPath
+
+    id::String
+    path::String
+    script::String
+end
+
 mutable struct WatchEventHandler <:EventHandlerIDWithPath
 
     id::String
@@ -58,40 +65,38 @@ mutable struct HookEventHandler <:EventHandler
     script::String
 end
 
-evt_map = Dict("computed"=>ComputedEventHandler, "methods"=>MethodsEventHandler, "watch"=>WatchEventHandler)
+evt_map = Dict("asynccomputed"=>AsyncComputedEventHandler,"computed"=>ComputedEventHandler, "methods"=>MethodsEventHandler, "watch"=>WatchEventHandler)
 
 ###############################################################
 STANDARD_APP_EVENTS=Vector{EventHandler}()
 
 ###### XHR #######
-xhr_script = """function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
+xhr_script = """function(contents, url=window.location.pathname, method="POST", async=true) {
 
-    console.log(contents)
-    var xhr = new XMLHttpRequest();
-    if (!error) {
-        xhr.onerror = function(){console.log('Error! Request failed with status ' + xhr.status + ' ' + xhr.responseText);}
-    }
-    else if (typeof(error) === 'function') {
-        xhr.onerror = function(xhr) {error(xhr);}
-    } else {
-        xhr.onerror = function() {return error;}
-    }
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            if (this.status == 200 && this.responseText) {
-                if (success) {
-                    return typeof(success) === 'function' ? success(xhr) : success
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
                 } else {
-                    console.log(this.responseText);
-                }
-            } else {
-                xhr.onerror;
-            }
-        }
-    }
-    xhr.open(method, url, async);
-    xhr.send(contents);
-    }"""
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}"""
+
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("xhr","",xhr_script))
 
 ##### Open Method #####

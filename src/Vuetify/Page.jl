@@ -9,11 +9,13 @@ function htmlstring(page_inst::Page)
     end
 
     head_dom=deepcopy(HEAD)
+    
     append!(head_dom.value,includes)   
     
     push!(head_dom.value,html("style","[v-cloak] {display: none}"))
         
     scripts=deepcopy(page_inst.scripts)
+        
     push!(scripts,"const vuetify = new Vuetify()")
     components=Dict{String,String}()
     for d in page_inst.dependencies
@@ -65,7 +67,7 @@ function htmlstring(page_inst::Page)
     
     body_dom=html("body",[styles,
                         html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
-    
+        
     htmlpage=html("html",[head_dom,body_dom],Dict())
     
     return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""])

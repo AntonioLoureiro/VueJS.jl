@@ -143,6 +143,11 @@ UPDATE_VALIDATION["v-switch"]=(x)->begin
     x.value_attr="input-value"
 end
 
+UPDATE_VALIDATION["v-chip"]=(x)->begin
+
+    x.value_attr=nothing
+end
+
 UPDATE_VALIDATION["v-slider"]=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing

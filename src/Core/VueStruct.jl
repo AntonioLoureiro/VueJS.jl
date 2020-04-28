@@ -153,7 +153,7 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,p
 	    if (no_post) {
 	        return content
 	    } else {
-     		return app.xhr(content, url, method, async)
+     		return app.xhr(JSON.stringify(content), url, method, async)
 		}
     }"""
 end

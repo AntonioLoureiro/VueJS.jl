@@ -1,6 +1,10 @@
 function docs()
     include("examples.jl")
+    io_readme = open("/workspace/VueJS.jl/README.md", "w")
+    println(io_readme,"# VueJS
 
+### Example Pages:")
+    
     for e in examples
 
         name=e[1] 
@@ -14,7 +18,7 @@ function docs()
 
         ioh=IOBuffer() 
         highlight(ioh, MIME("text/html"), join(deepcopy(ex_display)), Lexers.JuliaLexer)
-        ex_display=String(take!(ioh))
+        ex_display="<div v-pre>"*String(take!(ioh))*"</div>"
 
         ex[end]="global p="*ex[end]
 
@@ -28,5 +32,9 @@ function docs()
         io = open("/workspace/VueJS.jl/docs/$(name).html", "w")
         println(io, html_code)
         close(io)
+        println(io_readme, """[$name](https://antonioloureiro.github.io/VueJS.jl/$(name).html)""")
+        println(io_readme, """ 
+            """)
     end
+    close(io_readme)
 end

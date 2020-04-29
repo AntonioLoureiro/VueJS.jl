@@ -1,4 +1,4 @@
-<html><head><meta charset="UTF-8" /><meta name="viewport"  content="width=device-width, initial-scale=1" /><script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><style>[v-cloak] {display: none}</style>
+<html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue/dist/vue-handsontable.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><script src="https://unpkg.com/vue-async-computed@3.8.1" ></script><style>[v-cloak] {display: none}</style>
 <style>
 pre.hljl {
     border: 1px solid #ccc;
@@ -172,19 +172,19 @@ pre.hljl > span.hljl-gsB { }
 pre.hljl > span.hljl-gt { }
 </style>
 
-<div v-cloak id="app" ><v-app><v-content><v-container fluid><pre class='hljl'>
-<span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># Default cols=3 using a 12 cols grid</span><span class='hljl-t'>
+<div v-cloak id="app" ><v-app><v-content><v-container fluid><div v-pre><pre class='hljl'>
+<span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R1&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># Default cols=2 using a 12 cols grid</span><span class='hljl-t'>
 </span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r2</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R2 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R2&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>disabled</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>6</span><span class='hljl-p'>)</span><span class='hljl-t'>
 </span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>r3</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R3 Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;R3&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>disabled</span><span class='hljl-oB'>=</span><span class='hljl-kc'>false</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>3</span><span class='hljl-p'>)</span><span class='hljl-t'>
-</span><span class='hljl-n'>tx</span><span class='hljl-oB'>=</span><span class='hljl-nf'>html</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;p&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;Text&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>align</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;center&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># You can use normal html Elements with all the attributes, default cols=3</span><span class='hljl-t'>
+</span><span class='hljl-n'>tx</span><span class='hljl-oB'>=</span><span class='hljl-nf'>html</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;p&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;Text&quot;</span><span class='hljl-p'>,</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;align&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;center&quot;</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-cs'># You can use normal html Elements with all the attributes, default cols=2</span><span class='hljl-t'>
 </span><span class='hljl-nf'>page</span><span class='hljl-p'>([</span><span class='hljl-n'>r1</span><span class='hljl-p'>,</span><span class='hljl-n'>r2</span><span class='hljl-p'>,</span><span class='hljl-n'>r3</span><span class='hljl-p'>,</span><span class='hljl-n'>tx</span><span class='hljl-p'>])</span>
 </pre>
-<v-row><v-col md="3" ><v-text-field label="R1"  :value="r1.value"  @input="r1.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="6" ><v-text-field label="R2"  :disabled="r2.disabled"  :value="r2.value"  @input="r2.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><v-text-field label="R3"  :disabled="r3.disabled"  :value="r3.value"  @input="r3.value= $event" ></v-text-field></v-col></v-row><v-row><v-col md="3" ><p align="center" >Text</p></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"submit": function(url, method, async, success, error, no_post=false) {
+</div><v-row><v-col align-content="center"  md="2"  justify="center"  align="center" ><v-text-field label="R1"  :value="r1.value"  @input="r1.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="6"  justify="center"  align="center" ><v-text-field label="R2"  :disabled="r2.disabled"  :value="r2.value"  @input="r2.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-text-field label="R3"  :disabled="r3.disabled"  :value="r3.value"  @input="r3.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="2"  justify="center"  align="center" ><p align="center" >Text</p></v-col></v-row></v-container></v-content></v-app></div></body></html><script>const app_state = {"submit": function(url, method, async, no_post=false) {
      content={r1:app_state.r1.value,r2:app_state.r2.value,r3:app_state.r3.value};
 	    if (no_post) {
 	        return content
 	    } else {
-     		return app.xhr(content, url, method, async, success, error)
+     		return app.xhr(JSON.stringify(content), url, method, async)
 		}
     },"r1":{"value":"R1 Value"},"r2":{"disabled":true,"value":"R2 Value"},"r3":{"disabled":false,"value":"R3 Value"}}
 const vuetify = new Vuetify()
@@ -213,37 +213,37 @@ return format_script(item)
     }
     return "";
     }
-,setcookie : function(name, value, days) {
+,toNumber : function (val) {
+  var n = parseFloat(val);
+  return isNaN(n) ? val : n
+},setcookie : function(name, value, days) {
     var d = new Date;
     d.setTime(d.getTime() + 24*60*60*1000*days);
     maxage = days*86400;
     document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
 }
-,xhr : function(contents, url=window.location.pathname, method="POST", async=true, success=null, error=null) {
+,xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
 
-console.log(contents)
-var xhr = new XMLHttpRequest();
-if (!error) {
-    xhr.onerror = function(){console.log('Error! Request failed with status ' + xhr.status + ' ' + xhr.responseText);}
-}
-else if (typeof(error) === 'function') {
-    xhr.onerror = function(xhr) {error(xhr);}
-} else {
-    xhr.onerror = function() {return error;}
-}
-xhr.onreadystatechange = function() {
-    if (this.readyState == 4) {
-        if (this.status == 200 && this.responseText) {
-            if (success) {
-                return typeof(success) === 'function' ? success(xhr) : success
-            } else {
-                console.log(this.responseText);
-            }
-        } else {
-            xhr.onerror;
-        }
-    }
-}
-xhr.open(method, url, async);
-xhr.send(contents);
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
 }}})</script>

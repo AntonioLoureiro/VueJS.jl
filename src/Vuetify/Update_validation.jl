@@ -40,10 +40,12 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
                     ## Default Renders
                     if !haskey(x.attrs,"col_format") || (haskey(x.attrs,"col_format") && !haskey(x.attrs["col_format"],n))
-                        digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
-                        eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
-                        haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
-                        x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+			if nrow(df) > 0
+			    digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
+			    eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
+			    haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
+			    x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+			end
                     end
                 end
             end

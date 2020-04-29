@@ -22,12 +22,20 @@ function update_data!(el::VueHolder,datavalue,name::String)
     return Dict(name=>ret)
 end
 
+function keys_id_fix(k::String)
+    k=replace(k,"keyup."=>"keyup")
+    k=replace(k,"keydown."=>"keydown")
+    return k
+end
+
 function update_data!(el::VueElement,datavalue)
 
-    real_data=nothing
     def_data=Dict{String,Any}()
     for (k,v) in el.binds
+        real_data=nothing
         new_k=vue_escape(deepcopy(k))
+        
+        is_event(k) ? new_k=keys_id_fix(new_k) : nothing
         
         if haskey(el.attrs,k)
            real_data=deepcopy(el.attrs[k])

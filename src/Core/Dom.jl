@@ -17,8 +17,6 @@ function child_path(h::HtmlElement,path::String)
     return h
 end
 
-is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(k,"keydown")
-
 function update_template(r::VueElement)
 
     ## Only change value attr
@@ -53,6 +51,7 @@ function update_template(r::VueElement)
     return r
 end
 
+
 function update_dom(r::VueElement)
 
     ## Update @path@ and Events
@@ -70,13 +69,14 @@ function update_dom(r::VueElement)
             if k in DIRECTIVES
                 r.attrs[k]=value
             elseif is_event(k)
+                value=keys_id_fix(value)
                 r.attrs[k]=value*".call($(r.path))"
             else
                 r.attrs[":$k"]=value
             end
 
             ### delete attribute from dom
-            if haskey(r.attrs,k) && !(k in DIRECTIVES || k in KNOWN_JS_EVENTS)
+            if haskey(r.attrs,k) && !(k in DIRECTIVES || is_event(k))
                 delete!(r.attrs,k)
             end
         end

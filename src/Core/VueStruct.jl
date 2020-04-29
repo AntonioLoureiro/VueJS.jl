@@ -140,7 +140,7 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,p
             end
 
             for (kk,vv) in v
-                if kk in VueJS.KNOWN_JS_EVENTS && vv isa String
+                if is_event(kk) && vv isa String
                     v2=deepcopy(strip(vv) in vcat(methods_ids,CONTEXT_JS_FUNCTIONS) ? strip(vv)*"()" : vv)
                     d[k][kk]="function(){$data $v2}" 
                 end

@@ -83,6 +83,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
     return vuel
 end
 
+is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(k,"keydown")
 
 function update_validate!(vuel::VueElement)
 
@@ -97,7 +98,7 @@ function update_validate!(vuel::VueElement)
        
        haskey(vuel.binds,k) ? continue : nothing
        ## Bindig of non html accepted values => Arrays/Dicts or KNOWN_JS_EVENTS
-       if !(v isa String || v isa Date || v isa Missing) || k in KNOWN_JS_EVENTS
+       if !(v isa String || v isa Date || v isa Missing) || is_event(k)
           if k==vuel.value_attr
              vuel.binds[k]=vuel.id.*".value"
           else

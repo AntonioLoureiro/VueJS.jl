@@ -151,3 +151,10 @@ function(name, value, days) {
 }
 """
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("setcookie","",function_script))
+
+#toNumber
+function_script = """function (val) {
+  var n = parseFloat(val);
+  return isNaN(n) ? val : n
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))

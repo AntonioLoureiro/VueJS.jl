@@ -38,10 +38,11 @@ function update_template(r::VueElement)
        elseif v isa AbstractString && occursin("item.",v)
             new_d[":$k"]=v
             event=r.value_attr=="value" ? "input" : "change"
+            ev_expr=get(r.attrs,"type","")=="number" ? "$v= toNumber(\$event);" : "$v= \$event;"
             if haskey(r.attrs,event)
-                r.attrs[event]="$v= \$event;"*r.attrs[event]*";"
+                r.attrs[event]=ev_expr*r.attrs[event]*";"
             else
-                r.attrs[event]="$v= \$event"
+                r.attrs[event]=ev_expr
             end
        else
             new_d[k]=v
@@ -86,10 +87,11 @@ function update_dom(r::VueElement)
             v=r.binds[r.value_attr]
             value=r.path=="" ? v : r.path*"."*v
             event=r.value_attr=="value" ? "input" : "change"
+            ev_expr=get(r.attrs,"type","")=="number" ? "$v= toNumber(\$event);" : "$v= \$event;"
             if haskey(r.attrs,event)
-                r.attrs[event]="$value= \$event;"*r.attrs[event]*";"
+                r.attrs[event]=ev_expr*r.attrs[event]*";"
             else
-                r.attrs[event]="$value= \$event"
+                r.attrs[event]=ev_expr
             end
         end
 

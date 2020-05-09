@@ -34,7 +34,6 @@ mutable struct VueElement
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
     style::Vector{String}
-    template::Bool
     events::Dict{String, Any}
     child
 end
@@ -60,7 +59,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     no_dom_attrs["storage"]=get(attrs, "storage", false)
     haskey(attrs,"storage") ? delete!(attrs,"storage") : nothing
     
-    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],false,events,nothing)
+    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],events,nothing)
     
 end
 """

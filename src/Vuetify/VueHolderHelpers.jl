@@ -78,9 +78,9 @@ function dialog(id::String,elements::Vector;kwargs...)
     vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
     dial_attrs[":value"]=id*".active.value"
     
-    vs_dial.render_func=(x)->begin
+    vs_dial.render_func=(x;opts=PAGE_OPTIONS)->begin
         
-        child_dom=VueJS.dom(x.grid,opts=PAGE_OPTIONS)
+        child_dom=VueJS.dom(x.grid,opts=opts)
         [HtmlElement("v-dialog",dial_attrs,12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
     end
     

@@ -31,15 +31,15 @@ function htmlstring(page_inst::Page)
         if k=="v-content"
             ## component script
             update_data!(v,v.data)
-            update_events!(v)
+            merge!(app_state,update_events!(v))
+            
             comp_script=[]
             push!(comp_script,"el: '#app'")
             push!(comp_script,"vuetify: vuetify")
             push!(comp_script,"components:components")
             push!(comp_script,"data: app_state")
             push!(comp_script, v.scripts)
-            merge!(app_state,v.def_data)
-
+            
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
             
@@ -53,9 +53,9 @@ function htmlstring(page_inst::Page)
             end
             
             update_data!(vs,vs.data)
-            update_events!(vs)
+            merge!(app_state,update_events!(vs))
+            
             comp_el=VueJS.dom([vs])[1].value.value            
-            merge!(app_state,vs.def_data)
             comp_el.attrs["app"]=true
             push!(components_dom,comp_el)
         end

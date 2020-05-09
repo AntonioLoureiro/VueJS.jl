@@ -78,7 +78,7 @@ vue_json(a::Array,f_mode)="[$(join(vue_json.(a,f_mode),","))]"
 function vue_json(d::Dict,f_mode::Bool=false)
     els=[]
     for (k,v) in d
-        if k in JS_FUNCTION_ATTRS || is_event(k) || k in CONTEXT_JS_FUNCTIONS
+        if k in JS_FUNCTION_ATTRS || k in CONTEXT_JS_FUNCTIONS
             j="\"$k\": $(vue_json(v,true))"
         else
             j="\"$k\":"*vue_json(v,f_mode==false ? false : true)
@@ -94,6 +94,13 @@ function vue_escape(s::String)
    s=replace(s," "=>"")
    s=replace(s,"-"=>"_")
    s=replace(s,"%"=>"_perc")
-    
+   s=replace(s,"keyup."=>"keyup")
+    s=replace(s,"keydown."=>"keydown")
+    return s
+end
+
+function keys_id_fix(s::String)
+    s=replace(s,"keyup."=>"keyup")
+    s=replace(s,"keydown."=>"keydown")
     return s
 end

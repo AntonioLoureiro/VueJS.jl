@@ -121,34 +121,26 @@ function get_events(vs::VueStruct,scope="")
 end
 
 export submit
-function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,path="app_state")
-
-    context=count==1 ? "app" : "this"
-    vars=collect(keys(d))
+function boiler_this!(d::Dict;path="app_state")
+    
+    rd=deepcopy(d)
+    vars=collect(keys(rd))    
     append!(vars,CONTEXT_JS_FUNCTIONS)
-    data=join(map(x->"var $x = $context.$x;",vars))*methods_code
+            
     s_f=[]
-    for (k,v) in d
+    for (k,v) in rd
         if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==(length(values(v))-length(intersect(keys(v),CONTEXT_JS_FUNCTIONS)))
             ### Submit Function
             push!(s_f,"$k:$path.$k.submit(url, method, async,true)")
-            boiler_this!(v,methods_ids,methods_code,count=count+=1,path=path*".$k")
+            rd[k]=boiler_this!(v,path=path*".$k")
         elseif v isa Dict
             ### Submit Function
             if haskey(v,"value")
                 push!(s_f,"$k:$path.$k.value")
             end
-
-            for (kk,vv) in v
-                if is_event(kk) && vv isa String
-                    v2=deepcopy(strip(vv) in vcat(methods_ids,CONTEXT_JS_FUNCTIONS) ? strip(vv)*"()" : vv)
-                    d[k][kk]="function(){$data $v2}" 
-                end
-                
-            end
         end
     end
-    d["submit"]="""function(url, method, async, no_post=false) {
+    rd["submit"]="""function(url, method, async, no_post=false) {
      content={$(join(s_f,","))};
 	    if (no_post) {
 	        return content
@@ -156,6 +148,7 @@ function boiler_this!(d::Dict,methods_ids::Vector,methods_code::String;count=1,p
      		return app.xhr(JSON.stringify(content), url, method, async)
 		}
     }"""
+    return rd
 end
 
 
@@ -193,15 +186,11 @@ function update_events!(vs::VueStruct)
     
     ### Get all lower level events
     append!(all_events,get_events(vs.grid))
-
-    #only expose methods and computed to boiler_this!
-    methods_ids=map(x->x.id, filter(y->typeof(y) in [MethodsEventHandler,ComputedEventHandler,AsyncComputedEventHandler], all_events))
-    methods_code=join(map(x->"var $x = app.$x;",methods_ids))
-
-    boiler_this!(vs.def_data,methods_ids,methods_code)
+    
+    rd=boiler_this!(vs.def_data)
     
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))
-    return nothing
+    return rd
 end
 
 

@@ -92,7 +92,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             x.attrs["col_format"]=new_col_format
 
             for (k,v) in x.attrs["col_format"]
-				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_format(item.$k,@path@$(x.id).col_format.$k)"></div>"""
+				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_format(item.$k,$(x.id).col_format.$k)"></div>"""
 			end
         end
 
@@ -120,10 +120,11 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                     value_dom.attrs=new_d
                 end
                 
+                
+                
                 if v isa VueJS.VueElement
                     vd=deepcopy(v)
-                    vd.template=true
-                    value_dom=VueJS.dom(vd)
+                    value_dom=VueJS.dom(vd,is_child=true)
                 end
                 value_dom!=nothing ? trf_dom(value_dom) : nothing
                 value_dom!=nothing ? value_str=VueJS.htmlstring(value_dom) : nothing
@@ -187,21 +188,16 @@ end
 
 UPDATE_VALIDATION["v-list"]=(x)->begin
 
-    mark_template!(v)=nothing
-    mark_template!(v::Array)=mark_template.(v)
-    mark_template!(v::VueElement)=v.template=true
-
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
     @assert haskey(x.attrs,"item") "Vuetify List element with no arg item!"
 
     x.value_attr="items"
 
-    x.attrs["v-for"]="item in @path@$(x.id).value"
-    x.attrs["v-bind:key"]="item.id"
-
+    x.attrs["v-for"]="item in $(x.id).value"
+    x.binds["key"]="item.id"
+    
     x.child=x.attrs["item"]
-    mark_template!(x.child)
     delete!(x.attrs,"item")
 
 end
@@ -228,19 +224,20 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
     @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
     @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
 
-    x.value_attr="items"
-
+    x.value_attr=nothing
+    
     item_names=collect(keys(x.attrs["items"][1]))
     x.tag="v-list"
-    x.attrs["item"]="""<v-list-item dense link @click="open(item.href)">
-            $("icon" in item_names ? "<v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>" : "")
-            <v-list-item-content><v-list-item-title>{{ item.title }}</v-list-item-title></v-list-item-content></v-list-item"""
-
-    update_validate!(x)
+    x.attrs["item"]=html("v-list-item",[],Dict("dense"=>true,"link"=>true))
+    "icon" in item_names ? push!(x.attrs["item"].value,html("v-list-item-icon",html("v-icon","{{ item.icon }}"))) : nothing
+    "title" in item_names ? push!(x.attrs["item"].value,html("v-list-item-content",html("v-list-item-title","{{ item.title }}"))) : nothing
+    "href" in item_names ? x.attrs["item"].attrs["click"]="open(item.href)" : nothing
+            
+    VueJS.update_validate!(x)
 
     x.render_func=y->begin
 
-        dom_nav=dom(y,prevent_render_func=true)
+        dom_nav=VueJS.dom(y,prevent_render_func=true)
 
         nav_attrs=Dict()
 
@@ -248,9 +245,10 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
             haskey(y.attrs,k) ? nav_attrs[k]=y.attrs[k] : nav_attrs[k]=v
         end
 
-        HtmlElement("v-navigation-drawer",nav_attrs,12,dom_nav)
+        html("v-navigation-drawer",dom_nav,nav_attrs,cols=12)
     end
 end
+
 
 UPDATE_VALIDATION["v-card"]=(x)->begin
 

@@ -77,8 +77,14 @@ function update_data!(el::VueStruct,datavalue=Dict{String,Any}())
 
     merge!(new_data,datavalue)
     updated_data=update_data!(el.grid,new_data)
+    
     merge_def_data!(new_def_data,updated_data)
-
+    
+    ## Delete empty elements
+    for (k,v) in new_def_data
+        v==Dict() ? delete!(new_def_data,k) : nothing
+    end
+    
     el.data=new_data
     el.def_data=new_def_data
 

@@ -3,13 +3,14 @@ mutable struct VueStruct
     id::String
     grid::Union{Array,VueHolder}
     binds::Dict{String,Any}
-    data::Dict{String,Any}
-    def_data::Dict{String,Any}
+    data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
+    def_data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
     styles::Dict{String,String}
     attrs::Dict{String, Any}
+    iterable::Bool
 end
 
 function VueStruct(
@@ -17,6 +18,8 @@ function VueStruct(
     garr::Union{Array,VueHolder};
     binds=Dict{String,Any}(),
     data=Dict{String,Any}(),
+    value=Dict{String,Any}(),
+    iterable=false,
     methods=Dict{String,Any}(),
     asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
@@ -30,7 +33,12 @@ function VueStruct(
     update_styles!(styles,garr)
     scope=[]
     garr=element_path(garr,scope)
-    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs)
+    
+    ## value is alias of data
+    data==Dict() ? data=value : nothing
+    data isa Vector ? iterable=true : nothing
+    
+    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp

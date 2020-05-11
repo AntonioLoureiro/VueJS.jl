@@ -114,10 +114,9 @@ col_format_script=""" function(item,format_script) {
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_format_script))
 
 #### Filter DataTable ####
-filter_dt_script="""function(cont,col,value,oper){
+filter_dt_script="""function(cont,col,value){
       idx=cont.headers_idx[col]
       cont.headers[idx].filter_value=value
-      oper!=undefined ? cont.headers[idx].filter_mode=oper : ""
     }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))
 

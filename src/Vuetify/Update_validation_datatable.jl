@@ -14,8 +14,10 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
     end
-
-    x.value_attr=nothing
+    
+    haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
+    x.value_attr="value"
+    x.attrs["value"]=[]
     x.cols==nothing ? x.cols=4 : nothing
 
     ####### Has Items ###########
@@ -80,9 +82,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             if filt_oper!=nothing
                 @assert filt_oper in keys(dt_filter_modes) "Filter arg should be a Dict of Column Name and Filter Operator=> $(keys(dt_filter_modes))"
                 x.attrs["headers"][i]["filter_value"]=nothing
-                x.attrs["headers"][i]["filter"]=dt_filter_modes[filt_oper]
-            else
-                x.attrs["headers"][i]["filterable"]=true
+                x.attrs["headers"][i]["filter"]=dt_filter_modes[filt_oper]                
             end
         end
 

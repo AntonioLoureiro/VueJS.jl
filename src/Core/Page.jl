@@ -94,6 +94,7 @@ function page(
         bottom::Union{VueElement, Nothing}=nothing,
         kwargs...)
 
+    @assert cont.iterable==false "Cannot use a iterable VueStruct at top level, please put in inside an array (grid)"
     components=Dict{String,Any}("v-content"=>cont)
     styles=Dict()
     update_styles!(styles,cont)

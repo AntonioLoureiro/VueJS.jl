@@ -29,9 +29,8 @@ function update_data!(el::VueElement,datavalue)
         real_data=nothing
         new_k=vue_escape(deepcopy(k))
         
-        if haskey(el.attrs,k)
-           real_data=deepcopy(el.attrs[k])
-        end
+        ## get data from attr
+        haskey(el.attrs,k) ? real_data=deepcopy(el.attrs[k]) : nothing
         
         if k==el.value_attr
             new_k="value"
@@ -70,25 +69,51 @@ function update_data!(arr::Array,datavalue::Dict)
     return def_data
 end
 
-function update_data!(el::VueStruct,datavalue=Dict{String,Any}())
+function update_data!(el::VueStruct,datavalue::Union{Dict{String,T},Vector{Dict{String,T}}}) where T<:Any
 
     new_data=deepcopy(el.data)
     new_def_data=deepcopy(el.def_data)
 
-    merge!(new_data,datavalue)
-    updated_data=update_data!(el.grid,new_data)
-    
-    merge_def_data!(new_def_data,updated_data)
-    
-    ## Delete empty elements
-    for (k,v) in new_def_data
-        v==Dict() ? delete!(new_def_data,k) : nothing
-    end
-    
-    el.data=new_data
-    el.def_data=new_def_data
+    if el.iterable
+        el=deepcopy(el)
+        updated_data=Vector{Dict{String,Any}}()
+        if length(new_data)==0 
+            new_data=[Dict{String,Any}()]
+            length(datavalue)==0 ? datavalue=[Dict{String,Any}()] : nothing
+        end
+                
+        for (i,r) in enumerate(new_data)
+            merge!(new_data[i],datavalue[i])            
+            found_data=update_data!(el.grid,new_data[i])
+            push!(updated_data,found_data)
+        end
+        
+        if length(new_def_data)==length(updated_data)
+            VueJS.merge_def_data!.(new_def_data,updated_data)
+        else
+            new_def_data=updated_data
+        end
+        
+        el.data=new_data
+        el.def_data=new_def_data
+        
+        return Dict(el.id=>new_def_data)
+    else
+        merge!(new_data,datavalue)
+        updated_data=update_data!(el.grid,new_data)
 
-    return Dict(el.id=>new_def_data)
+        VueJS.merge_def_data!(new_def_data,updated_data)
+
+        ## Delete empty elements
+        for (k,v) in new_def_data
+            v==Dict() ? delete!(new_def_data,k) : nothing
+        end
+
+        el.data=new_data
+        el.def_data=new_def_data 
+        
+        return Dict(el.id=>new_def_data)
+    end
 end
 
 update_data!(vueh::VueHolder,datavalue::Dict)=update_data!(vueh.elements,datavalue)

@@ -4,7 +4,7 @@ mutable struct VueStruct
     grid::Union{Array,VueHolder}
     binds::Dict{String,Any}
     data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
-    def_data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
+    def_data::Union{Dict{String,T},Vector{Dict{String,T}}} where T<:Any
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
@@ -36,9 +36,17 @@ function VueStruct(
     
     ## value is alias of data
     data==Dict() ? data=value : nothing
-    data isa Vector ? iterable=true : nothing
+    if data isa Vector 
+        iterable=true
+        def_data=[]
+    else
+        data=convert(Dict{String,Any},data)
+        def_data=Dict{String,Any}()
+    end
     
-    comp=VueStruct(id,garr,trf_binds(binds),data,Dict{String,Any}(),Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs,iterable)
+    iterable==true ? def_data=Vector{Dict{String,Any}}() : nothing
+    
+    comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp

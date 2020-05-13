@@ -42,20 +42,25 @@ function htmlstring(page_inst::Page)
             
             comp_script="var app = new Vue({"*join(comp_script,",")*"})"
             push!(scripts,comp_script)    
-            
-            push!(components_dom,html("v-content",html("v-container",dom(v),Dict("fluid"=>true)),Dict()))
+            opts=PAGE_OPTIONS
+            opts.path="root"
+            push!(components_dom,html("v-content",html("v-container",dom(v,opts=opts),Dict("fluid"=>true)),Dict()))
         else
             
+            opts=PAGE_OPTIONS
             if v isa VueHolder
-                vs=VueStruct("",[VueStruct(vue_escape(k),[v])])
+                vsid=vue_escape(k)
+                vs=VueStruct("",[VueStruct(vsid,[v])])
+                opts.path=vsid
             else
                 vs=VueStruct(vue_escape(k),[v])
+                opts.path=""
             end
             
             update_data!(vs,vs.data)
             merge!(app_state,update_events!(vs))
             
-            comp_el=VueJS.dom([vs])[1].value.value            
+            comp_el=VueJS.dom([vs],opts=opts)[1].value.value            
             comp_el.attrs["app"]=true
             push!(components_dom,comp_el)
         end

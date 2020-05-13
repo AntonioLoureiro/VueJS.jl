@@ -13,7 +13,7 @@ end
 
 function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
 
-    ## Is Child
+    ## Is Child Explicit item. in child attrs
     if is_child
         ## Un Bind Things
         for (k,v) in r.binds
@@ -36,7 +36,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
         r.binds=Dict()
     end    
         
-    ## Update @path@ and Events
+    ## cycle through attrs
     for (k,v) in r.attrs
         if k in DIRECTIVES
             r.attrs[k]=trf_vue_expr(v,opts=opts)
@@ -46,9 +46,9 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
         end
     end
     
-    ## Bind element values to js
+    ## cycle through binds
     for (k,v) in r.binds
-        value=r.path=="" ? v : r.path*"."*v
+        value=opts.path=="" ? v : opts.path*"."*v
         ## Expressions
         if k!=r.value_attr && !(is_own_attr(r,v))
             r.attrs[":$k"]=trf_vue_expr(v,opts=opts)
@@ -62,7 +62,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
     ## Bind with Value Attr
     if haskey(r.binds,r.value_attr)
         v=r.binds[r.value_attr]
-        value=r.path=="" ? v : r.path*"."*v
+        value=opts.path=="" ? v : opts.path*"."*v
         event=r.value_attr=="value" ? "input" : "change"
         ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
         if haskey(r.attrs,event)
@@ -104,15 +104,11 @@ function dom(vuel_orig::VueElement;opts=PAGE_OPTIONS,prevent_render_func=false,i
     end
 
     ## styles
-    if length(vuel.style)!=0
-       vuel.attrs["class"]=vuel.id
-    end
-
+    length(vuel.style)!=0 ? vuel.attrs["class"]=vuel.id : nothing
+    
     ## cols
-    if vuel.cols==nothing
-        vuel.cols=1
-    end
-
+    vuel.cols==nothing ? vuel.cols=1 : nothing
+    
    if vuel.child!=nothing
        child=vuel.child
    else
@@ -165,33 +161,44 @@ function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 end
 
 
-
 function dom(r::VueStruct;opts=PAGE_OPTIONS)
         
     opts=deepcopy(opts)
     merge!(opts.attrs,r.attrs)
-    opts.path=opts.path=="root" ? "" : (opts.path=="" ? r.id : opts.path*"."*r.id)
     
-    if opts.path!=""
+    ## Paths
+    if r.iterable
+        vs_path=opts.path in ["root",""] ? r.id : opts.path*"."*r.id
+        opts.path=r.id*"_item"
         opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(collect(keys(r.def_data)),CONTEXT_JS_FUNCTIONS))
+    else
+        opts.path=opts.path=="root" ? "" : (opts.path=="" ? r.id : opts.path*"."*r.id)
+        if opts.path!=""
+            opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(collect(keys(r.def_data)),CONTEXT_JS_FUNCTIONS))
+        end
     end
     
+    ## Render
     if r.render_func!=nothing
         domvalue=r.render_func(r,opts=opts)
-        
-        if domvalue isa Array
-        elseif r.cols!=nothing
+        if !(domvalue isa Array) && r.cols!=nothing
             domvalue.cols=r.cols
         end
-        
-        return domvalue
     else
-       return dom(r.grid,opts=opts)
+       domvalue=dom(r.grid,opts=opts)
     end
+    
+    if r.iterable
+        domvalue=html("v-container",domvalue,Dict("v-for"=>"$(opts.path) in $(vs_path)","fluid"=>true))
+    end
+    
+    return domvalue
 end
 
 function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
-
+    
+    opts.path=="root" ? opts.path="" : nothing
+    
     if r.render_func!=nothing
         domvalue=r.render_func(r)
         if r.cols!=nothing
@@ -215,7 +222,9 @@ function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
 end
 
 function dom(arr::Array;opts=PAGE_OPTIONS,is_child=false)
-
+    
+    opts.path=="root" ? opts.path="" : nothing
+    
     if is_child
        return dom.(arr,opts=opts,is_child=is_child) 
     end
@@ -229,7 +238,7 @@ function dom(arr::Array;opts=PAGE_OPTIONS,is_child=false)
         ## update grid_data recursively
         append=false
         new_opts=deepcopy(opts)
-        r isa VueStruct ? append=true : nothing
+        (r isa VueStruct && r.iterable==false) ? append=true : nothing
         r isa VueStruct ? new_opts.rows=true : nothing
         r isa Array ? (opts.rows ? new_opts.rows=false : new_opts.rows=true) : nothing
 

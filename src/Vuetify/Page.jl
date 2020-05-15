@@ -31,7 +31,8 @@ function htmlstring(page_inst::Page)
         if k=="v-content"
             ## component script
             update_data!(v,v.data)
-            merge!(app_state,update_events!(v))
+            update_events!(v)
+            merge!(app_state,v.def_data)
             
             comp_script=[]
             push!(comp_script,"el: '#app'")
@@ -58,7 +59,8 @@ function htmlstring(page_inst::Page)
             end
             
             update_data!(vs,vs.data)
-            merge!(app_state,update_events!(vs))
+            update_events!(vs)
+            merge!(app_state,vs.def_data)
             
             comp_el=VueJS.dom([vs],opts=opts)[1].value.value            
             comp_el.attrs["app"]=true

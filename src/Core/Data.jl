@@ -83,7 +83,9 @@ function update_data!(el::VueStruct,datavalue::Union{Dict{String,T},Vector{Dict{
         end
                 
         for (i,r) in enumerate(new_data)
-            merge!(new_data[i],datavalue[i])            
+            if length(datavalue)>=i
+                merge!(new_data[i],datavalue[i])            
+            end
             found_data=update_data!(el.grid,new_data[i])
             push!(updated_data,found_data)
         end
@@ -115,5 +117,6 @@ function update_data!(el::VueStruct,datavalue::Union{Dict{String,T},Vector{Dict{
         return Dict(el.id=>new_def_data)
     end
 end
+
 
 update_data!(vueh::VueHolder,datavalue::Dict)=update_data!(vueh.elements,datavalue)

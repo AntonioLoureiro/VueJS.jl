@@ -24,8 +24,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
                 value=get(r.attrs,k,nothing)
             end
             if value isa AbstractString && occursin("item.",value)
-               r.attrs[":$k"]=trf_vue_expr(value,opts=opts)
-               
+               r.attrs[":$k"]=trf_vue_expr(value,opts=opts)               
                k==r.value_attr ? delete!(r.attrs,ka) : delete!(r.attrs,k)
             elseif value!=nothing
                 r.attrs[k]=value
@@ -169,8 +168,9 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     ## Paths
     if r.iterable
         vs_path=opts.path in ["root",""] ? r.id : opts.path*"."*r.id
-        opts.path=r.id*"_item"
-        opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(collect(keys(r.def_data)),CONTEXT_JS_FUNCTIONS))
+        opts.path=vs_path*"_item"
+        ks=collect(keys(get(update_data!(r,r.data),r.id,Dict())[1]))
+        opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(ks,CONTEXT_JS_FUNCTIONS))
     else
         opts.path=opts.path=="root" ? "" : (opts.path=="" ? r.id : opts.path*"."*r.id)
         if opts.path!=""

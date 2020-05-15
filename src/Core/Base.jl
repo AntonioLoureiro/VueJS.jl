@@ -126,7 +126,7 @@ end
 const JS_VAR_CHARS=vcat(Char.(48:57),Char.(65:90),Char(95),Char.(97:122))
 
 function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
-    
+        
     if opts.path==""
         return expr
     end

@@ -3,7 +3,7 @@ mutable struct VueStruct
     id::String
     grid::Union{Array,VueHolder}
     binds::Dict{String,Any}
-    data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
+    data::Union{Dict{String,T},Vector{Dict{String,T}}} where T<:Any
     def_data::Union{Dict{String,T},Vector{Dict{String,T}}} where T<:Any
     events::Dict{String, Any}
     scripts::String
@@ -137,37 +137,57 @@ function get_events(vs::VueStruct,scope="")
 end
 
 export submit
-function boiler_this!(d::Dict;path="app_state")
+
+in_context_functions!(a,fn_dict::Dict,context::String,def_data::Dict)=nothing
+in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::String,def_data::Dict)=ve.value_attr!=nothing ? push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value") : nothing
+in_context_functions!(a::VueJS.VueHolder,fn_dict::Dict,context::String,def_data::Dict)=map(x->in_context_functions!(x,fn_dict,context,def_data),a.elements)
+
+function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,def_data::Dict)
+  
+    fn_dict=Dict("submit"=>[])
     
-    rd=deepcopy(d)
-    vars=collect(keys(rd))    
-    append!(vars,CONTEXT_JS_FUNCTIONS)
-            
-    s_f=[]
-    for (k,v) in rd
-        if v isa Dict && sum(map(x->x isa Dict,collect(values(v))))==(length(values(v))-length(intersect(keys(v),CONTEXT_JS_FUNCTIONS)))
-            ### Submit Function
-            push!(s_f,"$k:$path.$k.submit(url, method, async,true)")
-            rd[k]=boiler_this!(v,path=path*".$k")
-        elseif v isa Dict
-            ### Submit Function
-            if haskey(v,"value")
-                push!(s_f,"$k:$path.$k.value")
-            end
+    if vs.iterable
+        in_context_functions!(vs.grid,fn_dict_prev,context,def_data)
+    else
+        ## update fn_dict
+        in_context_functions!(vs.grid,fn_dict,context,def_data)
+        
+        if context!="app_state"
+            push!(fn_dict_prev["submit"],"$(vs.id):$(context).submit(url, method, async,true)")
         end
-    end
-    rd["submit"]="""function(url, method, async, no_post=false) {
-     content={$(join(s_f,","))};
+        
+     ### Submit fn
+     def_data["submit"]="""function(url, method, async, no_post=false) {
+     content={$(join(fn_dict["submit"],","))};
 	    if (no_post) {
 	        return content
 	    } else {
      		return app.xhr(JSON.stringify(content), url, method, async)
 		}
     }"""
-    return rd
+    
+    vs.def_data=def_data
+       
+    end
+    
+    return nothing
 end
 
-
+function in_context_functions!(a::Vector,fn_dict::Dict,context::String,def_data::Dict)
+    for r in a
+        if r isa VueStruct
+            if r.iterable
+                fn_dict_new=Dict("submit"=>[])
+                in_context_functions!(r,fn_dict_new,"x",def_data)
+                push!(fn_dict["submit"],"""$(r.id):$(context).$(r.id).map(function(x) {  return {$(join(fn_dict_new["submit"],","))}})""")
+            else
+                in_context_functions!(r,fn_dict,context*"."*r.id,def_data[r.id])
+            end
+        else
+            in_context_functions!(r,fn_dict,context,def_data)
+        end
+    end
+end
 function create_events(vs::Union{VueElement,VueStruct})
     
     vs isa VueElement ? path=vs.path=="" ? "" : vs.path : path=""
@@ -203,10 +223,9 @@ function update_events!(vs::VueStruct)
     ### Get all lower level events
     append!(all_events,get_events(vs.grid))
     
-    rd=boiler_this!(vs.def_data)
-    
+    in_context_functions!(vs,Dict("submit"=>[]),"app_state",vs.def_data)
+        
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))
-    return rd
 end
 
 

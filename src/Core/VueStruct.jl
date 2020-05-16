@@ -3,8 +3,8 @@ mutable struct VueStruct
     id::String
     grid::Union{Array,VueHolder}
     binds::Dict{String,Any}
-    data::Union{Dict{String,T},Vector{Dict{String,T}}} where T<:Any
-    def_data::Union{Dict{String,T},Vector{Dict{String,T}}} where T<:Any
+    data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
+    def_data::Union{Dict{String,Any},Vector{Dict{String,Any}}}
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
@@ -38,6 +38,7 @@ function VueStruct(
     data==Dict() ? data=value : nothing
     if data isa Vector 
         iterable=true
+        data=convert.(Dict{String,Any},data)
         def_data=[]
     else
         data=convert(Dict{String,Any},data)

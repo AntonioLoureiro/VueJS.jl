@@ -137,7 +137,33 @@ function get_events(vs::VueStruct,scope="")
     return events
 end
 
-export submit
+export submit,add,delete
+
+get_def_obj(o)=Dict()
+function get_def_obj(vue::VueJS.VueElement)
+    rd=Dict(vue.id=>Dict())
+    
+    for (k,v) in vue.binds
+        rd[vue.id][k]=get(vue.attrs,k,nothing)
+    end
+    
+    return length(rd[vue.id])==0 ? Dict() : rd
+end
+    
+get_def_obj(a::VueJS.VueHolder)=get_def_obj(a.elements)
+function get_def_obj(a::Array)
+    rd=Dict()
+    for r in a
+        merge!(rd,get_def_obj(r))
+    end
+    return rd
+end
+
+function get_def_obj(vs::VueStruct)
+    rd=Dict()
+    merge!(rd,get_def_obj(vs.grid))
+    return rd
+end
 
 in_context_functions!(a,fn_dict::Dict,context::String,def_data::Dict)=nothing
 in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::String,def_data::Dict)=ve.value_attr!=nothing ? push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value") : nothing
@@ -149,6 +175,10 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     
     if vs.iterable
         in_context_functions!(vs.grid,fn_dict_prev,context,def_data)
+         
+         ### add fn
+        def_data[vs.id]=convert(Dict{String,Any},def_data[vs.id])
+        def_data[vs.id]["add"]="""function(){this.value.push($(JSON.json(get_def_obj(vs))))}"""
     else
         ## update fn_dict
         in_context_functions!(vs.grid,fn_dict,context,def_data)
@@ -180,7 +210,7 @@ function in_context_functions!(a::Vector,fn_dict::Dict,context::String,def_data:
             if r.iterable
                 fn_dict_new=Dict("submit"=>[])
                 in_context_functions!(r,fn_dict_new,"x",def_data)
-                push!(fn_dict["submit"],"""$(r.id):$(context).$(r.id).map(function(x) {  return {$(join(fn_dict_new["submit"],","))}})""")
+                push!(fn_dict["submit"],"""$(r.id):$(context).$(r.id).value.map(function(x) {  return {$(join(fn_dict_new["submit"],","))}})""")
             else
                 in_context_functions!(r,fn_dict,context*"."*r.id,def_data[r.id])
             end

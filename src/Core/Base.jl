@@ -28,7 +28,7 @@ FRAMEWORK="vuetify"
 const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
 
 const KNOWN_JS_EVENTS = ["input","click", "mouseover", "mouseenter", "change"]
-const CONTEXT_JS_FUNCTIONS=["submit"]
+const CONTEXT_JS_FUNCTIONS=["submit","add"]
 const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
 
 const KNOWN_HOOKS = [

@@ -169,7 +169,7 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     if r.iterable
         vs_path=opts.path in ["root",""] ? r.id : opts.path*"."*r.id
         opts.path=vs_path*"_item"
-        ks=collect(keys(get(update_data!(r,r.data),r.id,Dict())[1]))
+        ks=collect(keys(get(update_data!(r,r.data),r.id,Dict())["value"][1]))
         opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(ks,CONTEXT_JS_FUNCTIONS))
     else
         opts.path=opts.path=="root" ? "" : (opts.path=="" ? r.id : opts.path*"."*r.id)
@@ -189,7 +189,7 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     end
     
     if r.iterable
-        domvalue=html("v-container",domvalue,Dict("v-for"=>"$(opts.path) in $(vs_path)","fluid"=>true))
+        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true))
     end
     
     return domvalue

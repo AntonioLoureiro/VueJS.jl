@@ -69,7 +69,7 @@ function update_data!(arr::Array,datavalue::Dict)
     return def_data
 end
 
-function update_data!(el::VueStruct,datavalue::Union{Dict{String,T},Vector{Dict{String,T}}}) where T<:Any
+function update_data!(el::VueStruct,datavalue)
 
     new_data=deepcopy(el.data)
     new_def_data=deepcopy(el.def_data)
@@ -99,7 +99,7 @@ function update_data!(el::VueStruct,datavalue::Union{Dict{String,T},Vector{Dict{
         el.data=new_data
         el.def_data=new_def_data
         
-        return Dict(el.id=>new_def_data)
+        return Dict(el.id=>Dict("value"=>new_def_data))
     else
         merge!(new_data,datavalue)
         updated_data=update_data!(el.grid,new_data)
@@ -120,3 +120,4 @@ end
 
 
 update_data!(vueh::VueHolder,datavalue::Dict)=update_data!(vueh.elements,datavalue)
+

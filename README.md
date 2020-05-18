@@ -10,3 +10,6 @@
 [Basic_Binding](https://antonioloureiro.github.io/VueJS.jl/Basic_Binding.html)
  
 
+[Basic_Events](https://antonioloureiro.github.io/VueJS.jl/Basic_Events.html)
+ 
+

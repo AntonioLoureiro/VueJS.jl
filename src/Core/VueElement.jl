@@ -48,7 +48,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     
     binds=get(attrs, "binds", Dict())
     haskey(attrs,"binds") ? delete!(attrs,"binds") : nothing
-    
+        
     events=Dict{String, Any}()
     for ev in KNOWN_HOOKS
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
@@ -68,6 +68,11 @@ Defaults to binding on `value` attribute
 function VueElement(id::String, tag::String, attrs::Dict)
 
     vuel=create_vuel_update_attrs(id,tag,attrs)
+    if haskey(vuel.binds,"value") && vuel.value_attr!="value"
+       vuel.binds[vuel.value_attr]=vuel.binds["value"]
+       delete!(vuel.binds,"value")
+    end
+    
     update_validate!(vuel) 
     
     ## Slots

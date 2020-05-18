@@ -23,5 +23,15 @@ page([r1,r2,[r3,r4,r5],r6,r7])
 @el(chip,"v-chip",text-color="white",binds=Dict("content"=>"slider.value","color"=>"sel.value"))
 tx=html("h2","{{slider.value}}") ## You can use curly brace sintax to point plain html to element attributes
 page([slider,sel,[r1,r2,chip,tx]])
+""",
+"Basic_Events"=>"""
+@el(slider,"v-slider",value=200,min=0,max=1000,label="Use Slider",cols=4)
+@el(chip,"v-chip",text-color="white",x-large=true,binds=Dict("content"=>"slider.value","color"=>"slider.value >500 ? 'red' : 'blue'"))
+@el(chip2,"v-chip",text-color="white",color="green",content="HOVER",x-large=true,mouseover="slider.value=0;alert.content='RESET with Hover',alert.value=true")
+@el(btn_add,"v-btn",content="ADD+10",text-color="white",click="slider.value+=10")
+@el(btn_add_100,"v-btn",content="ADD+100",text-color="white",click="slider.value+=100")
+@el(alert,"v-alert",content="RESET!",type="success",text=true,cols=12,timeout=5000)
+@el(btn_toggle_reset,"v-btn",content="Reset",text-color="white",click="slider.value=0;alert.content='RESET with Click!',alert.value=true")
+page([alert,slider,[btn_add,btn_add_100,btn_toggle_reset],[chip,chip2]])
 """
 ]

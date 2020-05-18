@@ -30,7 +30,7 @@ function bar(elements::Vector;kwargs...)
     
     vh=VueHolder("v-app-bar",attrs,elements,nothing,nothing)
     
-    vh.render_func=(x)->HtmlElement(x.tag,x.attrs,12,map(e->deepcopy(dom(e)),x.elements))
+    vh.render_func=(x;opts=PAGE_OPTIONS)->HtmlElement(x.tag,x.attrs,12,map(e->deepcopy(dom(e)),x.elements))
     
    return vh
     

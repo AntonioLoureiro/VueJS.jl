@@ -47,7 +47,7 @@ function attr_render(k,v)
     elseif v isa Bool && !v   #false
         return ""
     elseif startswith(k,":")
-        return " $k=\"$(replace(vue_escape(string(v)),"\""=>"'"))\" "
+        return " $k=\"$(replace(string(v),"\""=>"'"))\" "
     else
         return " $k=\"$(replace(string(v),"\""=>"'"))\" "
     end
@@ -98,6 +98,7 @@ function vue_escape(s::String)
     s=replace(s,"keydown."=>"keydown")
     return s
 end
+
 
 function keys_id_fix(s::String)
     s=replace(s,"keyup."=>"keyup")

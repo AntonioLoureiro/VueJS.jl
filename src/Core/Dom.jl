@@ -52,8 +52,10 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
         if k!=r.value_attr && !(is_own_attr(r,v))
             r.attrs[":$k"]=trf_vue_expr(v,opts=opts)
             delete!(r.attrs,k)
+         
+        ## Own attrs
         else
-            r.attrs[":$k"]=value
+            r.attrs[":$k"]=vue_escape(value)
             delete!(r.attrs,k)
         end
     end
@@ -84,7 +86,7 @@ function dom(vuel_orig::VueElement;opts=PAGE_OPTIONS,prevent_render_func=false,i
 
     vuel=deepcopy(vuel_orig)
     if vuel.render_func!=nothing && prevent_render_func==false
-       return vuel.render_func(vuel)
+       return vuel.render_func(vuel,opts=opts)
     end
 
     vuel=update_dom(vuel,opts=opts,is_child=is_child)
@@ -200,7 +202,7 @@ function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
     opts.path=="root" ? opts.path="" : nothing
     
     if r.render_func!=nothing
-        domvalue=r.render_func(r)
+        domvalue=r.render_func(r,opts=opts)
         if r.cols!=nothing
             domvalue.cols=r.cols
         elseif domvalue.cols==nothing
@@ -211,6 +213,7 @@ function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
     else
         
         domvalue=deepcopy(dom(r.elements,opts=opts))
+        println(domvalue)
         if r.cols!=nothing
             cols=r.cols
         else

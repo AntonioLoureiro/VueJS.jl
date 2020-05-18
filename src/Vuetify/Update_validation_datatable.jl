@@ -8,8 +8,8 @@ dt_filter_modes["<"]="""function(value, search, item){if (this.filter_value==nul
 dt_filter_modes["=="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value==this.filter_value}}"""
 
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
-    col_pref="c__"
-    trf_col=x->col_pref*VueJS.vue_escape(string(x))
+    col_pref="_"
+    trf_col=x->!(string(x)[1] in JS_FIRST_VAR_CHARS) ? col_pref*VueJS.vue_escape(string(x)) : vue_escape(string(x))
     trf_dom=x->begin
     x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
@@ -63,9 +63,8 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
         end
 
         ####### normalize Headers if not internally built #########
-        if !(sum(map(c->startswith(c["value"],col_pref),x.attrs["headers"]))==length(x.attrs["headers"]))
-            map(c->c["value"]=trf_col(c["value"]),x.attrs["headers"])
-        end
+        map(c->c["value"]=trf_col(c["value"]),x.attrs["headers"])
+        
 
         #### Filter and create Headers Index #####
         x.attrs["headers_idx"]=Dict()
@@ -134,7 +133,6 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
                 v isa String ? value_str=VueJS.vue_escape(v) : nothing
 
-                value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
 
                 x.attrs["headers"][col_idx[k]]["align"]="center"

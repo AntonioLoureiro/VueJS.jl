@@ -137,8 +137,6 @@ function get_events(vs::VueStruct,scope="")
     return events
 end
 
-export submit,add,delete
-
 get_def_obj(o)=Dict()
 function get_def_obj(vue::VueJS.VueElement)
     rd=Dict(vue.id=>Dict())
@@ -169,6 +167,8 @@ in_context_functions!(a,fn_dict::Dict,context::String,def_data::Dict)=nothing
 in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::String,def_data::Dict)=ve.value_attr!=nothing ? push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value") : nothing
 in_context_functions!(a::VueJS.VueHolder,fn_dict::Dict,context::String,def_data::Dict)=map(x->in_context_functions!(x,fn_dict,context,def_data),a.elements)
 
+export submit,add,remove
+
 function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,def_data::Dict)
   
     fn_dict=Dict("submit"=>[])
@@ -176,9 +176,12 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     if vs.iterable
         in_context_functions!(vs.grid,fn_dict_prev,context,def_data)
          
-         ### add fn
         def_data[vs.id]=convert(Dict{String,Any},def_data[vs.id])
+        ### add fn
         def_data[vs.id]["add"]="""function(){this.value.push($(JSON.json(get_def_obj(vs))))}"""
+        ### delete fn
+        def_data[vs.id]["remove"]="""function(i){this.value.splice(i,1)}"""
+        
     else
         ## update fn_dict
         in_context_functions!(vs.grid,fn_dict,context,def_data)
@@ -254,8 +257,11 @@ function update_events!(vs::VueStruct)
     ### Get all lower level events
     append!(all_events,get_events(vs.grid))
     
-    in_context_functions!(vs,Dict("submit"=>[]),"app_state",vs.def_data)
-        
+    ## Only put functions for main content
+    if vs.id=="app"
+        in_context_functions!(vs,Dict("submit"=>[]),"app_state",vs.def_data)
+    end
+    
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))
 end
 

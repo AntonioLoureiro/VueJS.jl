@@ -28,7 +28,7 @@ FRAMEWORK="vuetify"
 const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
 
 const KNOWN_JS_EVENTS = ["input","click", "mouseover", "mouseenter", "change"]
-const CONTEXT_JS_FUNCTIONS=["submit","add"]
+const CONTEXT_JS_FUNCTIONS=["submit","add","remove"]
 const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
 
 const KNOWN_HOOKS = [
@@ -111,19 +111,8 @@ function assert_html_types(v::Vector)
     end
 end
 
-function update_boolean_values(x)
-    ##boolean props
-    for (k,v) in x.attrs
-        if v isa Bool
-            x.attrs["v-bind:$k"]="$v"
-            delete!(x.attrs, k)
-        elseif v isa Missing
-            x.attrs[k] = true #later `attr_render` call will remove the boolean value and keep only the key
-        end
-    end
-end
-
 const JS_VAR_CHARS=vcat(Char.(48:57),Char.(65:90),Char(95),Char.(97:122))
+const JS_FIRST_VAR_CHARS=vcat(Char.(65:90),Char(95),Char.(97:122))
 
 function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
         

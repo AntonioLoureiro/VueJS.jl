@@ -66,11 +66,11 @@ UPDATE_VALIDATION["v-tabs"]=(x)->begin
     @assert x.attrs["names"] isa Array "Vuetify tab names should be an array"
     @assert length(x.attrs["names"])==length(x.elements) "Vuetify Tabs elements should have the same number of names!"
 
-    x.render_func=y->begin
+    x.render_func=(y;opts=PAGE_OPTIONS)->begin
        content=[]
        for (i,r) in enumerate(y.elements)
            push!(content,HtmlElement("v-tab",Dict(),nothing,y.attrs["names"][i]))
-           value=r isa Array ? VueJS.dom(r) : VueJS.dom([r])
+           value=r isa Array ? VueJS.dom(r,opts=opts) : VueJS.dom([r],opts=opts)
            push!(content,HtmlElement("v-tab-item",Dict(),12,value))
        end
        HtmlElement("v-tabs",y.attrs,12,content)
@@ -93,9 +93,9 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
             
     VueJS.update_validate!(x)
 
-    x.render_func=y->begin
+    x.render_func=(y;opts=PAGE_OPTIONS)->begin
 
-        dom_nav=VueJS.dom(y,prevent_render_func=true)
+        dom_nav=VueJS.dom(y,prevent_render_func=true,opts=PAGE_OPTIONS)
 
         nav_attrs=Dict()
 
@@ -114,10 +114,10 @@ UPDATE_VALIDATION["v-card"]=(x)->begin
     @assert x.attrs["names"] isa Array "Vuetify card names should be an array"
     @assert length(x.attrs["names"])==length(x.elements) "Vuetify card elements should have the same number of names!"
 
-    x.render_func=y->begin
+    x.render_func=(y;opts=PAGE_OPTIONS)->begin
        content=[]
        for (i,r) in enumerate(y.elements)
-           push!(content,HtmlElement(y.attrs["names"][i],Dict(),nothing,dom(r)))
+           push!(content,HtmlElement(y.attrs["names"][i],Dict(),nothing,dom(r,opts=opts)))
        end
        HtmlElement("v-card",y.attrs,y.cols,content)
     end

@@ -32,7 +32,9 @@ page([slider,sel,[r1,r2,chip,tx]])
 @el(btn_add_100,"v-btn",content="ADD+100",text-color="white",click="slider.value+=100")
 @el(alert,"v-alert",content="RESET!",type="success",text=true,cols=12,timeout=5000)
 @el(btn_toggle_reset,"v-btn",content="Reset",text-color="white",click="slider.value=0;alert.content='RESET with Click!';alert.value=true")
-page([alert,slider,[btn_add,btn_add_100,btn_toggle_reset],[chip,chip2]])
+@el(sel,"v-select",items=["https://google.com","https://weather.com"],label="Select WebSite")
+@el(btn_open,"v-btn",content="OPEN",text-color="white",click="open('sel.value')")
+page([alert,slider,[btn_add,btn_add_100,btn_toggle_reset],[chip,chip2],[sel,btn_open]])
 """,
 "Basic_Datatables"=>"""
 df=DataFrame()

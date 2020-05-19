@@ -8,8 +8,8 @@ dt_filter_modes["<"]="""function(value, search, item){if (this.filter_value==nul
 dt_filter_modes["=="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value==this.filter_value}}"""
 
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
-    col_pref="_"
-    trf_col=x->!(string(x)[1] in JS_FIRST_VAR_CHARS) ? col_pref*VueJS.vue_escape(string(x)) : vue_escape(string(x))
+    col_pref="col_"
+    trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
     x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
@@ -51,12 +51,12 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
 
                     ## Default Renders
                     if !haskey(x.attrs,"col_format") || (haskey(x.attrs,"col_format") && !haskey(x.attrs["col_format"],n))
-			if nrow(df) > 0
-			    digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
-			    eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
-			    haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
-			    x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
-			end
+                        if nrow(df) > 0
+                            digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
+                            eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
+                            haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
+                            x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                        end
                     end
                 end
             end
@@ -132,9 +132,10 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 value_dom!=nothing ? value_str=VueJS.htmlstring(value_dom) : nothing
 
                 v isa String ? value_str=VueJS.vue_escape(v) : nothing
-
+                
+                value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
-
+                
                 x.attrs["headers"][col_idx[k]]["align"]="center"
 			end
             delete!(x.attrs,"col_template")

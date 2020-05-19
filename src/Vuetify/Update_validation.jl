@@ -14,6 +14,11 @@ UPDATE_VALIDATION["v-slider"]=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end
 
+UPDATE_VALIDATION["v-date-picker"]=(x)->begin
+
+    x.cols==nothing ? x.cols=3 : nothing
+end
+
 
 UPDATE_VALIDATION["v-btn"]=(x)->begin
 

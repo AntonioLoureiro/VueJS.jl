@@ -36,9 +36,9 @@ function bar(elements::Vector;kwargs...)
     
 end
 
-card(text::htmlTypes;cols=3,kwargs...)=card(text=[text],cols=cols;kwargs...) 
-card(text::Vector;cols=3,kwargs...)=card(text=text,cols=cols;kwargs...) 
-function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=nothing,cols=3,kwargs...)
+card(text::htmlTypes;cols=nothing,kwargs...)=card(text=[text],cols=cols;kwargs...) 
+card(text::Vector;cols=nothing,kwargs...)=card(text=text,cols=cols;kwargs...) 
+function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=nothing,cols=nothing,kwargs...)
     #elements=>title,subtitle,text,actions
 
     real_attrs=Dict(string(k)=>v for (k,v) in kwargs)

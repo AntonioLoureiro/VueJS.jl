@@ -116,7 +116,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                      new_d=Dict{String,Any}()
                     for (kk,vv) in value_dom.attrs
                         if vv isa AbstractString && occursin("item.",vv)
-                            new_d[":$kk"]=vv
+                            new_d[":$kk"]=vue_escape(vv)
                         else
                             new_d[kk]=vv
                         end
@@ -127,6 +127,11 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 if v isa VueJS.VueElement
                     vd=deepcopy(v)
                     value_dom=VueJS.dom(vd,is_child=true)
+                                        
+                    if value_dom.value isa HtmlElement && value_dom.value.value isa AbstractString && occursin("item.",value_dom.value.value)
+                       value_dom.value.value=vue_escape(value_dom.value.value)
+                    end
+                    
                 end
                 value_dom!=nothing ? trf_dom(value_dom) : nothing
                 value_dom!=nothing ? value_str=VueJS.htmlstring(value_dom) : nothing

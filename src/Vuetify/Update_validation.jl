@@ -121,10 +121,15 @@ UPDATE_VALIDATION["v-card"]=(x)->begin
 
     x.render_func=(y;opts=PAGE_OPTIONS)->begin
        content=[]
-       for (i,r) in enumerate(y.elements)
-           push!(content,HtmlElement(y.attrs["names"][i],Dict(),nothing,dom(r,opts=opts)))
+        cols=1
+        for (i,r) in enumerate(y.elements)
+           dom_el=VueJS.dom(r,opts=opts)
+           cols_el=VueJS.get_cols(dom_el,rows=false)
+           cols>cols_el ? nothing : cols=cols_el
+           push!(content,VueJS.HtmlElement(y.attrs["names"][i],Dict(),nothing,dom_el))
        end
-       HtmlElement("v-card",y.attrs,y.cols,content)
+        
+      VueJS.HtmlElement("v-card",y.attrs,cols,content)
     end
 end
 

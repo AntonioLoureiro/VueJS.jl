@@ -33,5 +33,23 @@ page([slider,sel,[r1,r2,chip,tx]])
 @el(alert,"v-alert",content="RESET!",type="success",text=true,cols=12,timeout=5000)
 @el(btn_toggle_reset,"v-btn",content="Reset",text-color="white",click="slider.value=0;alert.content='RESET with Click!';alert.value=true")
 page([alert,slider,[btn_add,btn_add_100,btn_toggle_reset],[chip,chip2]])
-"""
+""",
+"Basic_Datatables"=>"""
+df=DataFrame()
+df[!,:Class]=rand(["A","B","C"],10)
+df[!,:Text]=rand(["ABC","DEF","GHI"],10)
+df[!,:Value]=rand(10).*10000 .-5000
+
+@el(st,"v-text-field",label="Search")
+@el(d1,"v-data-table",items=df,binds=Dict("search"=>"st.value"),cols=3)
+
+@el(sel,"v-select",label="Filter Class",items=["","A","B","C"],change="filter_dt(d2,'Class',sel.value)")
+@el(d2,"v-data-table",items=df,filter=Dict("Class"=>"=="),cols=3)
+
+df[!,:Action]=df[!,:Text]
+@el(alert,"v-alert",type="success",text=true,cols=3)
+@el(btn,"v-btn",content="{{item.Text}}",binds=Dict("color"=>"item.Value<0 ? 'red' : 'blue'"),click="alert.content=item.Text;alert.value=true")
+@el(d3,"v-data-table",items=df,col_template=Dict("Action"=>btn),cols=3)
+
+page([[[st,d1],spacer(),[sel,d2],spacer(),[spacer(rows=4),d3,alert]]])"""
 ]

@@ -13,3 +13,6 @@
 [Basic_Events](https://antonioloureiro.github.io/VueJS.jl/Basic_Events.html)
  
 
+[Basic_Datatables](https://antonioloureiro.github.io/VueJS.jl/Basic_Datatables.html)
+ 
+

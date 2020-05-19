@@ -23,6 +23,9 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
             else
                 value=get(r.attrs,k,nothing)
             end
+            
+            value==nothing ? value=v : nothing
+            
             if value isa AbstractString && occursin("item.",value)
                r.attrs[":$k"]=trf_vue_expr(value,opts=opts)               
                k==r.value_attr ? delete!(r.attrs,ka) : delete!(r.attrs,k)
@@ -213,7 +216,7 @@ function dom(r::VueJS.VueHolder;opts=PAGE_OPTIONS)
     else
         
         domvalue=deepcopy(dom(r.elements,opts=opts))
-        println(domvalue)
+        
         if r.cols!=nothing
             cols=r.cols
         else

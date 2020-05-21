@@ -32,7 +32,8 @@ function docs()
         io = open("/workspace/VueJS.jl/docs/$(name).html", "w")
         println(io, html_code)
         close(io)
-        println(io_readme, """[$name](https://antonioloureiro.github.io/VueJS.jl/$(name).html)""")
+        name_url=replace(name," "=>"%20")
+        println(io_readme, """[$name](https://antonioloureiro.github.io/VueJS.jl/$(name_url).html)""")
         println(io_readme, """ 
             """)
     end

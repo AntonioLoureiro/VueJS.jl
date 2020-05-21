@@ -53,16 +53,14 @@ df[!,:Action]=df[!,:Text]
 @el(btn,"v-btn",content="{{item.Text}}",binds=Dict("color"=>"item.Value<0 ? 'red' : 'blue'"),click="alert.content=item.Text;alert.value=true")
 @el(d3,"v-data-table",items=df,col_template=Dict("Action"=>btn),cols=3)
 
-page([[[st,d1],spacer(),[sel,d2],spacer(),[spacer(rows=4),d3,alert]]])""",
-"Navigation and Bar"=>"""    
-@el(navel,"v-navigation-drawer",expand-on-hover=false,items=[Dict("icon"=>"mdi-apple","title"=>"Apple","href"=>"https://www.apple.com"),
-                                                            Dict("icon"=>"mdi-airplane-takeoff","title"=>"Flights","href"=>"https://www.skyscanner.com"),
-                                                            Dict("icon"=>"mdi-cart-outline","title"=>"Shopping","href"=>"https://www.amazon.com")])
-
+page([[[st,d1],spacer(),[sel,d2],spacer(),[spacer(rows=4),d3,alert]]])
+""",
+"Navigation and Bar"=>"""
+items=[Dict("icon"=>"mdi-apple","title"=>"Apple","href"=>"https://www.apple.com"),Dict("icon"=>"mdi-cart-outline","title"=>"Shopping","href"=>"https://www.amazon.com")]
+@el(navel,"v-navigation-drawer",expand-on-hover=false,items=items)
 @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('/home')")
 @el(searchb,"v-btn",icon=true,value="<v-icon>mdi-magnify</v-icon>",click="open('https://google.com')")
-barel=bar([homeb,"APP",spacer(),searchb]);
-
+barel=bar([homeb,"APP",spacer(),searchb])
 @el(icon_btn,"v-btn",content="Material Design Icons Page",click="open('https://materialdesignicons.com')")
-page([icon_btn],navigation=navel,bar=barel)"""
-]
+page([icon_btn],navigation=navel,bar=barel)
+"""]

@@ -1,18 +1,21 @@
 # VueJS
 
 ### Example Pages:
-[Elements_Basics](https://antonioloureiro.github.io/VueJS.jl/Elements_Basics.html)
+[Elements Basics](https://antonioloureiro.github.io/VueJS.jl/Elements Basics.html)
  
 
-[Basic_Grid](https://antonioloureiro.github.io/VueJS.jl/Basic_Grid.html)
+[Basic Grid](https://antonioloureiro.github.io/VueJS.jl/Basic Grid.html)
  
 
-[Basic_Binding](https://antonioloureiro.github.io/VueJS.jl/Basic_Binding.html)
+[Basic Binding](https://antonioloureiro.github.io/VueJS.jl/Basic Binding.html)
  
 
-[Basic_Events](https://antonioloureiro.github.io/VueJS.jl/Basic_Events.html)
+[Basic Events](https://antonioloureiro.github.io/VueJS.jl/Basic Events.html)
  
 
-[Basic_Datatables](https://antonioloureiro.github.io/VueJS.jl/Basic_Datatables.html)
+[Basic Datatables](https://antonioloureiro.github.io/VueJS.jl/Basic Datatables.html)
+ 
+
+[Navigation and Bar](https://antonioloureiro.github.io/VueJS.jl/Navigation and Bar.html)
  
 

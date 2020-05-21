@@ -71,9 +71,7 @@ function dialog(id::String,elements::Vector;kwargs...)
     haskey(real_attrs,"active") ? nothing : real_attrs["active"]=false
     
     ## Defaults and merge with real
-    maxwidth = get(real_attrs, "maxwidth", 600)
-    delete!(real_attrs, "maxwidth")
-    dial_attrs=Dict("persistent"=>true,"max-width"=>string(maxwidth))
+    dial_attrs=Dict("persistent"=>true,"max-width"=>"600")
     merge!(dial_attrs,real_attrs)
     
     vs_dial=VueStruct(id,elements)

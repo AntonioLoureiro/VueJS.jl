@@ -71,17 +71,18 @@ function dialog(id::String,elements::Vector;kwargs...)
     haskey(real_attrs,"active") ? nothing : real_attrs["active"]=false
     
     ## Defaults and merge with real
-    dial_attrs=Dict("persistent"=>true,"max-width"=>"600")
+    dial_attrs=Dict("persistent"=>true,"max-width"=>"2400")
     merge!(dial_attrs,real_attrs)
     
     vs_dial=VueStruct(id,elements)
+    vs_dial.attrs=Dict("v-dialog"=>dial_attrs)
     vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
     dial_attrs[":value"]=id*".active.value"
     
     vs_dial.render_func=(x;opts=PAGE_OPTIONS)->begin
         
         child_dom=VueJS.dom(x.grid,opts=opts)
-        [HtmlElement("v-dialog",dial_attrs,12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
+        [HtmlElement("v-dialog",get(vs_dial.attrs,"v-dialog",Dict()),12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
     end
     
     return vs_dial

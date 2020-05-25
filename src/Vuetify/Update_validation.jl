@@ -19,6 +19,31 @@ UPDATE_VALIDATION["v-date-picker"]=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end
 
+UPDATE_VALIDATION["v-text-field"]=(x)->begin
+    
+    x.cols==nothing ? x.cols=2 : nothing
+    
+    ## type date
+    if get(x.attrs,"type","")=="date"
+    
+        x.attrs["menu"]=false
+        
+        x.render_func=(y;opts=PAGE_OPTIONS)->begin
+
+            menu_var=y.id*".menu"
+            y.binds["menu"]=menu_var
+            y.attrs["v-on"]="on"
+            delete!(y.attrs,"type")
+            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)       
+            domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
+            html("v-date-picker","",Dict("v-model"=>"$(y.id).value"))]
+            domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"))
+            
+            return domvalue
+        end
+    end
+end
+
 
 UPDATE_VALIDATION["v-btn"]=(x)->begin
 
@@ -31,10 +56,6 @@ end
 
 UPDATE_VALIDATION["v-spacer"]=(x)->begin
     x.value_attr=nothing
-end
-
-UPDATE_VALIDATION["v-text-field"]=(x)->begin
-    x.cols==nothing ? x.cols=2 : nothing
 end
 
 UPDATE_VALIDATION["v-select"]=(x)->begin

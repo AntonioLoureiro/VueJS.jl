@@ -29,14 +29,14 @@ UPDATE_VALIDATION["v-text-field"]=(x)->begin
         x.attrs["menu"]=false
         
         x.render_func=(y;opts=PAGE_OPTIONS)->begin
-
-            menu_var=y.id*".menu"
+            path=opts.path=="" ? "" : opts.path
+            menu_var=path*y.id*".menu"
             y.binds["menu"]=menu_var
             y.attrs["v-on"]="on"
             delete!(y.attrs,"type")
             dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)       
             domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-            html("v-date-picker","",Dict("v-model"=>"$(y.id).value"))]
+            html("v-date-picker","",Dict("v-model"=>"$path$(y.id).value"))]
             domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"))
             
             return domvalue

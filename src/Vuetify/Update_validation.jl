@@ -29,7 +29,7 @@ UPDATE_VALIDATION["v-text-field"]=(x)->begin
         x.attrs["menu"]=false
         
         x.render_func=(y;opts=PAGE_OPTIONS)->begin
-            path=opts.path=="" ? "" : opts.path
+            path=opts.path=="" ? "" : opts.path*"."
             menu_var=path*y.id*".menu"
             y.binds["menu"]=menu_var
             y.attrs["v-on"]="on"

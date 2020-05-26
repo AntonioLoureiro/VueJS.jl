@@ -70,6 +70,25 @@ UPDATE_VALIDATION["v-select"]=(x)->begin
     end
 end
 
+UPDATE_VALIDATION["v-radio-group"]=(x)->begin
+    
+    x.cols==nothing ? x.cols=1 : nothing
+    x.value_attr="input-value"
+    
+    content=get(x.attrs,"content",[])
+    haskey(x.attrs,"content") ? delete!(x.attrs,"content") : nothing
+
+    x.child=content
+
+end
+
+UPDATE_VALIDATION["v-radio"]=(x)->begin
+    
+    x.cols==nothing ? x.cols=1 : nothing
+    x.value_attr="input-value"
+
+end
+
 UPDATE_VALIDATION["v-list"]=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"

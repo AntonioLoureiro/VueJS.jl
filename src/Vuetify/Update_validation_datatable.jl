@@ -6,6 +6,8 @@ dt_filter_modes[">"]="""function(value, search, item){if (this.filter_value==nul
 dt_filter_modes["<="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value<=this.filter_value}}"""
 dt_filter_modes["<"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value<this.filter_value}}"""
 dt_filter_modes["=="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value==this.filter_value}}"""
+dt_filter_modes["contains"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value.toLowerCase().includes(this.filter_value.toLowerCase())}}"""
+
 
 UPDATE_VALIDATION["v-data-table"]=(x)->begin
     col_pref="col_"

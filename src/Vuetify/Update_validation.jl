@@ -93,16 +93,43 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
-    @assert haskey(x.attrs,"item") "Vuetify List element with no arg item!"
-
+    
     x.value_attr="items"
 
-    x.attrs["v-for"]="item in $(x.id).value"
-    x.binds["key"]="item.id"
+    if haskey(x.attrs,"item") || haskey(x.attrs,"content")
+        x.attrs["v-for"]="(item, index) in $(x.id).value"
+        x.binds["key"]="index"
     
-    x.child=x.attrs["item"]
-    delete!(x.attrs,"item")
-
+        if haskey(x.attrs,"item")
+            x.child=x.attrs["item"]
+            delete!(x.attrs,"item")
+        else
+            x.child=x.attrs["content"]
+            delete!(x.attrs,"content")
+        end
+    else
+        items=x.attrs["items"]
+        child=html("v-list-item",[],Dict("dense"=>true))
+        
+        child.attrs["v-for"]="(item, index) in $(x.id).value"
+        child.attrs[":key"]="index"
+            
+        sum(map(x->haskey(x,"avatar"),items))>0 ? push!(child.value,html("v-list-item-avatar",html("v-img","",Dict(":src"=>"item.avatar")))) : ""
+        sum(map(x->haskey(x,"icon"),items))>0 ? push!(child.value,html("v-list-item-icon",html("v-icon","",Dict("v-text"=>"item.icon")))) : ""
+        if sum(map(x->haskey(x,"title"),items))>0 
+            contents=[]
+            push!(contents,html("v-list-item-title","",Dict("v-text"=>"item.title")))
+            sum(map(x->haskey(x,"subtitle"),items))>0 ? push!(contents,html("v-list-item-subtitle","",Dict("v-text"=>"item.subtitle"))) : ""
+            push!(child.value,html("v-list-item-content",contents))
+        end
+        
+        if sum(map(x->haskey(x,"href"),items))>0 
+            child.attrs["link"]=true
+            child.attrs["click"]="open(item.href)"
+        end
+    
+        x.child=child
+    end
 end
 
 UPDATE_VALIDATION["v-tabs"]=(x)->begin
@@ -131,10 +158,6 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
     
     item_names=collect(keys(x.attrs["items"][1]))
     x.tag="v-list"
-    x.attrs["item"]=html("v-list-item",[],Dict("dense"=>true,"link"=>true))
-    "icon" in item_names ? push!(x.attrs["item"].value,html("v-list-item-icon",html("v-icon","{{ item.icon }}"))) : nothing
-    "title" in item_names ? push!(x.attrs["item"].value,html("v-list-item-content",html("v-list-item-title","{{ item.title }}"))) : nothing
-    "href" in item_names ? x.attrs["item"].attrs["click"]="open(item.href)" : nothing
             
     VueJS.update_validate!(x)
 

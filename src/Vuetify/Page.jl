@@ -28,7 +28,7 @@ function htmlstring(page_inst::Page)
     app_state=Dict{String,Any}()
     ## Other components
     for (k,v) in page_inst.components
-        if k=="v-content"
+        if k=="v-main"
             ## component script
             update_data!(v,v.data)
             update_events!(v)
@@ -45,7 +45,7 @@ function htmlstring(page_inst::Page)
             push!(scripts,comp_script)    
             opts=PAGE_OPTIONS
             opts.path="root"
-            push!(components_dom,html("v-content",html("v-container",dom(v,opts=opts),Dict("fluid"=>true)),Dict()))
+            push!(components_dom,html("v-main",html("v-container",dom(v,opts=opts),Dict("fluid"=>true)),Dict()))
         else
             
             opts=PAGE_OPTIONS

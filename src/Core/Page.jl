@@ -95,7 +95,7 @@ function page(
         kwargs...)
 
     @assert cont.iterable==false "Cannot use a iterable VueStruct at top level, please put in inside an array (grid)"
-    components=Dict{String,Any}("v-content"=>cont)
+    components=Dict{String,Any}("v-main"=>cont)
     styles=Dict()
     update_styles!(styles,cont)
 

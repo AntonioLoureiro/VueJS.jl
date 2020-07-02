@@ -97,8 +97,7 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
     x.value_attr="items"
 
     if haskey(x.attrs,"item") || haskey(x.attrs,"content")
-        x.attrs["v-for"]="(item, index) in $(x.id).value"
-        x.binds["key"]="index"
+        
     
         if haskey(x.attrs,"item")
             x.child=x.attrs["item"]
@@ -106,6 +105,23 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
         else
             x.child=x.attrs["content"]
             delete!(x.attrs,"content")
+        end
+        
+        x.render_func=(y;opts=PAGE_OPTIONS)->begin
+           
+            dom_list=VueJS.dom(y,prevent_render_func=true,opts=opts)
+            
+            opts_item=deepcopy(opts)
+            opts_item.rows=false
+            
+            dom_item=VueJS.dom(y.child,opts=opts_item,is_child=true)
+                        
+            dom_item=html("v-list-item",dom_item)
+            dom_item.attrs["v-for"]="(item, index) in $(x.id).value"
+            dom_item.attrs[":key"]="index"
+            
+            dom_list.value=dom_item
+            dom_list
         end
     else
         items=x.attrs["items"]

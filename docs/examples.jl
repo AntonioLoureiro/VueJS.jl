@@ -63,4 +63,14 @@ items=[Dict("icon"=>"mdi-apple","title"=>"Apple","href"=>"https://www.apple.com"
 barel=bar([homeb,"APP",spacer(),searchb])
 @el(icon_btn,"v-btn",content="Material Design Icons Page",click="open('https://materialdesignicons.com')")
 page([icon_btn],navigation=navel,bar=barel)
+""",
+"Lists"=>"""
+items=[]
+push!(items,Dict("title"=>"Title1","subtitle"=>"SubTitle1","icon"=>"mdi-clock","href"=>"https://www.sapo.pt","avatar"=>"https://cdn.vuetifyjs.com/images/lists/2.jpg"))
+push!(items,Dict("title"=>"Title2","subtitle"=>"SubTitle2","icon"=>"mdi-pencil-outline","href"=>"https://www.sapo.pt","avatar"=>"https://cdn.vuetifyjs.com/images/lists/3.jpg"))
+@el(list1,"v-list",items=items,cols=2)
+@el(el,"v-text-field",binds=Dict("label"=>"item.label","value"=>"item.val"))
+@el(list2,"v-list",items=[Dict("val"=>"Value1","label"=>"Label1"),Dict("val"=>"Value2","label"=>"Label2")],item=el,cols=3)
+@el(b,"v-btn",click="list2.value.push({val:'',label:'New'})",value="ADD")
+page([[list1,spacer(),[b,list2]]])
 """]

@@ -19,3 +19,6 @@
 [Navigation and Bar](https://antonioloureiro.github.io/VueJS.jl/Navigation%20and%20Bar.html)
  
 
+[Lists](https://antonioloureiro.github.io/VueJS.jl/Lists.html)
+ 
+

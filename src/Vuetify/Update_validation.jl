@@ -1,3 +1,23 @@
+UPDATE_VALIDATION["v-file-input"]=(x)->begin
+
+    x.value_attr="input-value"
+end
+
+UPDATE_VALIDATION["v-tooltip"]=(x)->begin
+
+    x.value_attr=nothing
+end
+
+UPDATE_VALIDATION["v-menu"]=(x)->begin
+
+    x.value_attr=nothing
+    haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
+    
+    @el(menu_list,"v-list",items=x.attrs["items"])
+        
+    x.child=menu_list
+    
+end
 
 UPDATE_VALIDATION["v-switch"]=(x)->begin
 

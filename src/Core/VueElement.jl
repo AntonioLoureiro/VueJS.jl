@@ -59,6 +59,29 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     no_dom_attrs["storage"]=get(attrs, "storage", false)
     haskey(attrs,"storage") ? delete!(attrs,"storage") : nothing
     
+    ## Tooltip
+    tooltip=get(attrs, "tooltip", nothing)
+    if tooltip!=nothing
+        delete!(attrs,"tooltip")
+        no_dom_attrs["tooltip"]=tooltip
+    end
+    
+    ## Menu
+    menu=get(attrs, "menu", nothing)
+    if menu!=nothing
+        @assert (menu isa VueJS.VueElement || menu isa Array) "Menu shoulbe be a VueElement Menu or Vector of items"
+        if menu isa VueJS.VueElement
+            items=get(menu.attrs, "items", [])
+            attrs["items"]=items
+            delete!(attrs,"menu")
+            no_dom_attrs["menu"]=menu
+        else
+            attrs["items"]=menu
+            delete!(attrs,"menu")
+            no_dom_attrs["menu"]=menu
+        end
+    end
+        
     return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],events,nothing)
     
 end

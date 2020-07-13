@@ -96,43 +96,103 @@ dom(d::Dict;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=JSON.jso
 dom(r::String;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=HtmlElement("div",Dict(),1,r)
 dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=r
 
-function dom(vuel_orig::VueElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)
+function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_func=false,is_child=false)
 
     vuel=deepcopy(vuel_orig)
+    
     if vuel.render_func!=nothing && prevent_render_func==false
-       return vuel.render_func(vuel,opts=opts)
+       dom_ret=vuel.render_func(vuel,opts=opts)
+    else
+        vuel=VueJS.update_dom(vuel,opts=opts,is_child=is_child)
+
+        child=nothing
+        ## Value attr is nothing
+        if vuel.value_attr==nothing
+            if haskey(vuel.attrs,"content")
+                child=vuel.attrs["content"]
+                delete!(vuel.attrs,"content")
+            end
+            if haskey(vuel.attrs,":content")
+                child="""{{$(vuel.attrs[":content"])}}"""
+                delete!(vuel.attrs,":content")
+            end
+        end
+
+        ## styles
+        length(vuel.style)!=0 ? vuel.attrs["class"]=vuel.id : nothing
+
+        ## cols
+        vuel.cols==nothing ? vuel.cols=1 : nothing
+    
+        if vuel.child!=nothing
+           child=vuel.child
+       else
+           child=child==nothing ? "" : child
+       end
+
+       child_dom=child=="" ? "" : dom(child,opts=opts,is_child=true)
+        
+       dom_ret=VueJS.HtmlElement(vuel.tag, vuel.attrs, vuel.cols, child_dom)
+        
+    end
+        
+    ## Tooltip 
+    tooltip=get(vuel.no_dom_attrs,"tooltip",nothing)
+    if tooltip!=nothing
+       dom_ret=VueJS.activator(tooltip,dom_ret,"v-tooltip") 
+    end
+    
+    ## Menu 
+    menu=get(vuel.no_dom_attrs,"menu",nothing)
+    if menu!=nothing
+       dom_ret=VueJS.activator(menu,dom_ret,"v-menu") 
+       path=opts.path=="" ? "" : opts.path*"."
+       dom_ret.value[1].value.attrs["v-for"]="(item, index) in $path$(vuel.id).items"
+       delete!(dom_ret.attrs,"items")
+       delete!(dom_ret.value[1].attrs,"items")
+    end
+    
+    return dom_ret
+end
+
+function activator(activated::VueJS.VueElement,dom_ret::VueJS.HtmlElement,act_type::String)
+    
+    dom_act=dom(activated,is_child=true)
+    
+    return activator(dom_act,dom_ret,act_type)
+end
+
+function activator(dom_act::VueJS.HtmlElement,dom_ret::VueJS.HtmlElement,act_type::String)
+    @assert dom_act.tag==act_type "Element $dom_act cannot be activated!"
+    dom_ret.attrs["v-on"]="on"
+    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
+    dom_act.cols=dom_ret.cols
+    
+    if dom_ret.value==nothing
+       dom_act.value=dom_template
+    else
+        dom_act.value=[dom_act.value,dom_template]
     end
 
-    vuel=update_dom(vuel,opts=opts,is_child=is_child)
+    return dom_act
+end
 
-    child=nothing
-    ## Value attr is nothing
-    if vuel.value_attr==nothing
-        if haskey(vuel.attrs,"content")
-            child=vuel.attrs["content"]
-            delete!(vuel.attrs,"content")
-        end
-        if haskey(vuel.attrs,":content")
-            child="""{{$(vuel.attrs[":content"])}}"""
-            delete!(vuel.attrs,":content")
-        end
-    end
-
-    ## styles
-    length(vuel.style)!=0 ? vuel.attrs["class"]=vuel.id : nothing
+function activator(dom_act::String,dom_ret::VueJS.HtmlElement,act_type::String)
     
-    ## cols
-    vuel.cols==nothing ? vuel.cols=1 : nothing
-    
-   if vuel.child!=nothing
-       child=vuel.child
-   else
-       child=child==nothing ? "" : child
-   end
+    dom_ret.attrs["v-on"]="on"
+    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
+    dom_act=html(act_type,[dom_act,dom_template])
+    dom_act.cols=dom_ret.cols
 
-    child_dom=dom(child,opts=opts,is_child=true)
+    return dom_act
+end
 
-   return HtmlElement(vuel.tag, vuel.attrs, vuel.cols, child_dom)
+function activator(items::Vector,dom_ret::VueJS.HtmlElement,act_type::String)
+      @el(new_menu,"v-menu",items=items)
+      dom_act=VueJS.dom(new_menu,is_child=true)
+      dom_act=activator(dom_act,dom_ret,act_type)
+
+    return dom_act
 end
 
 function get_cols(v::Array;rows=true)
@@ -156,6 +216,7 @@ end
 
 
 update_cols!(h::Nothing;context_cols=12,opts=PAGE_OPTIONS)=nothing
+update_cols!(h::String;context_cols=12,opts=PAGE_OPTIONS)=nothing
 update_cols!(h::Array;context_cols=12,opts=PAGE_OPTIONS)=update_cols!.(h,context_cols=context_cols,opts=opts)
 function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 

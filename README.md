@@ -13,6 +13,9 @@
 [Basic Events](https://antonioloureiro.github.io/VueJS.jl/Basic%20Events.html)
  
 
+[Elements Special args Tooltip and Menu](https://antonioloureiro.github.io/VueJS.jl/Elements%20Special%20args%20Tooltip%20and%20Menu.html)
+ 
+
 [Basic Datatables](https://antonioloureiro.github.io/VueJS.jl/Basic%20Datatables.html)
  
 

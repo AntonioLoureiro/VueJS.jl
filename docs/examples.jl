@@ -36,6 +36,17 @@ page([slider,sel,[r1,r2,chip,tx]])
 @el(btn_open,"v-btn",content="OPEN",text-color="white",click="open(sel.value)")
 page([alert,slider,[btn_add,btn_add_100,btn_toggle_reset],[chip,chip2],[sel,btn_open]])
 """,
+"Elements Special args Tooltip and Menu"=>"""
+@el(ch1,"v-chip",content="Basic Tooltip",color="red",text-color="white",tooltip="<p>Lore Ipsilum</p><p><b>Lore Ipsilum</b></p>",cols=2)
+@el(ttp,"v-tooltip",content="<p>Lore Ipsilum</p><p><b>Lore Ipsilum</b></p>",bottom=true,color="rgba(0, 0, 255, 0.5)")
+@el(ch2,"v-chip",content="Advanced Tooltip",tooltip=ttp,color="red",text-color="white",cols=2)
+
+items=[Dict("title"=>"Action 1","href"=>"https://www.google.com"),Dict("title"=>"Action 2","href"=>"https://www.amazon.com")]
+@el(m1,"v-btn",menu=items,value="MENU 1")
+@el(menu,"v-menu",items=items,dark=true)
+@el(m2,"v-btn",menu=menu,value="MENU 2")
+page([[ch1,ch2,m1,m2]])    
+""",
 "Basic Datatables"=>"""
 df=DataFrame()
 df[!,:Class]=rand(["A","B","C"],10)

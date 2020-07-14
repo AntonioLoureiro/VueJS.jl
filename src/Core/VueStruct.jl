@@ -163,15 +163,32 @@ function get_def_obj(vs::VueStruct)
     return rd
 end
 
+function needs_multipart(ve::VueJS.VueElement)
+    if ve.tag=="v-file-input"
+        return true
+    else
+        return false
+    end
+end
+    
 in_context_functions!(a,fn_dict::Dict,context::String,def_data::Dict)=nothing
-in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::String,def_data::Dict)=ve.value_attr!=nothing ? push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value") : nothing
 in_context_functions!(a::VueJS.VueHolder,fn_dict::Dict,context::String,def_data::Dict)=map(x->in_context_functions!(x,fn_dict,context,def_data),a.elements)
+function in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::String,def_data::Dict)
+    if ve.value_attr!=nothing 
+        if needs_multipart(ve)
+            push!(fn_dict["submit"],"$(ve.id):[]")
+            push!(fn_dict["submit_files"],"$context.$(ve.id).value")
+        else
+            push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value")
+        end
+    end
+end
 
 export submit,add,remove
 
 function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,def_data::Dict)
   
-    fn_dict=Dict("submit"=>[])
+    fn_dict=Dict("submit"=>[],"submit_files"=>[])
     
     if vs.iterable
         in_context_functions!(vs.grid,fn_dict_prev,context,def_data)
@@ -183,7 +200,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         def_data[vs.id]["remove"]="""function(i){this.value.splice(i,1)}"""
         
     else
-        ## update fn_dict
+        ## update fn_dict updates also VueStructs
         in_context_functions!(vs.grid,fn_dict,context,def_data)
         
         if context!="app_state"
@@ -191,14 +208,38 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         end
         
      ### Submit fn
-     def_data["submit"]="""function(url, method, async, no_post=false) {
-     content={$(join(fn_dict["submit"],","))};
-	    if (no_post) {
-	        return content
-	    } else {
-     		return app.xhr(JSON.stringify(content), url, method, async)
-		}
-    }"""
+     if length(fn_dict["submit_files"])==0
+         def_data["submit"]="""function(url, method, async, no_post=false) {
+         content={$(join(fn_dict["submit"],","))};
+            if (no_post) {
+                return content
+            } else {
+                return app.xhr(JSON.stringify(content), url, method, async)
+            }
+        }"""
+    else
+        files_obj=map(x->"{'$x':$x}",fn_dict["submit_files"])
+        def_data["submit"]="""function(url, method, async, no_post=false) {
+        const content = new FormData();
+        json_content=JSON.stringify({$(join(fn_dict["submit"],","))});
+        const blob = new Blob([json_content], {
+          type: 'application/json'
+        });
+        content.append("json", blob);
+        const arr_files=[$(join(files_obj,","))];
+        for (const i in arr_files) {
+            for (const file in arr_files[i]){
+                content.append(file,arr_files[i][file]);
+            }
+        }
+            if (no_post) {
+                return content
+            } else {
+                return app.xhr(content, url, method, async)
+            }
+        }"""   
+            
+    end
     
     vs.def_data=def_data
        

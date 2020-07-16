@@ -228,8 +228,11 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         content.append("json", blob);
         const arr_files=[$(join(files_obj,","))];
         for (const i in arr_files) {
-            for (const file in arr_files[i]){
-                content.append(file,arr_files[i][file]);
+            for (const el in arr_files[i]){
+                for (const filei in arr_files[i][el]){
+                file_name=el+'.'+filei
+                content.append(file_name,arr_files[i][el][filei]);
+                }
             }
         }
             if (no_post) {

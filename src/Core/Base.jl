@@ -124,8 +124,7 @@ function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
     expr_arr=split(expr,"'")   
     expr_out=Vector{String}()
     expr_arr[1]=="" ? is_quoted=false : is_quoted=true
-    expr_arr=filter(x->x!="",expr_arr)
-    
+        
    ## iterate blocks of code
    for s in expr_arr
         

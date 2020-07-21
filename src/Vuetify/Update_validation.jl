@@ -128,7 +128,7 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
         end
         
         x.render_func=(y;opts=PAGE_OPTIONS)->begin
-           
+            path=opts.path=="" ? "" : opts.path*"."
             dom_list=VueJS.dom(y,prevent_render_func=true,opts=opts)
             
             opts_item=deepcopy(opts)
@@ -137,7 +137,7 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
             dom_item=VueJS.dom(y.child,opts=opts_item,is_child=true)
                         
             dom_item=html("v-list-item",dom_item)
-            dom_item.attrs["v-for"]="(item, index) in $(x.id).value"
+            dom_item.attrs["v-for"]="(item, index) in $path$(x.id).value"
             dom_item.attrs[":key"]="index"
             
             dom_list.value=dom_item
@@ -159,11 +159,16 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
             push!(child.value,html("v-list-item-content",contents))
         end
         
-        if sum(map(x->haskey(x,"href"),items))>0 
+        has_href=sum(map(x->haskey(x,"href"),items))>0 
+        has_click=sum(map(x->haskey(x,"click"),items))>0 
+        
+        @assert !(has_href && haskey(child.attrs,"click")) "You must choose between href and click!"
+        
+        if has_href
             child.attrs["link"]=true
             child.attrs["click"]="open(item.href)"
         end
-    
+            
         x.child=child
     end
 end

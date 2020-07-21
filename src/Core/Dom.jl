@@ -145,11 +145,17 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
     ## Menu 
     menu=get(vuel.no_dom_attrs,"menu",nothing)
     if menu!=nothing
+        
        dom_ret=VueJS.activator(menu,dom_ret,"v-menu") 
        path=opts.path=="" ? "" : opts.path*"."
+       if haskey(vuel.attrs,"click") 
+            dom_ret.value[1].value.attrs["click"]=vuel.attrs["click"]
+            delete!(vuel.attrs,"click")
+        end
        dom_ret.value[1].value.attrs["v-for"]="(item, index) in $path$(vuel.id).items"
        delete!(dom_ret.attrs,"items")
        delete!(dom_ret.value[1].attrs,"items")
+       
     end
     
     return dom_ret

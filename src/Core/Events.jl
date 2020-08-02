@@ -88,7 +88,8 @@ xhr_script = """function(contents, url=window.location.pathname, method="POST", 
                 } else {
                     reject({
                         status: request.status,
-                        statusText: request.statusText
+                        statusText: request.statusText,
+			responseText: request.responseText
                     });
             }};
      request.open(method, url, async);

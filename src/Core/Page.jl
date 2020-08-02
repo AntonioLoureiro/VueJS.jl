@@ -1,5 +1,6 @@
 struct WebDependency
     path::String
+    version::String
     kind::String
     components::Dict{String,String}
 end

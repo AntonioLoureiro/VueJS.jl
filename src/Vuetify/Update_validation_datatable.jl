@@ -42,6 +42,15 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
                 x.attrs["headers"]=[Dict{String,Any}("value"=>trf_col(n),"text"=>n,"value_orig"=>n) for n in string.(names(df))]
+            else
+                @assert all(y->"value" in keys(y), x.attrs["headers"]) "Headers declared without value key"
+                for (i,header) in enumerate(x.attrs["headers"])
+                    val = header["value"]
+                    text = get(header, "text", val)
+                    x.attrs["headers"][i]["text"] = text
+                    x.attrs["headers"][i]["value"] = trf_col(val)
+                    x.attrs["headers"][i]["value_orig"] = val
+                end
             end
 
             ### Default Formatting

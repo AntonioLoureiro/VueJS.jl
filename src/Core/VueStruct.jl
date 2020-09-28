@@ -158,8 +158,15 @@ function get_def_obj(a::Array)
 end
 
 function get_def_obj(vs::VueStruct)
-    rd=Dict()
-    merge!(rd,get_def_obj(vs.grid))
+    rd=Dict(vs.id=>get_def_obj(vs.grid))
+
+     if !vs.iterable
+     fn_dict=Dict("submit"=>[],"submit_files"=>[])
+     in_context_functions!(vs,fn_dict,vs.id,vs.def_data)
+        if haskey(vs.def_data,"submit")
+            rd[vs.id]["submit"]=vs.def_data["submit"]
+        end
+    end
     return rd
 end
 
@@ -177,9 +184,9 @@ function in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::Strin
     if ve.value_attr!=nothing 
         if needs_multipart(ve)
             push!(fn_dict["submit"],"$(ve.id):[]")
-            push!(fn_dict["submit_files"],"$context.$(ve.id).value")
+            push!(fn_dict["submit_files"],"this.$(ve.id).value")
         else
-            push!(fn_dict["submit"],"$(ve.id):$context.$(ve.id).value")
+            push!(fn_dict["submit"],"$(ve.id):this.$(ve.id).value")
         end
     end
 end
@@ -191,22 +198,30 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     fn_dict=Dict("submit"=>[],"submit_files"=>[])
     
     if vs.iterable
-        in_context_functions!(vs.grid,fn_dict_prev,context,def_data)
-         
+
+        ## Upper Level update of elements
+        map(x->in_context_functions!(vs.grid,fn_dict,"x",x),def_data[vs.id]["value"])
+        push!(fn_dict_prev["submit"],"""$(vs.id):this.$(vs.id).value.map(function(x) { return {$(replace(join(fn_dict["submit"],","),"this."=>"x."))}})""")
+                        
         def_data[vs.id]=convert(Dict{String,Any},def_data[vs.id])
+        
         ### add fn
-        def_data[vs.id]["add"]="""function(){this.value.push($(JSON.json(get_def_obj(vs))))}"""
+        def_data[vs.id]["empty_obj"]=VueJS.get_def_obj(vs)[vs.id]
+        empty_obj_str=VueJS.vue_json(VueJS.get_def_obj(vs)[vs.id],false)
+        def_data[vs.id]["add"]="""function(){this.value.push($empty_obj_str)}"""
+        
         ### delete fn
         def_data[vs.id]["remove"]="""function(i){this.value.splice(i,1)}"""
         
     else
+        
         ## update fn_dict updates also VueStructs
         in_context_functions!(vs.grid,fn_dict,context,def_data)
         
         if context!="app_state"
-            push!(fn_dict_prev["submit"],"$(vs.id):$(context).submit(url, method, async,true)")
+            push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url, method, async,true)")
         end
-        
+    
      ### Submit fn
      if length(fn_dict["submit_files"])==0
          def_data["submit"]="""function(url, method, async, no_post=false) {
@@ -222,9 +237,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         def_data["submit"]="""function(url, method, async, no_post=false) {
         const content = new FormData();
         json_content=JSON.stringify({$(join(fn_dict["submit"],","))});
-        const blob = new Blob([json_content], {
-          type: 'application/json'
-        });
+        const blob = new Blob([json_content], {type: 'application/json'});
         content.append("json", blob);
         const arr_files=[$(join(files_obj,","))];
         for (const i in arr_files) {
@@ -245,9 +258,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     end
     
     vs.def_data=def_data
-       
     end
-    
     return nothing
 end
 
@@ -255,9 +266,7 @@ function in_context_functions!(a::Vector,fn_dict::Dict,context::String,def_data:
     for r in a
         if r isa VueStruct
             if r.iterable
-                fn_dict_new=Dict("submit"=>[])
-                in_context_functions!(r,fn_dict_new,"x",def_data)
-                push!(fn_dict["submit"],"""$(r.id):$(context).$(r.id).value.map(function(x) {  return {$(join(fn_dict_new["submit"],","))}})""")
+                in_context_functions!(r,fn_dict,context,def_data)
             else
                 in_context_functions!(r,fn_dict,context*"."*r.id,def_data[r.id])
             end
@@ -266,6 +275,7 @@ function in_context_functions!(a::Vector,fn_dict::Dict,context::String,def_data:
         end
     end
 end
+
 function create_events(vs::Union{VueElement,VueStruct})
     
     vs isa VueElement ? path=vs.path=="" ? "" : vs.path : path=""

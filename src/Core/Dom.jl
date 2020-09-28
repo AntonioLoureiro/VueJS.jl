@@ -251,12 +251,9 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     ## Paths
     if r.iterable
         vs_path=opts.path in ["root",""] ? r.id : opts.path*"."*r.id
-        
-        
-        opts.path=vs_path*"_item"
-        ###HACK###
+
         opts.path=r.id*"_item"
-        
+
         ks=collect(keys(get(update_data!(r,r.data),r.id,Dict())["value"][1]))
         opts.vars_replace=Dict(k=>"$(opts.path).$k" for k in vcat(ks,CONTEXT_JS_FUNCTIONS))
     else

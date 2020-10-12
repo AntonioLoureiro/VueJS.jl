@@ -79,7 +79,12 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
     isdir(web_dependency_path) ? nothing : mkdir(web_dependency_path)
 
     for d in DEPENDENCIES
-        resp=HTTP.get(d.path,require_ssl_verification = false)
+        try
+            resp=HTTP.get(d.path,require_ssl_verification = false)
+        catch err;
+            error("Error getting $(d.path) please try again!")    
+        end
+        
         str=String(resp.body)
         sha_str=bytes2hex(sha256(str))
         d.sha=sha_str

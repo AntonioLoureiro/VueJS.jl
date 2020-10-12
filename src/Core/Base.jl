@@ -74,7 +74,7 @@ LIBRARY_RULES =
 
 const UPDATE_VALIDATION=Dict{String,Any}()
 
-function get_web_dependencies!(web_dependency_path::String)
+function get_web_dependencies!(web_dependency_path::String,deps_url::String)
 
     isdir(web_dependency_path) ? nothing : mkdir(web_dependency_path)
 
@@ -90,7 +90,7 @@ function get_web_dependencies!(web_dependency_path::String)
             open(filename, "w") do io
                    write(io,str)
             end
-            d.path=web_dependency_path*"/"*sha_str
+            d.path=deps_url*"/"*sha_str
         end
     end
 

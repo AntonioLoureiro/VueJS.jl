@@ -5,6 +5,7 @@ using JSON,Dates,DataFrames,HTTP,Namtso
 export VueStruct,WebDependency,html,spacer
 export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog
 export LIBRARY_RULES
+export get_web_dependencies!
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

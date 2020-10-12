@@ -79,6 +79,7 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
     isdir(web_dependency_path) ? nothing : mkdir(web_dependency_path)
 
     for d in DEPENDENCIES
+        resp=""
         try
             resp=HTTP.get(d.path,require_ssl_verification = false)
         catch err;

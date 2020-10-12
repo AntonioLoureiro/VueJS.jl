@@ -74,6 +74,28 @@ LIBRARY_RULES =
 
 const UPDATE_VALIDATION=Dict{String,Any}()
 
+function get_web_dependencies!(web_dependency_path::String)
+
+    isdir(web_dependency_path) ? nothing : mkdir(web_dependency_path)
+
+    for d in DEPENDENCIES
+        resp=HTTP.get(d.path,require_ssl_verification = false)
+        str=String(resp.body)
+        sha_str=bytes2hex(sha256(str))
+        d.sha=sha_str
+        filename=web_dependency_path*"/"*sha_str
+        file_exists=isfile(filename)
+
+        if !(file_exists)
+            open(filename, "w") do io
+                   write(io,str)
+            end
+            d.path=web_dependency_path*"/"*sha_str
+        end
+    end
+
+end
+
 function library(s::String)
     kind=String(split(s,".")[end])
     return VueJS.WebDependency(s,kind,Dict(),"")

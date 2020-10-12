@@ -90,8 +90,9 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
             open(filename, "w") do io
                    write(io,str)
             end
-            d.path=deps_url*"/"*sha_str
+       
         end
+        d.path=deps_url*"/"*sha_str
     end
 
 end

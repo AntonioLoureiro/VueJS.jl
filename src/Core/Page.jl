@@ -3,6 +3,7 @@ struct WebDependency
     version::String
     kind::String
     components::Dict{String,String}
+    sha::String
 end
 
 mutable struct Page

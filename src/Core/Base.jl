@@ -89,7 +89,7 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
         str=String(resp.body)
         sha_str=bytes2hex(sha256(str))
         d.sha=sha_str
-        filename=web_dependency_path*"/"*sha_str
+        filename=web_dependency_path*"/"*sha_str*"."*d.kind
         file_exists=isfile(filename)
 
         if !(file_exists)
@@ -98,7 +98,7 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
             end
        
         end
-        d.path=deps_url*"/"*sha_str
+        d.path=deps_url*"/"*sha_str*"."*d.kind
     end
 
 end

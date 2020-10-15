@@ -4,6 +4,7 @@ mutable struct WebDependency
     kind::String
     components::Dict{String,String}
     sha::String
+    local_path::String
 end
 
 mutable struct Page

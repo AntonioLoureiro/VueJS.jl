@@ -16,7 +16,7 @@ function parse(req::HTTP.Request)
             end
         end
 
-        for f in files_arr
+        for f in files_arr            
             name_arr=String.(split(f["name"],"."))[2:end-2]
             obj=body
             for n in name_arr

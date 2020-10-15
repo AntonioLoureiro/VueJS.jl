@@ -184,18 +184,20 @@ function in_context_functions!(ve::VueJS.VueElement,fn_dict::Dict,context::Strin
     if ve.value_attr!=nothing 
         if needs_multipart(ve)
             push!(fn_dict["submit"],"$(ve.id):[]")
-            push!(fn_dict["submit_files"],"this.$(ve.id).value")
+            push!(fn_dict["submit_files"],"$context.$(ve.id).value")
+            fn_dict["mp_mode"]=true
         else
             push!(fn_dict["submit"],"$(ve.id):this.$(ve.id).value")
         end
     end
 end
 
+
 export submit,add,remove
 
 function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,def_data::Dict)
   
-    fn_dict=Dict("submit"=>[],"submit_files"=>[])
+    fn_dict=Dict("submit"=>[],"submit_files"=>[],"mp_mode"=>false)
     
     if vs.iterable
 
@@ -223,7 +225,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         end
     
      ### Submit fn
-     if length(fn_dict["submit_files"])==0
+     if fn_dict["mp_mode"]==false
          def_data["submit"]="""function(url, method, async, no_post=false) {
          content={$(join(fn_dict["submit"],","))};
             if (no_post) {
@@ -233,13 +235,14 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
             }
         }"""
     else
-        files_obj=map(x->"{'$x':$x}",fn_dict["submit_files"])
+        files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
+        json_obj="{"*join(fn_dict["submit"],",")*"}"
         def_data["submit"]="""function(url, method, async, no_post=false) {
         const content = new FormData();
-        json_content=JSON.stringify({$(join(fn_dict["submit"],","))});
+        json_content=JSON.stringify($json_obj);
         const blob = new Blob([json_content], {type: 'application/json'});
         content.append("json", blob);
-        const arr_files=[$(join(files_obj,","))];
+        const arr_files=[$files_obj];
         for (const i in arr_files) {
             for (const el in arr_files[i]){
                 for (const filei in arr_files[i][el]){
@@ -249,7 +252,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
             }
         }
             if (no_post) {
-                return content
+                 return $json_obj
             } else {
                 return app.xhr(content, url, method, async)
             }
@@ -259,6 +262,12 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     
     vs.def_data=def_data
     end
+    
+    if fn_dict["mp_mode"] 
+       fn_dict_prev["mp_mode"]=true
+       append!(fn_dict_prev["submit_files"],fn_dict["submit_files"]) 
+    end
+    
     return nothing
 end
 
@@ -313,7 +322,7 @@ function update_events!(vs::VueStruct)
     
     ## Only put functions for main content
     if vs.id=="app"
-        in_context_functions!(vs,Dict("submit"=>[]),"app_state",vs.def_data)
+        in_context_functions!(vs,Dict("submit"=>[],"submit_files"=>[],"mp_mode"=>false),"app_state",vs.def_data)
     end
     
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))

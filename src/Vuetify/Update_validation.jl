@@ -1,6 +1,7 @@
 UPDATE_VALIDATION["v-file-input"]=(x)->begin
 
     x.value_attr="input-value"
+    haskey(x.attrs,"multiple") ? nothing : x.attrs["multiple"]=false
 end
 
 UPDATE_VALIDATION["v-tooltip"]=(x)->begin

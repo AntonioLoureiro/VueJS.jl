@@ -70,7 +70,6 @@ UPDATE_VALIDATION["v-btn"]=(x)->begin
 
     ## attr alias of content
     haskey(x.attrs,"value") ? (x.attrs["content"]=x.attrs["value"];delete!(x.attrs,"value")) : nothing
-    haskey(x.attrs,"text") ? (x.attrs["content"]=x.attrs["text"];delete!(x.attrs,"text")) : nothing
 
     x.value_attr=nothing
 end

@@ -23,7 +23,19 @@ end
 UPDATE_VALIDATION["v-switch"]=(x)->begin
 
     x.value_attr="input-value"
+    x.attrs["true-value"]=true
+    x.attrs["false-value"]=false
+    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
 end
+
+UPDATE_VALIDATION["v-checkbox"]=(x)->begin
+
+    x.value_attr="input-value"
+    x.attrs["true-value"]=true
+    x.attrs["false-value"]=false
+    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
+end
+
 
 UPDATE_VALIDATION["v-chip"]=(x)->begin
 

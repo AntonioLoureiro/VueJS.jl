@@ -1,3 +1,4 @@
+update_style!(el, opts::VueJS.Opts)=nothing
 
 function update_style!(el::VueElement,opts::Opts)
     

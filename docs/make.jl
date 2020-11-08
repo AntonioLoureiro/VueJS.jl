@@ -31,12 +31,12 @@ function docs()
         println(io, html_code)
         close(io)
         name_url=replace(name," "=>"%20")
-        push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html)"""))
+        push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html"""))
         
     end
         
-    @el(bt,"v-btn",value="Link",click="open(item.Name)")
-    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Name"=>bt),cols=4)
+    @el(bt,"v-btn",value="Link",click="open(item.Link)")
+    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),cols=4)
 
     p1=page([dt])
     io = open("public/index.html", "w")

@@ -100,6 +100,14 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
 
     vuel=deepcopy(vuel_orig)
     
+    opts_style=get(opts.style,vuel.tag,Dict{Any,Any}())
+    vuel_style=get(vuel.attrs,"style",Dict{Any,Any}())
+        
+    if length(vuel_style)!=0 || length(opts_style)!=0
+        haskey(vuel.attrs,"style") ? nothing : vuel.attrs["style"]=Dict{Any,Any}()
+        merge!(vuel.attrs["style"],opts_style)
+    end
+    
     if vuel.render_func!=nothing && prevent_render_func==false
        dom_ret=vuel.render_func(vuel,opts=opts)
     else
@@ -117,9 +125,6 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
                 delete!(vuel.attrs,":content")
             end
         end
-
-        ## styles
-        length(vuel.style)!=0 ? vuel.attrs["class"]=vuel.id : nothing
 
         ## cols
         vuel.cols==nothing ? vuel.cols=1 : nothing
@@ -227,12 +232,12 @@ update_cols!(h::Array;context_cols=12,opts=PAGE_OPTIONS)=update_cols!.(h,context
 function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
-        h.attrs=get(opts.attrs,h.tag,Dict())  
+        h.attrs=get(opts.style,h.tag,Dict())  
         update_cols!(h.value,context_cols=context_cols,opts=opts)
     elseif h.tag=="v-col"
-        h.attrs=get(opts.attrs,h.tag,Dict())
+        h.attrs=get(opts.style,h.tag,Dict())
         cols=VueJS.get_cols(h.value,rows=false)
-        viewport=get(opts.attrs,"viewport","md")
+        viewport=get(opts.style,"viewport","md")
         h.attrs[viewport]=Int(round(cols/context_cols*12))
         update_cols!(h.value,context_cols=cols,opts=opts)
     elseif h.value isa VueJS.HtmlElement || h.value isa Array
@@ -246,7 +251,7 @@ end
 function dom(r::VueStruct;opts=PAGE_OPTIONS)
         
     opts=deepcopy(opts)
-    merge!(opts.attrs,r.attrs)
+    merge!(opts.style,get(r.attrs,"style",Dict{Any,Any}()))
     
     ## Paths
     if r.iterable

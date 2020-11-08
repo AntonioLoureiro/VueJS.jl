@@ -55,7 +55,7 @@ const KNOWN_EVT_PROPS = [
 ## Dom Render Opts
 mutable struct Opts
     rows::Bool
-    attrs::Dict{String,Any}
+    style::Dict{String,Any}
     path::String
     vars_replace::Dict{String,String}
 end

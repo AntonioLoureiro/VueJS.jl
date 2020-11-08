@@ -8,7 +8,6 @@ mutable struct VueStruct
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
-    styles::Dict{String,String}
     attrs::Dict{String, Any}
     iterable::Bool
 end
@@ -25,12 +24,11 @@ function VueStruct(
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
     attrs=Dict{String,Any}(),
+    style=Dict{String,Any}(),
     kwargs...)
 
     args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    styles=Dict()
-    update_styles!(styles,garr)
+    
     scope=[]
     garr=element_path(garr,scope)
     
@@ -44,10 +42,15 @@ function VueStruct(
         data=convert(Dict{String,Any},data)
         def_data=Dict{String,Any}()
     end
+
+    if length(style)!=0
+        haskey(attrs,"style") ? nothing : attrs["style"]=Dict{String,Any}()
+        merge!(attrs["style"],style)
+    end
     
     iterable==true ? def_data=Vector{Dict{String,Any}}() : nothing
     
-    comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs,iterable)
+    comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp
@@ -328,18 +331,6 @@ function update_events!(vs::VueStruct)
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))
 end
 
-
-update_styles!(st_dict::Dict,v)=nothing
-update_styles!(st_dict::Dict,a::Array)=map(x->update_styles!(st_dict,x),a)
-update_styles!(st_dict::Dict,v::VueHolder)=map(x->update_styles!(st_dict,x),v.elements)
-function update_styles!(st_dict::Dict,vs::VueStruct)
-   merge!(st_dict,vs.styles)
-end
-
-function update_styles!(st_dict::Dict,v::VueElement)
-    length(v.style)!=0 ? st_dict[v.id]=join(v.style) : nothing
-    return nothing
-end
 
 function events_script(handlers::Vector{MethodsEventHandler}) 
     evs_dict=Dict()

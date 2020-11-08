@@ -33,7 +33,6 @@ mutable struct VueElement
     slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
-    style::Vector{String}
     events::Dict{String, Any}
     child
 end
@@ -53,7 +52,16 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     for ev in KNOWN_HOOKS
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
     end
-    
+        
+    ## Style
+    style=get(attrs,"style",Dict())
+    @assert style isa Dict "style attr should be a Dict"
+    ## Only use style 
+    if id!=""
+        attrs=convert(Dict{Any,Any},attrs)
+        attrs["style"]=style
+    end
+        
     ## No Dom attrs
     no_dom_attrs=Dict{String, Any}()
     no_dom_attrs["storage"]=get(attrs, "storage", false)
@@ -82,7 +90,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
         end
     end
         
-    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],events,nothing)
+    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,events,nothing)
     
 end
 """
@@ -97,6 +105,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
     end
     
     update_validate!(vuel) 
+    
     
     ## Slots
     if length(vuel.slots)!=0

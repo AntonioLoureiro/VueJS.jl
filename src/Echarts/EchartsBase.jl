@@ -12,5 +12,8 @@ UPDATE_VALIDATION["vuechart"]=(x)->begin
     height=deepcopy(x.attrs["height"])
     delete!(x.attrs,"height")
     x.value_attr=nothing
-    push!(x.style,"width: $(width)px;height: $(height)px;")
+    
+    haskey(x.attrs,"style") ? nothing : x.attrs["style"]=Dict{Any,Any}()
+    x.attrs["style"]["width"]=width
+    x.attrs["style"]["height"]=height
 end

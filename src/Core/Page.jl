@@ -11,10 +11,10 @@ mutable struct Page
     dependencies::Vector{WebDependency}
     components::Dict{String,Any}
     scripts::Vector{String}
-    styles::Dict{String,String}
+    style::Dict{String,String}
     cookiejar::Dict{String, Any}
 end
-Page(deps, comps, scripts,styles) = return Page(deps, comps, scripts,styles, Dict{String, Any}())
+Page(deps, comps, scripts,style) = return Page(deps, comps, scripts,style, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -72,7 +72,7 @@ function page(
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
     hooks=Dict{String,Any}(),
-    attrs=Dict{String,Any}(),
+    style=Dict{String,Any}(),
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
@@ -83,7 +83,7 @@ function page(
     args=Dict(string(k)=>v for (k,v) in kwargs)
 
     cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,hooks=hooks,attrs=attrs)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,hooks=hooks,style=style)
     
     return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
 end
@@ -99,11 +99,10 @@ function page(
 
     @assert cont.iterable==false "Cannot use a iterable VueStruct at top level, please put in inside an array (grid)"
     components=Dict{String,Any}("v-main"=>cont)
-    styles=Dict()
-    update_styles!(styles,cont)
-
+    
     args=Dict(string(k)=>v for (k,v) in kwargs)
     scripts=haskey(args,"scripts") ? args["scripts"] : []
+    style=haskey(args, "style") ? args["style"] : Dict{String,Any}()
     cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
 
     sysbar!=nothing ? components["v-system-bar"]=sysbar : nothing
@@ -116,7 +115,7 @@ function page(
             DEPENDENCIES,
             components,
             scripts,
-            styles,
+            style,
             cookiejar)
 
     return page_inst

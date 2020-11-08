@@ -36,7 +36,7 @@ function docs()
     end
         
     @el(bt,"v-btn",value="Link",click="open(item.Link)")
-    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),cols=4)
+    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",cols=3)
 
     p1=page([dt])
     io = open("public/index.html", "w")

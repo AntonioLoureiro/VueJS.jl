@@ -18,19 +18,6 @@ jobs:
         run: |
              mkdir public 
              julia -e 'push!(LOAD_PATH,"/home/runner/work/VueJS.jl/VueJS.jl");using VueJS;include("/home/runner/work/VueJS.jl/VueJS.jl/docs/make.jl")'
-      - name: Gen dummy page
-        run: |
-          cat > public/index.html <<EOL
-          <!doctype html>
-          <html>
-            <head>
-              <title>GitHub Pages deployed!</title>
-            </head>
-            <body>
-              <p>GitHub Pages with <strong>${{ github.sha }}</strong> commit ID has been deployed through <a href="https://github.com/marketplace/actions/github-pages">GitHub Pages action</a> successfully.</p>
-            </body>
-          </html>
-          EOL
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2

@@ -1,6 +1,6 @@
 function docs()
     include("examples.jl")
-    io_readme = open("/public/README.md", "w")
+    io_readme = open("public/README.md", "w")
     println(io_readme,"# VueJS
 
 ### Example Pages:")
@@ -29,7 +29,7 @@ function docs()
         
         html_code=replace(html_code,"</style>"=>"</style>"*ex_style)
         html_code=replace(html_code,"<v-container fluid>"=>"<v-container fluid>"*ex_display)
-        io = open("/public/$(name).html", "w")
+        io = open("public/$(name).html", "w")
         println(io, html_code)
         close(io)
         name_url=replace(name," "=>"%20")

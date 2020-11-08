@@ -12,6 +12,8 @@ jobs:
         uses: julia-actions/setup-julia@latest
         with:
           version: 1.5        
+      - name: Install dependencies
+        run: julia -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
       - name: Create Docs
         run: julia -e 'push!(LOAD_PATH,"/home/runner/work/VueJS.jl/VueJS.jl");using VueJS'
       - name: Gen dummy page

@@ -34,8 +34,7 @@ function docs()
         push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html)"""))
         
     end
-    close(io_readme)
-    
+        
     @el(bt,"v-btn",value="Link",click="open(item.Name)")
     @el(dt,"v-data-table",items=df_examples,col_template=Dict("Name"=>bt),cols=4)
 

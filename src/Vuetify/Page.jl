@@ -69,11 +69,8 @@ function htmlstring(page_inst::Page)
     end
     
     scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
-        
-    style=html("style",join([".$k {$v}" for (k,v) in page_inst.style]),Dict("type"=>"text/css"))
-    
-    body_dom=html("body",[style,
-                        html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
+            
+    body_dom=html("body",[html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
         
     htmlpage=html("html",[head_dom,body_dom],Dict())
     

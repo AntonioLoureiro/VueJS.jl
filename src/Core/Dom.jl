@@ -99,15 +99,7 @@ dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=r
 function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_func=false,is_child=false)
 
     vuel=deepcopy(vuel_orig)
-    
-    opts_style=get(opts.style,vuel.tag,Dict{Any,Any}())
-    vuel_style=get(vuel.attrs,"style",Dict{Any,Any}())
         
-    if length(vuel_style)!=0 || length(opts_style)!=0
-        haskey(vuel.attrs,"style") ? nothing : vuel.attrs["style"]=Dict{Any,Any}()
-        merge!(vuel.attrs["style"],opts_style)
-    end
-    
     if vuel.render_func!=nothing && prevent_render_func==false
        dom_ret=vuel.render_func(vuel,opts=opts)
     else
@@ -232,10 +224,14 @@ update_cols!(h::Array;context_cols=12,opts=PAGE_OPTIONS)=update_cols!.(h,context
 function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
-        h.attrs=get(opts.style,h.tag,Dict())  
+        h.attrs=get(opts.style,h.tag,Dict())
+        class=get(opts.class,h.tag,"")
+        class!="" ? h.attrs["class"]=class : nothing
         update_cols!(h.value,context_cols=context_cols,opts=opts)
     elseif h.tag=="v-col"
         h.attrs=get(opts.style,h.tag,Dict())
+        class=get(opts.class,h.tag,"")
+        class!="" ? h.attrs["class"]=class : nothing
         cols=VueJS.get_cols(h.value,rows=false)
         viewport=get(opts.style,"viewport","md")
         h.attrs[viewport]=Int(round(cols/context_cols*12))
@@ -252,6 +248,7 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
         
     opts=deepcopy(opts)
     merge!(opts.style,get(r.attrs,"style",Dict{Any,Any}()))
+    merge!(opts.class,get(r.attrs,"class",Dict{Any,Any}()))
     
     ## Paths
     if r.iterable

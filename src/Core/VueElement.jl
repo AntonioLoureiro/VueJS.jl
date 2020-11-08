@@ -1,26 +1,4 @@
-"""
-### Arguments
 
- * id           :: String           :: Element's identifier
- * tag          :: String           :: Vuetify tag, e.g. "v-dialog", "v-text-input", "v-btn", ...
- * attrs        :: Dict             ::
- * path         :: String           ::
- * binds        :: Dict             ::
- * value_attr   :: String           ::
- * data         :: Dict             ::
- * slots        :: Dict             :: VueJS slots, e.g. append, footer, header, label, prepend, ...
- * cols         :: Union{Nothing, Int64} :: Number of columns the element should occupy
-
-### Examples
-
-```julia
-
-@el(r1,"v-text-field",value="JValue",label="R1")   :: r1 = VueElement{"r1", HtmlElement("v-textfield", Dict("value"=>"JValue","label"=>"R1")), ...}
-@el(r3,"v-slider",value=20,label="Slider 3")
-```
-
-[See also: Vuejs components slots](https://vuejs.org/v2/guide/components-slots.html)
-"""
 mutable struct VueElement
     id::String
     tag::String
@@ -53,15 +31,11 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
     end
         
-    ## Style
+    ## Style Assert
     style=get(attrs,"style",Dict())
     @assert style isa Dict "style attr should be a Dict"
-    ## Only use style 
-    if id!=""
-        attrs=convert(Dict{Any,Any},attrs)
-        attrs["style"]=style
-    end
-        
+    length(style)!=0 ? style=convert(Dict{String,Any},style) : nothing
+    
     ## No Dom attrs
     no_dom_attrs=Dict{String, Any}()
     no_dom_attrs["storage"]=get(attrs, "storage", false)
@@ -105,7 +79,6 @@ function VueElement(id::String, tag::String, attrs::Dict)
     end
     
     update_validate!(vuel) 
-    
     
     ## Slots
     if length(vuel.slots)!=0

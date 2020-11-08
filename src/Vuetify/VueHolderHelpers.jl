@@ -75,7 +75,7 @@ function dialog(id::String,elements::Vector;kwargs...)
     merge!(dial_attrs,real_attrs)
     
     vs_dial=VueStruct(id,elements)
-    vs_dial.attrs=Dict("v-dialog"=>dial_attrs)
+    merge!(vs_dial.attrs,Dict("v-dialog"=>dial_attrs))
     vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
     dial_attrs[":value"]=id*".active.value"
     

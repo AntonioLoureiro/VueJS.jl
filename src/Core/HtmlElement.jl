@@ -1,31 +1,4 @@
-"""
-### Arguments
 
- * tag      :: String              :: Vuetify tag (e.g: "v-text-field")
- * attrs    :: Dict{String, Any}   :: HTML element attributes (e.g: Dict("placeholder"=>"username"))
- * cols     :: Union{Nothing, Int} :: Number of columns the element should occupy
- * value    :: Any                 :: Element content, will be assigned in between opening and closing tags. Defaults to nothing
-
-### Examples
-
-```julia
-el      = HtmlElement("h4", Dict("class"=>"header"), 3, "A small tittle")
-user    = HtmlElement("input", Dict("class"=>"form-control","type"=>"text", "placeholder"=>"username"), "")
-headers = HtmlElement("head", [HtmlElement("meta", Dict("charset"=>"UTF-8")),
-                               HtmlElement("meta", Dict("name"=>"author", "content"=>"Risk Assurance"))])
-
-htmlstring(el)           :: `<h4 class='header'>A small tittle</h4>`
-htmlstring(user)         :: `<input class='form-control' type="text" placeholder="username">`
-htmlstring(headers)      :: `<head><meta charset="UTF-8"/><meta name="author" content="Risk Assurance"/></head>`
-
-# @el(example,"v-text-field",value="JValue",label="R1")
-example = VueElement("teste", HtmlElement("v-text-field", Dict{String,Any}("label"=>"R1","value"=>"JValue"), 3, ""), "", Dict("value"=>"teste.value"), "value", Dict{String,Any}(), 3)
-body=HtmlElement("body",
-        HtmlElement("div",Dict("id"=>"app"),
-            HtmlElement("v-app",
-                HtmlElement("v-container",Dict("fluid"=>true),[example]))))
-```
-"""
 mutable struct HtmlElement
     tag::String
     attrs::Dict{String, Any}

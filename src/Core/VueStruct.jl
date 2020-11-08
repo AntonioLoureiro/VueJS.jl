@@ -23,11 +23,21 @@ function VueStruct(
     asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
-    attrs=Dict{String,Any}(),
     style=Dict{String,Any}(),
-    kwargs...)
-
-    args=Dict(string(k)=>v for (k,v) in kwargs)
+    class=Dict{String,Any}())
+    
+    attrs=Dict{String,Any}()
+    attrs["style"]=PAGE_OPTIONS.style
+    attrs["class"]=PAGE_OPTIONS.class
+    
+    length(style)!=0 ? merge!(attrs["style"],style) : nothing
+    length(class)!=0 ? merge!(attrs["class"],class) : nothing
+    
+    new_opts=deepcopy(PAGE_OPTIONS)
+    merge!(new_opts.style,attrs["style"])
+    merge!(new_opts.class,attrs["class"])
+        
+    update_style!(garr,new_opts)
     
     scope=[]
     garr=element_path(garr,scope)
@@ -43,14 +53,8 @@ function VueStruct(
         def_data=Dict{String,Any}()
     end
 
-    if length(style)!=0
-        haskey(attrs,"style") ? nothing : attrs["style"]=Dict{String,Any}()
-        merge!(attrs["style"],style)
-    end
-    
     iterable==true ? def_data=Vector{Dict{String,Any}}() : nothing
-    
-    comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,attrs,iterable)
+        comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp

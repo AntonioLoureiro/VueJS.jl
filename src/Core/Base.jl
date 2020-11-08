@@ -56,10 +56,11 @@ const KNOWN_EVT_PROPS = [
 mutable struct Opts
     rows::Bool
     style::Dict{String,Any}
+    class::Dict{String,Any}
     path::String
     vars_replace::Dict{String,String}
 end
-const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),"root",Dict())
+const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),Dict(),"root",Dict())
 
 
 LIBRARY_RULES =

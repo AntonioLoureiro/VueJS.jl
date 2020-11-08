@@ -20,6 +20,7 @@ include("Core/Page.jl")
 include("Core/Base.jl")
 include("Core/Parsing.jl")
 include("Core/Update_validation.jl")
+include("Core/Style.jl")
 include("Vuetify/Vuetify.jl")
 include("Echarts/EchartsBase.jl")
 

@@ -1,3 +1,2 @@
-"""
-<h1>LORE IPSILUM</h1>
-"""
+include("docs_lib.jl")
+docs()

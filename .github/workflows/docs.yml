@@ -11,9 +11,9 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@latest
         with:
-          version: 1.5
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+          version: 1.5        
+      - name: Create Docs
+        run: julia -e 'using VueJS'
       - name: Gen dummy page
         run: |
           mkdir public

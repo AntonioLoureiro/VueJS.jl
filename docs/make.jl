@@ -1,12 +1,10 @@
 using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights
 
 function docs()
-    include("examples.jl")
-    io_readme = open("public/README.md", "w")
-    println(io_readme,"# VueJS
-
-### Example Pages:")
     
+    df_examples=DataFrame(Name=[],Link=[])
+    
+    include("examples.jl")
     for e in examples
 
         name=e[1] 
@@ -33,11 +31,19 @@ function docs()
         println(io, html_code)
         close(io)
         name_url=replace(name," "=>"%20")
-        println(io_readme, """[$name](https://antonioloureiro.github.io/VueJS.jl/$(name_url).html)""")
-        println(io_readme, """ 
-            """)
+        push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html)"""))
+        
     end
     close(io_readme)
+    
+    @el(bt,"v-btn",value="Link",click="open(item.Name)")
+    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Name"=>bt),cols=4)
+
+    p=page([dt])
+    io = open("public/index.html", "w")
+    println(io, VueJS.htmlstring(p))
+    close(io)
+    
 end
 
 docs()

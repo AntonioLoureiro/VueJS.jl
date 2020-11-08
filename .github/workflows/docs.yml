@@ -13,7 +13,7 @@ jobs:
         with:
           version: 1.5        
       - name: Create Docs
-        run: julia -e 'using VueJS'
+        run: julia -e 'push!(LOAD_PATH,"/home/runner/work/VueJS.jl/VueJS.jl");using VueJS'
       - name: Gen dummy page
         run: |
           mkdir public

@@ -39,9 +39,9 @@ function docs()
     @el(bt,"v-btn",value="Link",click="open(item.Name)")
     @el(dt,"v-data-table",items=df_examples,col_template=Dict("Name"=>bt),cols=4)
 
-    p=page([dt])
+    p1=page([dt])
     io = open("public/index.html", "w")
-    println(io, VueJS.htmlstring(p))
+    println(io, VueJS.htmlstring(p1))
     close(io)
     
 end

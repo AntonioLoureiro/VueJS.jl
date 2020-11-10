@@ -15,6 +15,13 @@ mutable struct VueElement
     child
 end
 
+struct VueElementUpdateValidate
+   
+    value_attr::Union{Nothing,String}
+    fn::Function    
+end
+
+
 function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     
     slots=get(attrs, "slots", Dict{String,String}())
@@ -99,7 +106,8 @@ function update_validate!(vuel::VueElement)
     ### Specific Validations and updates
     tag=vuel.tag
     if haskey(UPDATE_VALIDATION, tag)
-        UPDATE_VALIDATION[tag](vuel)
+        UPDATE_VALIDATION[tag].fn(vuel)
+        vuel.value_attr=UPDATE_VALIDATION[tag].value_attr
     end
 
     ## Binding

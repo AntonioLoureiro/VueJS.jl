@@ -27,8 +27,8 @@ function VueStruct(
     class=Dict{String,Any}())
     
     attrs=Dict{String,Any}()
-    attrs["style"]=PAGE_OPTIONS.style
-    attrs["class"]=PAGE_OPTIONS.class
+    attrs["style"]=deepcopy(PAGE_OPTIONS.style)
+    attrs["class"]=deepcopy(PAGE_OPTIONS.class)
     
     length(style)!=0 ? merge!(attrs["style"],style) : nothing
     length(class)!=0 ? merge!(attrs["class"],class) : nothing

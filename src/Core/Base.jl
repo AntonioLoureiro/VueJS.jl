@@ -73,7 +73,27 @@ LIBRARY_RULES =
          "in"=>(x->return """ value => $x.includes(value) || 'Value not in $x' """)
     )
 
-const UPDATE_VALIDATION=Dict{String,Any}()
+struct VueElementSettings
+    framework::String
+    doc::String
+    value_attr::Union{Nothing,String}
+    fn::Function    
+end
+
+function VueElementSettings(nt::NamedTuple)
+    
+    framework=get(nt,:framework,"vuetify")
+    doc=get(nt,:doc,"")
+    value_attr=get(nt,:value_attr,"value")
+    fn=nt.fn
+    
+    return VueElementSettings(framework,doc,value_attr,fn)
+end
+
+import Base.convert
+Base.convert(::Type{VueElementSettings}, x::NamedTuple) = VueElementSettings(x)
+
+const UPDATE_VALIDATION=Dict{String,VueElementSettings}()
 
 function get_web_dependencies!(web_dependency_path::String,deps_url::String)
 

@@ -1,10 +1,11 @@
 
-UPDATE_VALIDATION["vue-editor"]=(x)->begin
-
+UPDATE_VALIDATION["vue-editor"]=(
+doc="",
+fn=(x)->begin
     x.cols==nothing ? x.cols=6 : nothing
-end
+end)
 
-UPDATE_VALIDATION["hot-table"]=(x)->begin
-    
-    x.value_attr="data"
-end
+UPDATE_VALIDATION["hot-table"]=(
+doc="",
+value_attr="data",
+fn=(x)->x)

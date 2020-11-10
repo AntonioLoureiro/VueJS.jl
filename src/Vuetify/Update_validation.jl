@@ -1,58 +1,65 @@
-UPDATE_VALIDATION["v-file-input"]=(x)->begin
-
-    x.value_attr="input-value"
+UPDATE_VALIDATION["v-file-input"]=(
+doc="",
+value_attr="input-value",
+fn=(x)->begin
     haskey(x.attrs,"multiple") ? nothing : x.attrs["multiple"]=false
-end
+end)
 
-UPDATE_VALIDATION["v-tooltip"]=(x)->begin
+UPDATE_VALIDATION["v-tooltip"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->x)
 
-    x.value_attr=nothing
-end
-
-UPDATE_VALIDATION["v-menu"]=(x)->begin
-
-    x.value_attr=nothing
+UPDATE_VALIDATION["v-menu"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->begin
     haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
-    
     @el(menu_list,"v-list",items=x.attrs["items"])
-        
     x.child=menu_list
-    
-end
+end)
 
-UPDATE_VALIDATION["v-switch"]=(x)->begin
-
-    x.value_attr="input-value"
+UPDATE_VALIDATION["v-switch"]=(
+doc="",
+value_attr="input-value",    
+fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
     haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
-end
+end)
 
-UPDATE_VALIDATION["v-checkbox"]=(x)->begin
-
-    x.value_attr="input-value"
+UPDATE_VALIDATION["v-checkbox"]=(
+doc="",
+value_attr="input-value",
+fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
     haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
-end
+end)
 
 
-UPDATE_VALIDATION["v-chip"]=(x)->begin
+UPDATE_VALIDATION["v-chip"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->x
+)
 
-    x.value_attr=nothing
-end
+UPDATE_VALIDATION["v-slider"]=(
+doc="",
+fn=(x)->begin
+    x.cols==nothing ? x.cols=3 : nothing
+end)
 
-UPDATE_VALIDATION["v-slider"]=(x)->begin
+UPDATE_VALIDATION["v-date-picker"]=(
+doc="",    
+fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
-end
+end)
 
-UPDATE_VALIDATION["v-date-picker"]=(x)->begin
-
-    x.cols==nothing ? x.cols=3 : nothing
-end
-
-UPDATE_VALIDATION["v-text-field"]=(x)->begin
+UPDATE_VALIDATION["v-text-field"]=(
+doc="", 
+fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
     
@@ -75,22 +82,26 @@ UPDATE_VALIDATION["v-text-field"]=(x)->begin
             return domvalue
         end
     end
-end
+end)
 
 
-UPDATE_VALIDATION["v-btn"]=(x)->begin
+UPDATE_VALIDATION["v-btn"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->begin
 
     ## attr alias of content
     haskey(x.attrs,"value") ? (x.attrs["content"]=x.attrs["value"];delete!(x.attrs,"value")) : nothing
+end)
 
-    x.value_attr=nothing
-end
+UPDATE_VALIDATION["v-spacer"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->x)
 
-UPDATE_VALIDATION["v-spacer"]=(x)->begin
-    x.value_attr=nothing
-end
-
-UPDATE_VALIDATION["v-select"]=(x)->begin
+UPDATE_VALIDATION["v-select"]=(
+doc="",
+fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify Select element with non Array arg items!"
@@ -100,33 +111,36 @@ UPDATE_VALIDATION["v-select"]=(x)->begin
     if !haskey(x.attrs,"value")
         x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
     end
-end
+end)
 
-UPDATE_VALIDATION["v-radio-group"]=(x)->begin
+UPDATE_VALIDATION["v-radio-group"]=(
+doc="",
+value_attr="input-value",
+fn=(x)->begin
     
     x.cols==nothing ? x.cols=1 : nothing
-    x.value_attr="input-value"
-    
+   
     content=get(x.attrs,"content",[])
     haskey(x.attrs,"content") ? delete!(x.attrs,"content") : nothing
 
     x.child=content
 
-end
+end)
 
-UPDATE_VALIDATION["v-radio"]=(x)->begin
-    
+UPDATE_VALIDATION["v-radio"]=(
+doc="",
+value_attr="input-value",
+fn=(x)->begin
     x.cols==nothing ? x.cols=1 : nothing
-    x.value_attr="input-value"
+end)
 
-end
-
-UPDATE_VALIDATION["v-list"]=(x)->begin
+UPDATE_VALIDATION["v-list"]=(
+doc="",
+value_attr="items",
+fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
-    
-    x.value_attr="items"
 
     if haskey(x.attrs,"item") || haskey(x.attrs,"content")
         
@@ -183,9 +197,11 @@ UPDATE_VALIDATION["v-list"]=(x)->begin
             
         x.child=child
     end
-end
+end)
 
-UPDATE_VALIDATION["v-tabs"]=(x)->begin
+UPDATE_VALIDATION["v-tabs"]=(
+doc="",
+fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"
     @assert x.attrs["names"] isa Array "Vuetify tab names should be an array"
@@ -200,15 +216,16 @@ UPDATE_VALIDATION["v-tabs"]=(x)->begin
        end
        HtmlElement("v-tabs",y.attrs,12,content)
     end
-end
+end)
 
-UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
+UPDATE_VALIDATION["v-navigation-drawer"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
     @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
 
-    x.value_attr=nothing
-    
     item_names=collect(keys(x.attrs["items"][1]))
     x.tag="v-list"
             
@@ -226,10 +243,12 @@ UPDATE_VALIDATION["v-navigation-drawer"]=(x)->begin
 
         html("v-navigation-drawer",dom_nav,nav_attrs,cols=12)
     end
-end
+end)
 
 
-UPDATE_VALIDATION["v-card"]=(x)->begin
+UPDATE_VALIDATION["v-card"]=(
+doc="", 
+fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify card with no names, please define names array!"
     @assert x.attrs["names"] isa Array "Vuetify card names should be an array"
@@ -247,9 +266,12 @@ UPDATE_VALIDATION["v-card"]=(x)->begin
         
       VueJS.HtmlElement("v-card",y.attrs,cols,content)
     end
-end
+end)
 
-UPDATE_VALIDATION["v-alert"]=(x)->begin
+UPDATE_VALIDATION["v-alert"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->begin
     
     x.cols==nothing ? x.cols=12 : nothing
     
@@ -267,8 +289,7 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
     x.binds["value"]=x.id*".value"
     
     x.binds["v-html"]=x.id*".content"
-    x.value_attr=nothing
-
+    
     dismissible = get(x.attrs, "dismissible", false)
     timeout = get(x.attrs, "timeout", 4000)
     delay = get(x.attrs, "delay", 0)
@@ -276,4 +297,4 @@ UPDATE_VALIDATION["v-alert"]=(x)->begin
     timeout_func="function(val,old){val ? setTimeout(()=>{this.$(x.id).value = false}, $timeout) : ''}"
     haskey(x.events,"watch") ? x.events["watch"]["$(x.id).value"]=timeout_func : x.events["watch"]=Dict("$(x.id).value"=>timeout_func)
 
-end
+end)

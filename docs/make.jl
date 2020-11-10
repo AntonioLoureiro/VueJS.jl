@@ -1,6 +1,6 @@
 using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights
 
-function docs()
+function live_examples()
     
     df_examples=DataFrame(Name=[],Link=[])
     
@@ -45,4 +45,4 @@ function docs()
     
 end
 
-docs()
+live_examples()

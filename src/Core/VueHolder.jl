@@ -10,7 +10,7 @@ mutable struct VueHolder
         vueh=new(tag,attrs,elements,cols,render_func)
         
         if haskey(UPDATE_VALIDATION, tag)
-            UPDATE_VALIDATION[tag](vueh)
+            UPDATE_VALIDATION[tag].fn(vueh)
         end
     
         return vueh

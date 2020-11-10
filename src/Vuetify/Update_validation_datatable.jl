@@ -9,7 +9,10 @@ dt_filter_modes["=="]="""function(value, search, item){if (this.filter_value==nu
 dt_filter_modes["contains"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value.toLowerCase().includes(this.filter_value.toLowerCase())}}"""
 
 
-UPDATE_VALIDATION["v-data-table"]=(x)->begin
+UPDATE_VALIDATION["v-data-table"]=(
+doc="",
+value_attr="value",
+fn=(x)->begin
     col_pref="col_"
     trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
@@ -18,7 +21,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     end
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
-    x.value_attr="value"
+    
     x.attrs["value"]=[]
     x.cols==nothing ? x.cols=4 : nothing
 
@@ -158,4 +161,4 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
         end
 
     end
-end
+end)

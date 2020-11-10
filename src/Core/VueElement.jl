@@ -15,12 +15,6 @@ mutable struct VueElement
     child
 end
 
-struct VueElementUpdateValidate
-   
-    value_attr::Union{Nothing,String}
-    fn::Function    
-end
-
 
 function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     

@@ -35,7 +35,7 @@ function docs()
         
     end
         
-    @el(bt,"v-btn",value="Link",click="open(item.Link)")
+    @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true)
     @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,cols=3)
 
     ## Components
@@ -44,7 +44,7 @@ function docs()
     for (k,v) in VueJS.UPDATE_VALIDATION
         push!(df_components,(k,v.library,v.value_attr,v.doc))
     end
-    @el(dt_components,"v-data-table",items=df_components,caption="Components",dense=true,cols=4)
+    @el(dt_components,"v-data-table",items=df_components,caption="Components",dense=true,items-per-page=50,cols=4)
     
     p1=page([[dt_components,spacer(),dt_live]])
     

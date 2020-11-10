@@ -74,7 +74,7 @@ LIBRARY_RULES =
     )
 
 struct VueElementSettings
-    framework::String
+    library::String
     doc::String
     value_attr::Union{Nothing,String}
     fn::Function    
@@ -82,12 +82,12 @@ end
 
 function VueElementSettings(nt::NamedTuple)
     
-    framework=get(nt,:framework,"vuetify")
+    library=get(nt,:library,"vuetify")
     doc=get(nt,:doc,"")
     value_attr=get(nt,:value_attr,"value")
     fn=nt.fn
     
-    return VueElementSettings(framework,doc,value_attr,fn)
+    return VueElementSettings(library,doc,value_attr,fn)
 end
 
 import Base.convert

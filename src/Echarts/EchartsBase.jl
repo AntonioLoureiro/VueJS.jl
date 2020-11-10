@@ -7,6 +7,7 @@ end
 
 UPDATE_VALIDATION["vuechart"]=(
 doc="",
+library="echarts",
 value_attr=nothing,
 fn=(x)->begin
 

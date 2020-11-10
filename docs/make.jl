@@ -1,6 +1,6 @@
 using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights
 
-function live_examples()
+function docs()
     
     df_examples=DataFrame(Name=[],Link=[])
     
@@ -36,13 +36,22 @@ function live_examples()
     end
         
     @el(bt,"v-btn",value="Link",click="open(item.Link)")
-    @el(dt,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",cols=3)
+    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",cols=3)
 
-    p1=page([dt])
+    ## Components
+    df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
+
+    for (k,v) in VueJS.UPDATE_VALIDATION
+        push!(df_components,(k,v.library,v.value_attr,v.doc))
+    end
+    @el(dt_components,"v-data-table",items=df_components,caption="Components",cols=3)
+    
+    p1=page([[dt_components,dt_live]])
+    
     io = open("public/index.html", "w")
     println(io, VueJS.htmlstring(p1))
     close(io)
     
 end
 
-live_examples()
+docs()

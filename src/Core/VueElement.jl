@@ -98,10 +98,9 @@ is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(
 function update_validate!(vuel::VueElement)
 
     ### Specific Validations and updates
-    tag=vuel.tag
-    if haskey(UPDATE_VALIDATION, tag)
-        UPDATE_VALIDATION[tag].fn(vuel)
-        vuel.value_attr=UPDATE_VALIDATION[tag].value_attr
+    if haskey(UPDATE_VALIDATION, vuel.tag)
+        UPDATE_VALIDATION[vuel.tag].fn(vuel)
+        vuel.value_attr=deepcopy(UPDATE_VALIDATION[vuel.tag].value_attr)
     end
 
     ## Binding

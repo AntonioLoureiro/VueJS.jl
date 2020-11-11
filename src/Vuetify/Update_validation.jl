@@ -1,12 +1,21 @@
 UPDATE_VALIDATION["v-file-input"]=(
-doc="",
+doc="Component for file upload, allows multiple files. When used, the submit function will submit all the files including contents and filenames. In server side parse the request with:<br>
+    <code>
+    function example(req::HTTP.Request)<br>
+    VueJS.parse(req)
+    </code>",
 value_attr="input-value",
 fn=(x)->begin
     haskey(x.attrs,"multiple") ? nothing : x.attrs["multiple"]=false
 end)
 
 UPDATE_VALIDATION["v-tooltip"]=(
-doc="",
+doc="""Should be used as a argument in other elements. Example:
+    <code>
+    @el(ttp,"v-tooltip",content="<p>Lore Ipsilum</p><p><b>Lore Ipsilum</b></p>",bottom=true,color="rgba(0, 0, 255, 0.5)")<br>
+    @el(ch1,"v-chip",content="Tooltip",tooltip=ttp)
+    <code>
+    """,
 value_attr=nothing,
 fn=(x)->x)
 

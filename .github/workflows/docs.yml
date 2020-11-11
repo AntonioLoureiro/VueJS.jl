@@ -16,7 +16,8 @@ jobs:
         run: julia -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
       - name: Create Docs
         run: |
-             mkdir public 
+             mkdir public
+             cp /home/runner/work/VueJS.jl/VueJS.jl/docs/Docs.html public/Docs.html
              julia -e 'push!(LOAD_PATH,"/home/runner/work/VueJS.jl/VueJS.jl");using VueJS;include("/home/runner/work/VueJS.jl/VueJS.jl/docs/make.jl")'
       - name: Deploy to GitHub Pages
         if: success()

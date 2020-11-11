@@ -53,13 +53,16 @@ function docs()
     dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
-    @el(nav,"v-navigation-drawer",items=[Dict("icon"=>"mdi-image","title"=>"Base","href"=>"https://antonioloureiro.github.io/VueJS.jl/base.html"),
-        Dict("icon"=>"mdi-image","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
+    @el(nav,"v-navigation-drawer",items=[Dict("icon"=>"mdi-file-document-outline","title"=>"Base","href"=>"https://antonioloureiro.github.io/VueJS.jl/base.html"),
+        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
 
-    pcomp=page([[[st,dt_components],spacer(),dt_live],dial,title_el,doc_el],navigation=nav);
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('base.html')")
+    barapp=bar([homeb]);
     
-    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>800,"height"=>800),cols=12)
-    pbase=page([iframe],navigation=nav);
+    pcomp=page([[[st,dt_components],spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
+    
+    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>"100%","height"=>"100%"),cols=12)
+    pbase=page([iframe],navigation=nav,bar=barapp);
     
     io = open("public/base.html", "w")
     println(io, VueJS.htmlstring(pbase))

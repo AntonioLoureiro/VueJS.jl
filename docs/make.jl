@@ -35,7 +35,7 @@ function docs()
         
     end
     
-    @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true)
+    @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
     @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,cols=3)
 
     df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
@@ -52,7 +52,8 @@ function docs()
     dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
-    p1=page([[dt_components,spacer(),dt_live],dial,title_el,doc_el]);
+    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>600),cols=4)
+    p1=page([[iframe,dt_components,spacer(),dt_live],dial,title_el,doc_el]);
     
     io = open("public/index.html", "w")
     println(io, VueJS.htmlstring(p1))

@@ -12,7 +12,7 @@ end)
 UPDATE_VALIDATION["v-tooltip"]=(
 doc="""Should be used as a argument in other elements. Example:
     <code>
-    @el(ttp,"v-tooltip",content="<p>Lore Ipsilum</p><p><b>Lore Ipsilum</b></p>",bottom=true,color="rgba(0, 0, 255, 0.5)")<br>
+    @el(ttp,"v-tooltip",content="Tooltip Text",bottom=true,color="rgba(0, 0, 255, 0.5)")<br>
     @el(ch1,"v-chip",content="Tooltip",tooltip=ttp)
     <code>
     """,

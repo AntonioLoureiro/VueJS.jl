@@ -43,7 +43,7 @@ function docs()
         push!(df_components,(k,v.library,v.value_attr,v.doc))
     end
     @el(bt_doc,"v-btn",value="Doc",click="doc_el.value=item.doc;title_el.value=item.component;dial.active.value=true",small=true,outlined=true,color="indigo")
-    @el(st,"v-text-field",label="Search")
+    @el(st,"v-text-field",label="Search Components")
     @el(dt_components,"v-data-table",items=df_components,col_template=Dict("Doc"=>bt_doc),caption="Components",binds=Dict("search"=>"st.value"),dense=true,items-per-page=50,cols=4)
 
     @el(doc_el,"v-text-field",value="",v-show="false")
@@ -53,21 +53,22 @@ function docs()
     dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
-    @el(nav,"v-navigation-drawer",items=[Dict("icon"=>"mdi-file-document-outline","title"=>"Base","href"=>"https://antonioloureiro.github.io/VueJS.jl/base.html"),
+    @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[Dict("icon"=>"mdi-file-document-outline","title"=>"Base","href"=>"https://antonioloureiro.github.io/VueJS.jl/base.html"),
         Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
 
     @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('base.html')")
     barapp=bar([homeb,"VueJS Documentation"]);
     
-    pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
     
-    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>"100%","height"=>1000,"frameborder"=>0),cols=12)
+    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
     pbase=page([iframe],navigation=nav,bar=barapp);
     
     io = open("public/base.html", "w")
     println(io, VueJS.htmlstring(pbase))
     close(io)
     
+    pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
+        
     io = open("public/components.html", "w")
     println(io, VueJS.htmlstring(pcomp))
     close(io)

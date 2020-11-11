@@ -39,6 +39,9 @@ function docs()
     @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,cols=3)
 
     df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
+    for (k,v) in VueJS.UPDATE_VALIDATION
+        push!(df_components,(k,v.library,v.value_attr,v.doc))
+    end
     @el(bt_doc,"v-btn",value="Doc",click="doc_el.value=item.doc;title_el.value=item.component;dial.active.value=true",small=true,outlined=true,color="indigo")
     @el(dt_components,"v-data-table",items=df_components,col_template=Dict("Doc"=>bt_doc),caption="Components",dense=true,items-per-page=50,cols=4)
 

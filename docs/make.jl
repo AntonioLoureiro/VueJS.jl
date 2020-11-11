@@ -34,7 +34,7 @@ function docs()
         push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html"""))
         
     end
-        
+    df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
     @el(bt_doc,"v-btn",value="Doc",click="doc_el.value=item.doc;title_el.value=item.component;dial.active.value=true",small=true,outlined=true,color="indigo")
     @el(dt_components,"v-data-table",items=df_components,col_template=Dict("Doc"=>bt_doc),caption="Components",dense=true,items-per-page=50,cols=4)
 
@@ -45,7 +45,7 @@ function docs()
     dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
-    p1=page([[dt_components,dt_live],dial,title_el,doc_el]);
+    p1=page([[dt_components,spacer(),dt_live],dial,title_el,doc_el]);
     
     io = open("public/index.html", "w")
     println(io, VueJS.htmlstring(p1))

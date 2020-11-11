@@ -57,11 +57,11 @@ function docs()
         Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
 
     @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('base.html')")
-    barapp=bar([homeb]);
+    barapp=bar([homeb,"VueJS Documentation"]);
     
-    pcomp=page([[[st,dt_components],spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
+    pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
     
-    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>"100%","height"=>"100%"),cols=12)
+    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","width"=>"100%","height"=>1000,"frameborder"=>0),cols=12)
     pbase=page([iframe],navigation=nav,bar=barapp);
     
     io = open("public/base.html", "w")

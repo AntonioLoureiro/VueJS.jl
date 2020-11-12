@@ -14326,6 +14326,38 @@ a.anchor-link {
 </div>
 
 </div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Styling">Styling<a class="anchor-link" href="#Styling">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
+<li>Allows definition of 3 levels of styling: App, page and element</li>
+<li>Binding of style attrs in JS data that allows for client side reactivity</li>
+<li>Usage of class attr for padding and margin (see documentation o Vuetify)</li>
+</ul>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># App Style definition</span>
+<span class="nd">@style</span> <span class="s">&quot;v-btn&quot;</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span> <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;black&quot;</span>
+<span class="nd">@class</span> <span class="s">&quot;v-btn&quot;</span> <span class="s">&quot;ma-5&quot;</span>
+
+<span class="c"># Element Style definition (overrides App and Page)</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Submit&quot;</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="s">&quot;background-color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;black&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-5&quot;</span><span class="p">)</span>
+
+<span class="c"># Page Style definition (overrides App)</span>
+<span class="n">page</span><span class="p">([</span><span class="n">bt</span><span class="p">],</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;v-btn&quot;</span><span class="o">=&gt;</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="s">&quot;background-color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;black&quot;</span><span class="p">)),</span><span class="n">class</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;v-btn&quot;</span><span class="o">=&gt;</span><span class="s">&quot;ma-5&quot;</span><span class="p">));</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
 </body>
 
 

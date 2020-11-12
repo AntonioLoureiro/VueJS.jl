@@ -141,7 +141,7 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-spacer"]=(
-doc="""Holder Element helper function is the correct method to use. Special attributes are rows and cols for number of rows and cols of space.<br>
+doc="""Holder Element, helper function is the correct method to use. Special attributes are rows and cols for number of rows and cols of space.<br>
     <code>
     spacer() # One col of space<br>
     spacer(rows=2,cols=3) # 2 rows and 3 cols of space
@@ -151,7 +151,11 @@ value_attr=nothing,
 fn=(x)->x)
 
 UPDATE_VALIDATION["v-select"]=(
-doc="",
+doc="""Simple Element, value attribute is items. Items are the options available to select. Value is the selected item, allows for multiple.<br>
+    <code>
+    @el(sel,"v-select",items=["A","B","C"],multiple=true)
+    </code>
+    """,
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
@@ -251,7 +255,11 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-tabs"]=(
-doc="",
+doc="""Holder Element, helper function is the correct method to use. Accepts array of pairs key is Tab Name value is the content<br>
+    <code>
+    tabs(["Tab1"=>[el1,el2,el3],"Tab2"=>[el4,[el5,el6]]])
+    </code>
+    """,
 fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"

@@ -7,6 +7,7 @@ export VueStruct,WebDependency,html,spacer
 export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog
 export LIBRARY_RULES
 export get_web_dependencies!
+export @style,@class
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

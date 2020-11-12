@@ -37,3 +37,32 @@ function update_style!(el::VueStruct,opts::Opts)
 end
 
 update_style!(vueh::VueHolder,opts::Opts)=update_style!(vueh.elements,opts)
+
+
+macro style(tag_name,args...)
+
+    @assert typeof(tag_name) <: AbstractString "1st arg should be tag name"
+    newargs=treat_kwargs(args) 
+        
+    newargs="Dict($(join(newargs,",")))"
+    newargs=Meta.parse(newargs)
+    if haskey(PAGE_OPTIONS.style,tag_name)
+        return quote
+        merge!(PAGE_OPTIONS.style[$tag_name],$newargs)
+        end
+    else
+        return quote
+        PAGE_OPTIONS.style[$tag_name]=$newargs
+        end
+    end
+end
+
+macro class(tag_name,class_string)
+
+    @assert typeof(tag_name) <: AbstractString "1st arg should be tag name"
+    @assert typeof(class_string) <: AbstractString "2nd arg should be class string"
+            
+    return quote
+       PAGE_OPTIONS.class[$tag_name]=$class_string
+    end
+end

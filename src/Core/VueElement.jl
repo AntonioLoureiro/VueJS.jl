@@ -124,23 +124,7 @@ function update_validate!(vuel::VueElement)
     return nothing
 end
 
-"""
-### Examples
-```julia
-@el(r1,"v-slider",value=20,label="Slider 1")
-@el(r4,"v-text-field",value="R4 Value",label="R4")
-@el(r2,"v-slider",value=20,label="Slider 2")
-@el(r6,"v-text-field",placeholder="Dummy data",label="Test")
-@el(element,"v-text-field", full-width=true, label="Example", solo-inverted=true)
-```
-"""
-macro el(varname,tag,args...)
-
-    @assert varname isa Symbol "1st arg should be Variable name"
-    tag_type=typeof(tag)
-
-    @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
-
+function treat_kwargs(args) 
         newargs=[]
         for r in (args)
            @assert r.head==:(=) "You should input args with = indication e.g. a=1"
@@ -165,7 +149,18 @@ macro el(varname,tag,args...)
                 push!(newargs,e)
             end
         end
-        newargs="Dict($(join(newargs,",")))"
+   return newargs
+end
+
+macro el(varname,tag,args...)
+
+    @assert varname isa Symbol "1st arg should be Variable name"
+    tag_type=typeof(tag)
+
+    @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
+    newargs=treat_kwargs(args) 
+        
+    newargs="Dict($(join(newargs,",")))"
 
     ## Special Building Condition (EChart)
     if tag_type==Symbol

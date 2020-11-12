@@ -10,17 +10,23 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-tooltip"]=(
-doc="""Should be used as a argument in other elements. Example:
+doc="""Should be used as a argument in other elements. Example:<br>
     <code>
     @el(ttp,"v-tooltip",content="Tooltip Text",bottom=true,color="rgba(0, 0, 255, 0.5)")<br>
     @el(ch1,"v-chip",content="Tooltip",tooltip=ttp)
-    <code>
+    </code>
     """,
 value_attr=nothing,
 fn=(x)->x)
 
 UPDATE_VALIDATION["v-menu"]=(
-doc="",
+doc="""Should be used as a argument in other elements, normally v-btn. Example:<br>
+    <code>
+    items=[Dict("title"=>"Action 1","val"=>"BATATA"),Dict("title"=>"Action 2","val"=>"https://www.amazon.com")]<br>
+    @el(menu,"v-menu",items=items,dark=true)<br>
+    @el(m2,"v-btn",menu=menu,value="Menu")<br>
+    </code>
+    """,
 value_attr=nothing,
 fn=(x)->begin
     haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
@@ -29,7 +35,11 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-switch"]=(
-doc="",
+doc="""Simple element, value attribute is input-value. Switch value on is true, off is false.<br>
+    <code>
+    @el(sw,"v-switch",label="Switch",value=false)<br>
+    </code>
+    """,
 value_attr="input-value",    
 fn=(x)->begin
     x.attrs["true-value"]=true
@@ -38,7 +48,11 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-checkbox"]=(
-doc="",
+doc="""Simple element, value attribute is input-value. CheckBox ticked value is true, non ticked is false.<br>
+    <code>
+    @el(sw,"v-checkbox",label="Check",value=false)<br>
+    </code>
+    """,
 value_attr="input-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
@@ -48,26 +62,45 @@ end)
 
 
 UPDATE_VALIDATION["v-chip"]=(
-doc="",
+doc="""Simple Element, value attribute is nothing, when submitted has no value. Can be used with with events,e.g. click (like any other vuetify element)<br>
+    <code>
+    @el(chip,"v-chip",content="Chip",color="rgba(200,0,0,0.8)",text-color="white",click="open('https://www.google.com')")
+    </code>
+    """,
 value_attr=nothing,
 fn=(x)->x
 )
 
 UPDATE_VALIDATION["v-slider"]=(
-doc="",
+doc="""Simple Element, value attribute is value. Important attributes are min and max for minimum and maximum values, thumb-label will show the selected value if true or always for persintent.<br>
+    <code>
+    @el(slid,"v-slider",value=0,min=0,max=50,thumb-label="always",thumb-color="red")
+    </code>
+    """,
 fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
 UPDATE_VALIDATION["v-date-picker"]=(
-doc="",    
+doc="""Simple Element, value attribute is value. Is invoked when v-text-field element has type date!. Can be used without v-text-field<br>
+    <code>
+    @el(dpt,"v-text-field",label="Date",type="date")<br>
+    @el(dp,"v-date-picker",color="red") # utilization without text field
+    </code>
+    """,    
 fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
 UPDATE_VALIDATION["v-text-field"]=(
-doc="", 
+doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is number when submited the value will be a valid number in JSON.<br>
+    <code>
+    @el(tf,"v-text-field",label="Date Field",type="date")<br>
+    @el(tf2,"v-text-field",label="Number Field",type="number")<br>
+    @el(tf3,"v-text-field",label="Text Field") # default type is text<br>
+    </code>
+    """, 
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
@@ -95,7 +128,11 @@ end)
 
 
 UPDATE_VALIDATION["v-btn"]=(
-doc="",
+doc="""Simple Element, value attribute is nothing, when submitted has no value. Can be used with with events,e.g. click (like any other vuetify element)<br>
+    <code>
+    @el(b,"v-btn",content="Button",click="submit('login')",small=true,outlined=true,color="indigo")
+    </code>
+    """,
 value_attr=nothing,
 fn=(x)->begin
 
@@ -104,7 +141,12 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-spacer"]=(
-doc="",
+doc="""Holder Element helper function is the correct method to use. Special attributes are rows and cols for number of rows and cols of space.<br>
+    <code>
+    spacer() # One col of space<br>
+    spacer(rows=2,cols=3) # 2 rows and 3 cols of space
+    </code>
+    """,
 value_attr=nothing,
 fn=(x)->x)
 

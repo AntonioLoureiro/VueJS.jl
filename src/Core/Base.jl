@@ -23,7 +23,9 @@ DEPENDENCIES=[
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","6.2.2","css",Dict(),"",""),
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","6.2.2","js",Dict(),"",""),
                 
-                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"","")
+                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"",""),
+                WebDependency("https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","3.1.1","js",Dict(),"","")
+    
             ]
 
 FRAMEWORK="vuetify"

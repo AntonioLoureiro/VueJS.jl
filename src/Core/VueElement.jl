@@ -124,7 +124,7 @@ function update_validate!(vuel::VueElement)
     return nothing
 end
 
-function treat_kwargs(args;kind="Dict") 
+function treat_kwargs(args) 
         newargs=[]
         for r in (args)
            @assert r.head==:(=) "You should input args with = indication e.g. a=1"

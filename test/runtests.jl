@@ -3,7 +3,7 @@ using Test, VueJS,Namtso
 @el(r1,"v-text-field",value="R1 Value",label="R1",disabled=false,prepend-icon="mdi-account",cols=2)
 @el(r2,"v-text-field",value="R2 Value",label="R2")
 @st(c1,[r1,r2],data=Dict("vuet"=>"Cebola"),binds=Dict("r1.label"=>"r2.value"))
-@dialog(dial,[username,username2],persistent=false,max-width=800)
+@dialog(dial,[r1,r2],persistent=false,max-width=800)
 
 
 ## Tests

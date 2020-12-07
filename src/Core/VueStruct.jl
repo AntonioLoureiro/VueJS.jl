@@ -60,6 +60,23 @@ function VueStruct(
     return comp
 end
 
+macro st(varname,els,args...)
+    @assert varname isa Symbol "1st arg should be Variable name"
+    
+    @assert els isa Expr "2nd arg should be Array of Elements"
+          
+    newargs=join([r for r in args],",")
+    
+    if length(newargs)==0
+        newexpr=(Meta.parse("""VueJS.VueStruct("$(string(varname))",$(els))"""))
+    else
+        newexpr=(Meta.parse("""VueJS.VueStruct("$(string(varname))",$(els),$newargs)"""))
+    end
+    return quote
+        $(esc(varname))=$(esc(newexpr))
+    end
+end
+
 function element_path(v::VueHolder,scope::Array)
     v.elements=deepcopy(element_path(v.elements,scope))
     return v

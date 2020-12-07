@@ -124,7 +124,7 @@ function update_validate!(vuel::VueElement)
     return nothing
 end
 
-function treat_kwargs(args) 
+function treat_kwargs(args;kind="Dict") 
         newargs=[]
         for r in (args)
            @assert r.head==:(=) "You should input args with = indication e.g. a=1"
@@ -141,7 +141,7 @@ function treat_kwargs(args)
                     lefte=replace(replace(lefte,"("=>""), ")"=>"") 
                     push!(newargs,lefte*righte)
                 else  ### handle cases where left side expr is similar to: dot.key
-                    str_expr=replace("\""*string(str_expr)," ="=>"\" =>",count=1)
+                     str_expr=replace("\""*string(str_expr)," ="=>"\" =>",count=1)
                     push!(newargs,str_expr)
                 end
             else
@@ -158,7 +158,7 @@ macro el(varname,tag,args...)
     tag_type=typeof(tag)
 
     @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
-    newargs=treat_kwargs(args) 
+    newargs=treat_kwargs(args)
         
     newargs="Dict($(join(newargs,",")))"
 

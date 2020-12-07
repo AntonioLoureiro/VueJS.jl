@@ -3,8 +3,9 @@ module VueJS
 using JSON,Dates,DataFrames,HTTP,Namtso
 using SHA,Base64
 
-export VueStruct,WebDependency,html,spacer
-export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog
+export WebDependency,html,spacer
+export grid,page,@el,@st,@dialog,response,submit,tabs,bar,card,libraries!
+export dialog,VueStruct
 export LIBRARY_RULES
 export get_web_dependencies!
 export @style,@class

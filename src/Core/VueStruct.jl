@@ -250,37 +250,62 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
     
      ### Submit fn
      if fn_dict["mp_mode"]==false
-         def_data["submit"]="""function(url, method, async, no_post=false) {
+         def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
+            
+        if (sub_content==null){
          content={$(join(fn_dict["submit"],","))};
             if (no_post) {
                 return content
             } else {
                 return app.xhr(JSON.stringify(content), url, method, async)
             }
-        }"""
+            } else {
+               if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+               return app.xhr(JSON.stringify(sub_content), url, method, async)
+            }}"""
     else
         files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
         json_obj="{"*join(fn_dict["submit"],",")*"}"
-        def_data["submit"]="""function(url, method, async, no_post=false) {
-        const content = new FormData();
-        json_content=JSON.stringify($json_obj);
-        const blob = new Blob([json_content], {type: 'application/json'});
-        content.append("json", blob);
-        const arr_files=[$files_obj];
-        for (const i in arr_files) {
-            for (const el in arr_files[i]){
-                for (const filei in arr_files[i][el]){
-                file_name=el+'.'+filei
-                content.append(file_name,arr_files[i][el][filei]);
+        def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify($json_obj);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[$files_obj];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
                 }
             }
-        }
-            if (no_post) {
-                 return $json_obj
-            } else {
-                return app.xhr(content, url, method, async)
-            }
-        }"""   
+                if (no_post) {
+                     return $json_obj
+                } else {
+                    return app.xhr(content, url, method, async)
+                }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                            if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                                if(typeof(sub_content[oi][0].filename=="String")){
+                                    file_name='app_state.'+oi+'.value.'+el
+                                    content.append(file_name,sub_content[oi][el]);
+                                }
+                        } 
+                    }}}
+            
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return app.xhr(content, url, method, async)
+        }}"""   
             
     end
     

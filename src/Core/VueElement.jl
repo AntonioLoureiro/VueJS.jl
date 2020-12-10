@@ -101,6 +101,8 @@ function update_validate!(vuel::VueElement)
     if haskey(UPDATE_VALIDATION, vuel.tag)
         UPDATE_VALIDATION[vuel.tag].fn(vuel)
         vuel.value_attr=deepcopy(UPDATE_VALIDATION[vuel.tag].value_attr)
+    else
+        error("Vue Element $(vuel.tag) is not implemented! Please submit a PR in VueJS Github repo!")
     end
 
     ## Binding

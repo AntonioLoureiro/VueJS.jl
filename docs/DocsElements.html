@@ -14379,10 +14379,10 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h4 id="SUBMIT">SUBMIT<a class="anchor-link" href="#SUBMIT">&#182;</a></h4>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># submit methods has 4 args function(url, content=null,method=&#39;POST&#39;, async=true) only url is mandatory</span>
@@ -14399,36 +14399,16 @@ a.anchor-link {
     
     <span class="c"># data has body and headers in the correct format</span>
     
-    <span class="k">return</span> <span class="s">&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&quot;OK&quot;</span>
 <span class="k">end</span>
+
+<span class="c"># Submits returns a promise, you can deal with it in the standard promise way</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;submit(&#39;sub_page&#39;).then(x=&gt;tf3.value=(x.responseText)).catch(x=&gt;tf3.value=&#39;error&#39;)&quot;</span><span class="p">);</span>
 </pre></div>
 
      </div>
 </div>
 </div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>sub_page (generic function with 1 method)</pre>
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 </div>

@@ -14287,7 +14287,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-2&quot;</span><span class="p">)</span>
@@ -14295,9 +14295,41 @@ a.anchor-link {
 
 <span class="c"># @st(variable,elements;kwargs) elements is an array of elements using the grid system, see live examples. kwargs are defined below</span>
 <span class="nd">@st</span><span class="p">(</span><span class="n">vs1</span><span class="p">,[</span><span class="n">el1</span><span class="p">,</span><span class="n">bt</span><span class="p">],</span><span class="n">data</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;el1&quot;</span><span class="o">=&gt;</span><span class="s">&quot;default text&quot;</span><span class="p">),</span><span class="n">methods</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;my_alert&quot;</span><span class="o">=&gt;</span><span class="s">&quot;(arg)=&gt;{window.alert(arg)}&quot;</span><span class="p">));</span>
+
 <span class="c">## Kwargs</span>
 <span class="c"># data : default value for elements, uses the value_attr of the element</span>
 <span class="c"># methods : defines methods using a Dict, key is method name, value is the function</span>
+<span class="c"># computed : creates new element dependent on other one</span>
+
+<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="k">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span><span class="p">)</span>
+<span class="nd">@st</span><span class="p">(</span><span class="n">vs1</span><span class="p">,[</span><span class="n">el1</span><span class="p">,</span><span class="n">bt</span><span class="p">],</span><span class="n">data</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;el1&quot;</span><span class="o">=&gt;</span><span class="mi">500</span><span class="p">),</span><span class="n">computed</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;comp1&quot;</span><span class="o">=&gt;</span><span class="s">&quot;&quot;&quot;function(){return this.el1.value*10}&quot;&quot;&quot;</span><span class="p">));</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Dialog">Dialog<a class="anchor-link" href="#Dialog">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
+<li>Dialog internally is a Vue Struct and has the same sintax</li>
+<li>Has active property to show or hide</li>
+</ul>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@el</span><span class="p">(</span><span class="n">btn_off</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;CLOSE&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;active.value=false&quot;</span><span class="p">)</span>
+<span class="nd">@dialog</span><span class="p">(</span><span class="n">dial</span><span class="p">,[</span><span class="n">el1</span><span class="p">,</span><span class="n">btn_off</span><span class="p">],</span><span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">);</span>
+
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt_on</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;dial.active.value=true&quot;</span><span class="p">);</span>
+<span class="nd">@st</span><span class="p">(</span><span class="n">vs1</span><span class="p">,[</span><span class="n">el1</span><span class="p">,</span><span class="n">bt_on</span><span class="p">,</span><span class="n">dial</span><span class="p">]);</span>
 </pre></div>
 
      </div>

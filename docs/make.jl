@@ -64,7 +64,7 @@ function docs()
     
     
     for p in ["DocsElements","DocsStyling","DocsStructs"]
-        iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
+        iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/docs/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
         pbase=page([iframe],navigation=nav,bar=barapp);
     
         io = open("public/$p.html", "w")

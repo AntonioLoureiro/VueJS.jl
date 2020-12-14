@@ -245,7 +245,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         in_context_functions!(vs.grid,fn_dict,context,def_data)
         
         if context!="app_state"
-            push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url, method, async,true)")
+            push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url,null, method, async,true)")
         end
     
      ### Submit fn

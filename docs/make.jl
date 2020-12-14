@@ -53,19 +53,24 @@ function docs()
     dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
-    @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[Dict("icon"=>"mdi-file-document-outline","title"=>"Base","href"=>"https://antonioloureiro.github.io/VueJS.jl/base.html"),
+    @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[
+        Dict("icon"=>"mdi-file-document-outline","title"=>"Elements","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsElements.html"),
+        Dict("icon"=>"mdi-file-document-outline","title"=>"Styling","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html"),
+        Dict("icon"=>"mdi-file-document-outline","title"=>"Structs","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStructs.html"),
         Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
 
-    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('base.html')")
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('DocsElements.html')")
     barapp=bar([homeb,"VueJS Documentation"]);
     
     
-    iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/Docs.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
-    pbase=page([iframe],navigation=nav,bar=barapp);
+    for p in ["DocsElements","DocsStyling","DocsStructs"]
+        iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
+        pbase=page([iframe],navigation=nav,bar=barapp);
     
-    io = open("public/base.html", "w")
-    println(io, VueJS.htmlstring(pbase))
-    close(io)
+        io = open("public/$p.html", "w")
+        println(io, VueJS.htmlstring(pbase))
+        close(io)
+    end
     
     pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
         

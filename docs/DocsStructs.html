@@ -3,17 +3,17 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Docs</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>DocsStructs</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
 
 <style type="text/css">
     pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: var(--jp-cell-editor-active-background) }
 .highlight { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }
 .highlight .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */
@@ -14197,7 +14197,23 @@ a.anchor-link {
 .highlight  {
     margin: 0.4em;
 }
+
+/* Input area styling */
+.jp-InputArea {
+    overflow: hidden;
+}
+
+.jp-InputArea-editor {
+    overflow: hidden;
+}
+
+@media print {
+  body {
+    margin: 0;
+  }
+}
 </style>
+
 
 
 <!-- Load mathjax -->
@@ -14258,12 +14274,13 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="HtmlElement">HtmlElement<a class="anchor-link" href="#HtmlElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic Element</li>
-<li>No JS Data</li>
-<li>Only html attrs and value</li>
-<li>Value can be a String or array of HtmlElements or Strings</li>
-<li>Admits cols argument to define column width</li>
+<h3 id="VueStruct">VueStruct<a class="anchor-link" href="#VueStruct">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
+<li>Allows reusability of elements disposed in a specific grid in severall pages</li>
+<li>Allows injection of data default values</li>
+<li>Allows specific methods, computed, watch and asynccomputed</li>
+<li>Has a iterable mode that repeats the grid the number of data array positions, with add and remove methods</li>
+<li>Has specific data context</li>
+<li>Has specific submit function</li>
 </ul>
 
 </div>
@@ -14273,83 +14290,14 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># html(tag,value,attrs;kwargs) </span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;Heading Text&quot;</span><span class="p">,</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;style&quot;</span><span class="o">=&gt;</span><span class="s">&quot;color:red&quot;</span><span class="p">),</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="c"># Special attributes:</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-2&quot;</span><span class="p">)</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;my_alert(el1.value)&quot;</span><span class="p">);</span>
 
-<span class="c"># Array of values(HtmlElements):</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;div&quot;</span><span class="p">,[</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;first line&quot;</span><span class="p">),</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;second line&quot;</span><span class="p">)])</span>
-
-<span class="c"># Bind of content to element data any attribute present in JS data Structure</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;{{el1.value}}&quot;</span><span class="p">);</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="VueElement">VueElement<a class="anchor-link" href="#VueElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic data structure</li>
-<li>With JS Data</li>
-<li>Reactive</li>
-<li>Input Elements have a value_attr that holds the input value, available using elementid.value</li>
-<li>Binds attrs to JS var using binds argument Dict(“attr”=&gt;”jsvar”)</li>
-<li>Listens to events, e.g. click. Uses event name as arg and Expression to execute click=”el1.value=’new’”</li>
-<li>Admits all attributes available for the specific element</li>
-<li>Admits cols argument to define column width</li>
-<li>Admits style arg to define style</li>
-</ul>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># @el(variable,element type;attributes) attributes should be used according to element original framework documentation (e.g. vuetify)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-2&quot;</span><span class="p">);</span>
-<span class="c"># Special attributes:</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
-<span class="c"># Style: Dict with CSS attribute and value</span>
-<span class="c"># Class (vuetify): margin and padding according to vuetify documentation</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Styling">Styling<a class="anchor-link" href="#Styling">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Allows definition of 3 levels of styling: App, page and element</li>
-<li>Binding of style attrs in JS data that allows for client side reactivity</li>
-<li>Usage of class attr for padding and margin (see documentation o Vuetify)</li>
-</ul>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># App Style definition</span>
-<span class="nd">@style</span> <span class="s">&quot;v-btn&quot;</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span> <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;black&quot;</span>
-<span class="nd">@class</span> <span class="s">&quot;v-btn&quot;</span> <span class="s">&quot;ma-5&quot;</span>
-
-<span class="c"># Element Style definition (overrides App and Page)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Submit&quot;</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="s">&quot;background-color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;black&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-5&quot;</span><span class="p">)</span>
-
-<span class="c"># Page Style definition (overrides App)</span>
-<span class="n">page</span><span class="p">([</span><span class="n">bt</span><span class="p">],</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;v-btn&quot;</span><span class="o">=&gt;</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="s">&quot;background-color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;black&quot;</span><span class="p">)),</span><span class="n">class</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;v-btn&quot;</span><span class="o">=&gt;</span><span class="s">&quot;ma-5&quot;</span><span class="p">));</span>
+<span class="c"># @st(variable,elements;kwargs) elements is an array of elements using the grid system, see live examples. kwargs are defined below</span>
+<span class="nd">@st</span><span class="p">(</span><span class="n">vs1</span><span class="p">,[</span><span class="n">el1</span><span class="p">,</span><span class="n">bt</span><span class="p">],</span><span class="n">data</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;el1&quot;</span><span class="o">=&gt;</span><span class="s">&quot;default text&quot;</span><span class="p">),</span><span class="n">methods</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;my_alert&quot;</span><span class="o">=&gt;</span><span class="s">&quot;(arg)=&gt;{window.alert(arg)}&quot;</span><span class="p">));</span>
+<span class="c">## Kwargs</span>
+<span class="c"># data : default value for elements, uses the value_attr of the element</span>
+<span class="c"># methods : defines methods using a Dict, key is method name, value is the function</span>
 </pre></div>
 
      </div>

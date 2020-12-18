@@ -361,7 +361,7 @@ end)
 UPDATE_VALIDATION["v-textarea"]=(
 doc="""Simple Element, value attribute is value. Text Box bigger than v-text-field<br>
     <code>
-    @el(tf,"v-textarea",label="Date Field",rows=10)<br>
+    @el(tf,"v-textarea",label="Text Field",rows=10)<br>
     </code>
     """, 
 fn=(x)->begin

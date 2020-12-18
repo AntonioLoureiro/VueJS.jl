@@ -168,6 +168,24 @@ fn=(x)->begin
     end
 end)
 
+UPDATE_VALIDATION["v-autocomplete"]=(
+doc="""Simple Element, value attribute is items. Items are the options available to select. Value is the selected item, allows for multiple.<br>
+    <code>
+    @el(sel,"v-autocomplete",items=["A","B","C"],multiple=true)
+    </code>
+    """,
+fn=(x)->begin
+
+    @assert haskey(x.attrs,"items") "Vuetify autocomplete element with no arg items!"
+    @assert typeof(x.attrs["items"])<:Array "Vuetify autocomplete element with non Array arg items!"
+
+    x.cols==nothing ? x.cols=2 : nothing
+    
+    if !haskey(x.attrs,"value")
+        x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
+    end
+end)
+
 UPDATE_VALIDATION["v-radio-group"]=(
 doc="",
 value_attr="input-value",

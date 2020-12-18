@@ -357,3 +357,15 @@ fn=(x)->begin
     haskey(x.events,"watch") ? x.events["watch"]["$(x.id).value"]=timeout_func : x.events["watch"]=Dict("$(x.id).value"=>timeout_func)
 
 end)
+
+UPDATE_VALIDATION["v-textarea"]=(
+doc="""Simple Element, value attribute is value. Text Box bigger than v-text-field<br>
+    <code>
+    @el(tf,"v-textarea",label="Date Field",rows=10)<br>
+    </code>
+    """, 
+fn=(x)->begin
+    
+    x.cols==nothing ? x.cols=3 : nothing
+   
+end)

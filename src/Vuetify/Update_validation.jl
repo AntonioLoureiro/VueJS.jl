@@ -387,3 +387,17 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
    
 end)
+
+UPDATE_VALIDATION["v-combobox"]=(
+doc="""Simple Element. Items are the options available to select. Value is the selected items (custom or predefined), allows for multiple.<br>
+    <code>
+    @el(sel,"v-combobox",items=["A","B","C"],multiple=true)
+    </code>
+    """,
+fn=(x)->begin
+    x.cols==nothing ? x.cols=2 : nothing
+    
+    if !haskey(x.attrs,"value")
+        x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
+    end
+end)

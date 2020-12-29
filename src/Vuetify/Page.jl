@@ -74,5 +74,5 @@ function htmlstring(page_inst::Page)
         
     htmlpage=html("html",[head_dom,body_dom],Dict())
     
-    return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""])
+    return join([htmlstring(htmlpage), """<script>xhr=$(xhr_script)\n $(join(scripts,"\n"))</script>"""])
 end

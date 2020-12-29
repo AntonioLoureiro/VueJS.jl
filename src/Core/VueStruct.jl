@@ -257,11 +257,11 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
             if (no_post) {
                 return content
             } else {
-                return app.xhr(JSON.stringify(content), url, method, async)
+                return xhr(JSON.stringify(content), url, method, async)
             }
             } else {
                if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
-               return app.xhr(JSON.stringify(sub_content), url, method, async)
+               return xhr(JSON.stringify(sub_content), url, method, async)
             }}"""
     else
         files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
@@ -284,7 +284,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
                 if (no_post) {
                      return $json_obj
                 } else {
-                    return app.xhr(content, url, method, async)
+                    return xhr(content, url, method, async)
                 }
         } else{ 
             if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
@@ -304,7 +304,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
             json_content=JSON.stringify(sub_content);
             const blob = new Blob([json_content], {type: 'application/json'});
             content.append("json", blob);
-            return app.xhr(content, url, method, async)
+            return xhr(content, url, method, async)
         }}"""   
             
     end

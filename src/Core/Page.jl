@@ -78,10 +78,11 @@ function page(
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
     footer::Union{VueElement, Nothing}=nothing,
-    bottom::Union{VueElement, Nothing}=nothing)
+    bottom::Union{VueElement, Nothing}=nothing,
+    kwargs...)
 
     
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,style=style,class=class)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,style=style,class=class;kwargs...)
     
     return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts,cookies=cookies)
 end

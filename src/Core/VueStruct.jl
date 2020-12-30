@@ -24,7 +24,8 @@ function VueStruct(
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
     style=Dict{String,Any}(),
-    class=Dict{String,Any}())
+    class=Dict{String,Any}(),
+    kwargs...)
     
     attrs=Dict{String,Any}()
     attrs["style"]=deepcopy(PAGE_OPTIONS.style)
@@ -53,8 +54,19 @@ function VueStruct(
         def_data=Dict{String,Any}()
     end
 
+    events=Dict{String,Any}("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch)
+    
+    ## Kwargs only accepts lifecycle hooks
+    for (k,v) in kwargs
+        
+        @assert string(k) in KNOWN_HOOKS "$k keyword not acceptable"
+        @assert v isa String "value of $k should be a String"
+        
+        events[string(k)]=v
+    end
+    
     iterable==true ? def_data=Vector{Dict{String,Any}}() : nothing
-        comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,attrs,iterable)
+        comp=VueStruct(id,garr,trf_binds(binds),data,def_data,events,"",nothing,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp

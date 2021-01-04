@@ -234,7 +234,7 @@ function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
         class!="" ? h.attrs["class"]=class : nothing
         cols=VueJS.get_cols(h.value,rows=false)
         viewport=get(opts.style,"viewport","md")
-        h.attrs[viewport]=Int(round(cols/context_cols*12))
+        h.attrs[viewport]=Int(round(cols/(context_cols/12)))        
         update_cols!(h.value,context_cols=cols,opts=opts)
     elseif h.value isa VueJS.HtmlElement || h.value isa Array
         update_cols!(h.value,context_cols=context_cols,opts=opts)

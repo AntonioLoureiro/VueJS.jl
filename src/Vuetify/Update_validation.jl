@@ -81,6 +81,16 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
+UPDATE_VALIDATION["v-range-slider"]=(
+doc="""Simple Element, value attribute is value, return is an array of low and high value. Important attributes are min and max for minimum and maximum values, thumb-label will show the selected value if true or always for persintent.<br>
+    <code>
+    @el(slid,"v-range-slider",value=[10,20],min=0,max=50,thumb-label="always",thumb-color="red")
+    </code>
+    """,
+fn=(x)->begin
+    x.cols==nothing ? x.cols=3 : nothing
+end)
+
 UPDATE_VALIDATION["v-date-picker"]=(
 doc="""Simple Element, value attribute is value. Is invoked when v-text-field element has type date!. Can be used without v-text-field<br>
     <code>

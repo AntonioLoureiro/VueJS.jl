@@ -254,7 +254,7 @@ fn=(x)->begin
         end
     else
         items=x.attrs["items"]
-        child=html("v-list-item",[],Dict("dense"=>true))
+        child=html("v-list-item",[],Dict(":class" => "item.class", "dense"=>true))
         
         child.attrs["v-for"]="(item, index) in $(x.id).value"
         child.attrs[":key"]="index"

@@ -217,7 +217,7 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=1 : nothing
 end)
 
-UPDATE_VALIDATION["v-list"]=(
+VueJS.UPDATE_VALIDATION["v-list"]=(
 doc="",
 value_attr="items",
 fn=(x)->begin
@@ -254,11 +254,15 @@ fn=(x)->begin
         end
     else
         items=x.attrs["items"]
-        child=html("v-list-item",[],Dict(":class" => "item.class", "dense"=>true))
-        
-        child.attrs["v-for"]="(item, index) in $(x.id).value"
-        child.attrs[":key"]="index"
             
+        temp = html("template", [], Dict("v-for" => "(item, index) in $(x.id).value"))
+        push!(temp.value, html("v-divider", [], Dict("v-if" => "item.divider", ":key" => "index", "class" => "ma-5")))
+    
+        child = html("v-list-item",[],Dict(":class" => "item.class", "dense" => true, "v-else" => true))
+        
+        #child.attrs["v-for"]="(item, index) in $(x.id).value"
+        #child.attrs[":key"]="index"
+                        
         sum(map(x->haskey(x,"avatar"),items))>0 ? push!(child.value,html("v-list-item-avatar",html("v-img","",Dict(":src"=>"item.avatar")))) : ""
         sum(map(x->haskey(x,"icon"),items))>0 ? push!(child.value,html("v-list-item-icon",html("v-icon","",Dict("v-text"=>"item.icon")))) : ""
         if sum(map(x->haskey(x,"title"),items))>0 
@@ -278,7 +282,8 @@ fn=(x)->begin
             child.attrs["click"]="open(item.href)"
         end
             
-        x.child=child
+        push!(temp.value, child)
+        x.child=temp            
     end
 end)
 

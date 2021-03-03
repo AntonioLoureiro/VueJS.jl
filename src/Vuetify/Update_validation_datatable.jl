@@ -165,10 +165,11 @@ fn=(x)->begin
                 
                 value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
-                
-                x.attrs["headers"][col_idx[k]]["align"]="center"
-			end
-            delete!(x.attrs,"col_template")
+					
+                haskey(x.attrs["headers"][col_idx[k]], "align") ? nothing : x.attrs["headers"][col_idx[k]]["align"]="center"
+	    end
+            
+	    delete!(x.attrs,"col_template")
         end
 
     end

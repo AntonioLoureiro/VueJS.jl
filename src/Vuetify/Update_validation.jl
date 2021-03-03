@@ -217,7 +217,7 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=1 : nothing
 end)
 
-VueJS.UPDATE_VALIDATION["v-list"]=(
+UPDATE_VALIDATION["v-list"]=(
 doc="",
 value_attr="items",
 fn=(x)->begin

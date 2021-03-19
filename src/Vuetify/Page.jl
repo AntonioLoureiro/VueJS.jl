@@ -26,6 +26,9 @@ function htmlstring(page_inst::Page)
     
     components_dom=[]
     app_state=Dict{String,Any}()
+    ## initialize globals
+    app_state["globals"]=Dict()
+
     ## Other components
     for (k,v) in page_inst.components
         if k=="v-main"
@@ -69,13 +72,10 @@ function htmlstring(page_inst::Page)
     end
     
     scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
-        
-    styles=html("style",join([".$k {$v}" for (k,v) in page_inst.styles]),Dict("type"=>"text/css"))
-    
-    body_dom=html("body",[styles,
-                        html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
+            
+    body_dom=html("body",[html("div",html("v-app",components_dom),Dict("id"=>"app","v-cloak"=>true))],Dict())
         
     htmlpage=html("html",[head_dom,body_dom],Dict())
     
-    return join([htmlstring(htmlpage), """<script>$(join(scripts,"\n"))</script>"""])
+    return join([htmlstring(htmlpage), """<script>xhr=$(xhr_script)\n $(join(scripts,"\n"))</script>"""])
 end

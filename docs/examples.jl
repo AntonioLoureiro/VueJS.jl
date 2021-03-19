@@ -67,7 +67,7 @@ df[!,:Action]=df[!,:Text]
 page([[[st,d1],spacer(),[sel,d2],spacer(),[spacer(rows=4),d3,alert]]])
 """,
 "Navigation and Bar"=>"""
-items=[Dict("icon"=>"mdi-apple","title"=>"Apple","href"=>"https://www.apple.com"),Dict("icon"=>"mdi-cart-outline","title"=>"Shopping","href"=>"https://www.amazon.com")]
+items=[Dict("icon"=>"mdi-apple","title"=>"Apple","href"=>"https://www.apple.com"),Dict("divider" => true), Dict("icon"=>"mdi-cart-outline","title"=>"Shopping","href"=>"https://www.amazon.com")]
 @el(navel,"v-navigation-drawer",expand-on-hover=false,items=items)
 @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('/home')")
 @el(searchb,"v-btn",icon=true,value="<v-icon>mdi-magnify</v-icon>",click="open('https://google.com')")

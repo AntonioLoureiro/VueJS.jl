@@ -8,7 +8,6 @@ mutable struct VueStruct
     events::Dict{String, Any}
     scripts::String
     render_func::Union{Nothing,Function}
-    styles::Dict{String,String}
     attrs::Dict{String, Any}
     iterable::Bool
 end
@@ -24,13 +23,23 @@ function VueStruct(
     asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
-    attrs=Dict{String,Any}(),
+    style=Dict{String,Any}(),
+    class=Dict{String,Any}(),
     kwargs...)
-
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    styles=Dict()
-    update_styles!(styles,garr)
+    
+    attrs=Dict{String,Any}()
+    attrs["style"]=deepcopy(PAGE_OPTIONS.style)
+    attrs["class"]=deepcopy(PAGE_OPTIONS.class)
+    
+    length(style)!=0 ? merge!(attrs["style"],style) : nothing
+    length(class)!=0 ? merge!(attrs["class"],class) : nothing
+    
+    new_opts=deepcopy(PAGE_OPTIONS)
+    merge!(new_opts.style,attrs["style"])
+    merge!(new_opts.class,attrs["class"])
+        
+    update_style!(garr,new_opts)
+    
     scope=[]
     garr=element_path(garr,scope)
     
@@ -44,13 +53,40 @@ function VueStruct(
         data=convert(Dict{String,Any},data)
         def_data=Dict{String,Any}()
     end
+
+    events=Dict{String,Any}("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch)
+    
+    ## Kwargs only accepts lifecycle hooks
+    for (k,v) in kwargs
+        
+        @assert string(k) in KNOWN_HOOKS "$k keyword not acceptable"
+        @assert v isa String "value of $k should be a String"
+        
+        events[string(k)]=v
+    end
     
     iterable==true ? def_data=Vector{Dict{String,Any}}() : nothing
-    
-    comp=VueStruct(id,garr,trf_binds(binds),data,def_data,Dict("methods"=>methods,"asynccomputed"=>asynccomputed,"computed"=>computed,"watch"=>watch),"",nothing,styles,attrs,iterable)
+        comp=VueStruct(id,garr,trf_binds(binds),data,def_data,events,"",nothing,attrs,iterable)
     element_binds!(comp,binds=comp.binds)
     
     return comp
+end
+
+macro st(varname,els,args...)
+    @assert varname isa Symbol "1st arg should be Variable name"
+    
+    @assert els isa Expr "2nd arg should be Array of Elements"
+          
+    newargs=join([r for r in args],",")
+    
+    if length(newargs)==0
+        newexpr=(Meta.parse("""VueJS.VueStruct("$(string(varname))",$(els))"""))
+    else
+        newexpr=(Meta.parse("""VueJS.VueStruct("$(string(varname))",$(els),$newargs)"""))
+    end
+    return quote
+        $(esc(varname))=$(esc(newexpr))
+    end
 end
 
 function element_path(v::VueHolder,scope::Array)
@@ -221,42 +257,67 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         in_context_functions!(vs.grid,fn_dict,context,def_data)
         
         if context!="app_state"
-            push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url, method, async,true)")
+            push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url,null, method, async,true)")
         end
     
      ### Submit fn
      if fn_dict["mp_mode"]==false
-         def_data["submit"]="""function(url, method, async, no_post=false) {
+         def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
+            
+        if (sub_content==null){
          content={$(join(fn_dict["submit"],","))};
             if (no_post) {
                 return content
             } else {
-                return app.xhr(JSON.stringify(content), url, method, async)
+                return xhr(JSON.stringify(content), url, method, async)
             }
-        }"""
+            } else {
+               if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+               return xhr(JSON.stringify(sub_content), url, method, async)
+            }}"""
     else
         files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
         json_obj="{"*join(fn_dict["submit"],",")*"}"
-        def_data["submit"]="""function(url, method, async, no_post=false) {
-        const content = new FormData();
-        json_content=JSON.stringify($json_obj);
-        const blob = new Blob([json_content], {type: 'application/json'});
-        content.append("json", blob);
-        const arr_files=[$files_obj];
-        for (const i in arr_files) {
-            for (const el in arr_files[i]){
-                for (const filei in arr_files[i][el]){
-                file_name=el+'.'+filei
-                content.append(file_name,arr_files[i][el][filei]);
+        def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify($json_obj);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[$files_obj];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
                 }
             }
-        }
-            if (no_post) {
-                 return $json_obj
-            } else {
-                return app.xhr(content, url, method, async)
-            }
-        }"""   
+                if (no_post) {
+                     return $json_obj
+                } else {
+                    return xhr(content, url, method, async)
+                }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                            if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                                if(typeof(sub_content[oi][0].filename=="String")){
+                                    file_name='app_state.'+oi+'.value.'+el
+                                    content.append(file_name,sub_content[oi][el]);
+                                }
+                        } 
+                    }}}
+            
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }}"""   
             
     end
     
@@ -328,18 +389,6 @@ function update_events!(vs::VueStruct)
     vs.scripts=events_script(convert(Vector{EventHandler},all_events))
 end
 
-
-update_styles!(st_dict::Dict,v)=nothing
-update_styles!(st_dict::Dict,a::Array)=map(x->update_styles!(st_dict,x),a)
-update_styles!(st_dict::Dict,v::VueHolder)=map(x->update_styles!(st_dict,x),v.elements)
-function update_styles!(st_dict::Dict,vs::VueStruct)
-   merge!(st_dict,vs.styles)
-end
-
-function update_styles!(st_dict::Dict,v::VueElement)
-    length(v.style)!=0 ? st_dict[v.id]=join(v.style) : nothing
-    return nothing
-end
 
 function events_script(handlers::Vector{MethodsEventHandler}) 
     evs_dict=Dict()

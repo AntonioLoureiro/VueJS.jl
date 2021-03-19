@@ -3,10 +3,12 @@ module VueJS
 using JSON,Dates,DataFrames,HTTP,Namtso
 using SHA,Base64
 
-export VueStruct,WebDependency,html,spacer
-export grid,page,@el,response,submit,tabs,bar,card,libraries!,dialog
+export WebDependency,html,spacer
+export grid,page,@el,@st,@dialog,response,submit,tabs,bar,card,libraries!
+export dialog,VueStruct
 export LIBRARY_RULES
 export get_web_dependencies!
+export @style,@class
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")
@@ -20,6 +22,7 @@ include("Core/Page.jl")
 include("Core/Base.jl")
 include("Core/Parsing.jl")
 include("Core/Update_validation.jl")
+include("Core/Style.jl")
 include("Vuetify/Vuetify.jl")
 include("Echarts/EchartsBase.jl")
 

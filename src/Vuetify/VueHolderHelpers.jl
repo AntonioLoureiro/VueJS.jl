@@ -75,7 +75,7 @@ function dialog(id::String,elements::Vector;kwargs...)
     merge!(dial_attrs,real_attrs)
     
     vs_dial=VueStruct(id,elements)
-    vs_dial.attrs=Dict("v-dialog"=>dial_attrs)
+    merge!(vs_dial.attrs,Dict("v-dialog"=>dial_attrs))
     vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
     dial_attrs[":value"]=id*".active.value"
     
@@ -87,3 +87,22 @@ function dialog(id::String,elements::Vector;kwargs...)
     
     return vs_dial
 end
+
+macro dialog(varname,els,args...)
+    @assert varname isa Symbol "1st arg should be Variable name"
+    
+    newargs=treat_kwargs(args)
+    
+    newargs="Dict($(join(newargs,",")))"
+    
+    if length(newargs)==0
+        newexpr=(Meta.parse("""VueJS.dialog("$(string(varname))",$(els))"""))
+    else
+        newexpr=(Meta.parse("""VueJS.dialog("$(string(varname))",$(els),$newargs)"""))
+    end
+    return quote
+        $(esc(varname))=$(esc(newexpr))
+    end
+end
+
+dialog(id::String,element,d::Dict)=dialog(id,element;Dict(Symbol(k)=>v for (k,v) in d)...)

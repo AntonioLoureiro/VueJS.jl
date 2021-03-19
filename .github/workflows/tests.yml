@@ -1,0 +1,20 @@
+name: Tests
+
+on: push
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@latest
+        with:
+          version: 1.5        
+      - name: Install dependencies
+        run: julia -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Run Tests
+        run: julia -e 'push!(LOAD_PATH,"/home/runner/work/VueJS.jl/VueJS.jl");using VueJS;include("/home/runner/work/VueJS.jl/VueJS.jl/test/runtests.jl")'
+        
+        

@@ -11,10 +11,9 @@ mutable struct Page
     dependencies::Vector{WebDependency}
     components::Dict{String,Any}
     scripts::Vector{String}
-    styles::Dict{String,String}
     cookiejar::Dict{String, Any}
 end
-Page(deps, comps, scripts,styles) = return Page(deps, comps, scripts,styles, Dict{String, Any}())
+Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -71,8 +70,10 @@ function page(
     asynccomputed=Dict{String,Any}(),
     computed=Dict{String,Any}(),
     watch=Dict{String,Any}(),
-    hooks=Dict{String,Any}(),
-    attrs=Dict{String,Any}(),
+    style=Dict{String,Any}(),
+    class=Dict{String,Any}(),
+    scripts=[],
+    cookies=Dict{String,Any}(),
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
@@ -80,31 +81,24 @@ function page(
     bottom::Union{VueElement, Nothing}=nothing,
     kwargs...)
 
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-
-    cookies=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
-    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,hooks=hooks,attrs=attrs)
     
-    return page(cont::VueStruct, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, kwargs...)
+    cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,style=style,class=class;kwargs...)
+    
+    return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts,cookies=cookies)
 end
 
 function page(
         cont::VueStruct;
+        scripts=[],
+        cookies=Dict{String,Any}(),
         sysbar::Union{VueElement, Nothing}=nothing,
         bar::Union{VueHolder,Nothing}=nothing,
         navigation::Union{VueElement,Nothing}=nothing,
         footer::Union{VueElement, Nothing}=nothing,
-        bottom::Union{VueElement, Nothing}=nothing,
-        kwargs...)
+        bottom::Union{VueElement, Nothing}=nothing)
 
     @assert cont.iterable==false "Cannot use a iterable VueStruct at top level, please put in inside an array (grid)"
     components=Dict{String,Any}("v-main"=>cont)
-    styles=Dict()
-    update_styles!(styles,cont)
-
-    args=Dict(string(k)=>v for (k,v) in kwargs)
-    scripts=haskey(args,"scripts") ? args["scripts"] : []
-    cookiejar=haskey(args, "cookies") ? args["cookies"] : Dict{String,Any}()
 
     sysbar!=nothing ? components["v-system-bar"]=sysbar : nothing
     bar!=nothing ? components["v-app-bar"]=bar : nothing
@@ -116,8 +110,7 @@ function page(
             DEPENDENCIES,
             components,
             scripts,
-            styles,
-            cookiejar)
+            cookies)
 
     return page_inst
 end

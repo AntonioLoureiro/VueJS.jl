@@ -23,7 +23,9 @@ DEPENDENCIES=[
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","6.2.2","css",Dict(),"",""),
                 WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","6.2.2","js",Dict(),"",""),
                 
-                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"","")
+                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"",""),
+                WebDependency("https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","3.1.1","js",Dict(),"","")
+    
             ]
 
 FRAMEWORK="vuetify"
@@ -55,11 +57,12 @@ const KNOWN_EVT_PROPS = [
 ## Dom Render Opts
 mutable struct Opts
     rows::Bool
-    attrs::Dict{String,Any}
+    style::Dict{String,Any}
+    class::Dict{String,Any}
     path::String
     vars_replace::Dict{String,String}
 end
-const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),"root",Dict())
+const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),Dict(),"root",Dict())
 
 
 LIBRARY_RULES =
@@ -72,7 +75,27 @@ LIBRARY_RULES =
          "in"=>(x->return """ value => $x.includes(value) || 'Value not in $x' """)
     )
 
-const UPDATE_VALIDATION=Dict{String,Any}()
+struct VueElementSettings
+    library::String
+    doc::String
+    value_attr::Union{Nothing,String}
+    fn::Function    
+end
+
+function VueElementSettings(nt::NamedTuple)
+    
+    library=get(nt,:library,"vuetify")
+    doc=get(nt,:doc,"")
+    value_attr=get(nt,:value_attr,"value")
+    fn=nt.fn
+    
+    return VueElementSettings(library,doc,value_attr,fn)
+end
+
+import Base.convert
+Base.convert(::Type{VueElementSettings}, x::NamedTuple) = VueElementSettings(x)
+
+const UPDATE_VALIDATION=Dict{String,VueElementSettings}()
 
 function get_web_dependencies!(web_dependency_path::String,deps_url::String)
 

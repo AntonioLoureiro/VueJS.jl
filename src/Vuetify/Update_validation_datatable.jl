@@ -1,15 +1,29 @@
 #### Filter DataTable to put in header ####
 dt_filter_modes=Dict()
-dt_filter_modes["range"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return (value>=this.filter_value[0] && value<=this.filter_value[1])}}"""
-dt_filter_modes[">="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value>=this.filter_value}}"""
-dt_filter_modes[">"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value>this.filter_value}}"""
-dt_filter_modes["<="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value<=this.filter_value}}"""
-dt_filter_modes["<"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value<this.filter_value}}"""
-dt_filter_modes["=="]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value==this.filter_value}}"""
-dt_filter_modes["contains"]="""function(value, search, item){if (this.filter_value==null || this.filter_value==''){return true} else{return value.toLowerCase().includes(this.filter_value.toLowerCase())}}"""
+dt_filter_modes["range"]="""(item, filter) =>    {return item >= filter[0] && item <= filter[1] }"""
+dt_filter_modes[">="]="""   (item, filter) =>    {return item >= filter}"""
+dt_filter_modes[">"]="""    (item, filter) =>    {return item > filter}"""
+dt_filter_modes["<="]="""   (item, filter) =>    {return item <= filter}"""
+dt_filter_modes["<"]="""    (item, filter) =>    {return item < filter}"""
+dt_filter_modes["=="]="""   (item, filter) =>    {return item == filter}"""
+dt_filter_modes["contains"]="""(item, filter) => {return String(item).toLowerCase().includes(String(filter).toLowerCase())}"""
 
+dt_filter_dispatcher(mode::String; callback=dt_filter_modes[mode]) = """
+    function(value, search, item) {
+        c = $callback;        
+        if (this.filter_value == null || this.filter_value == '') { return true; }
+        
+        if (Array.isArray(this.filter_value) && '$mode'.toLowerCase() !== 'range') {
+            return this.filter_value.some((x) => c(value, x));  
+        }
+        return c(value, this.filter_value)
+    }
+"""
 
-UPDATE_VALIDATION["v-data-table"]=(x)->begin
+UPDATE_VALIDATION["v-data-table"]=(
+doc="",
+value_attr="value",
+fn=(x)->begin
     col_pref="col_"
     trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
@@ -18,7 +32,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
     end
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
-    x.value_attr="value"
+    
     x.attrs["value"]=[]
     x.cols==nothing ? x.cols=4 : nothing
 
@@ -92,7 +106,7 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
             if filt_oper!=nothing
                 @assert filt_oper in keys(dt_filter_modes) "Filter arg should be a Dict of Column Name and Filter Operator=> $(keys(dt_filter_modes))"
                 x.attrs["headers"][i]["filter_value"]=nothing
-                x.attrs["headers"][i]["filter"]=dt_filter_modes[filt_oper]                
+                x.attrs["headers"][i]["filter"] = dt_filter_dispatcher(filt_oper) # pass `filtering operator` to construct the generic filter function        
             end
         end
 
@@ -151,11 +165,12 @@ UPDATE_VALIDATION["v-data-table"]=(x)->begin
                 
                 value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
-                
-                x.attrs["headers"][col_idx[k]]["align"]="center"
-			end
-            delete!(x.attrs,"col_template")
+					
+                haskey(x.attrs["headers"][col_idx[k]], "align") ? nothing : x.attrs["headers"][col_idx[k]]["align"]="center"
+	    end
+            
+	    delete!(x.attrs,"col_template")
         end
 
     end
-end
+end)

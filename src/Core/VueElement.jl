@@ -1,26 +1,4 @@
-"""
-### Arguments
 
- * id           :: String           :: Element's identifier
- * tag          :: String           :: Vuetify tag, e.g. "v-dialog", "v-text-input", "v-btn", ...
- * attrs        :: Dict             ::
- * path         :: String           ::
- * binds        :: Dict             ::
- * value_attr   :: String           ::
- * data         :: Dict             ::
- * slots        :: Dict             :: VueJS slots, e.g. append, footer, header, label, prepend, ...
- * cols         :: Union{Nothing, Int64} :: Number of columns the element should occupy
-
-### Examples
-
-```julia
-
-@el(r1,"v-text-field",value="JValue",label="R1")   :: r1 = VueElement{"r1", HtmlElement("v-textfield", Dict("value"=>"JValue","label"=>"R1")), ...}
-@el(r3,"v-slider",value=20,label="Slider 3")
-```
-
-[See also: Vuejs components slots](https://vuejs.org/v2/guide/components-slots.html)
-"""
 mutable struct VueElement
     id::String
     tag::String
@@ -33,10 +11,10 @@ mutable struct VueElement
     slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
-    style::Vector{String}
     events::Dict{String, Any}
     child
 end
+
 
 function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     
@@ -53,6 +31,11 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     for ev in KNOWN_HOOKS
         haskey(attrs,ev) ? events[ev]=attrs[ev] : nothing
     end
+        
+    ## Style Assert
+    style=get(attrs,"style",Dict())
+    @assert style isa Dict "style attr should be a Dict"
+    length(style)!=0 ? style=convert(Dict{String,Any},style) : nothing
     
     ## No Dom attrs
     no_dom_attrs=Dict{String, Any}()
@@ -82,7 +65,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
         end
     end
         
-    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,[],events,nothing)
+    return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,events,nothing)
     
 end
 """
@@ -115,9 +98,11 @@ is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(
 function update_validate!(vuel::VueElement)
 
     ### Specific Validations and updates
-    tag=vuel.tag
-    if haskey(UPDATE_VALIDATION, tag)
-        UPDATE_VALIDATION[tag](vuel)
+    if haskey(UPDATE_VALIDATION, vuel.tag)
+        UPDATE_VALIDATION[vuel.tag].fn(vuel)
+        vuel.value_attr=deepcopy(UPDATE_VALIDATION[vuel.tag].value_attr)
+    else
+        error("Vue Element $(vuel.tag) is not implemented! Please submit a PR in VueJS Github repo!")
     end
 
     ## Binding
@@ -141,23 +126,7 @@ function update_validate!(vuel::VueElement)
     return nothing
 end
 
-"""
-### Examples
-```julia
-@el(r1,"v-slider",value=20,label="Slider 1")
-@el(r4,"v-text-field",value="R4 Value",label="R4")
-@el(r2,"v-slider",value=20,label="Slider 2")
-@el(r6,"v-text-field",placeholder="Dummy data",label="Test")
-@el(element,"v-text-field", full-width=true, label="Example", solo-inverted=true)
-```
-"""
-macro el(varname,tag,args...)
-
-    @assert varname isa Symbol "1st arg should be Variable name"
-    tag_type=typeof(tag)
-
-    @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
-
+function treat_kwargs(args) 
         newargs=[]
         for r in (args)
            @assert r.head==:(=) "You should input args with = indication e.g. a=1"
@@ -174,7 +143,7 @@ macro el(varname,tag,args...)
                     lefte=replace(replace(lefte,"("=>""), ")"=>"") 
                     push!(newargs,lefte*righte)
                 else  ### handle cases where left side expr is similar to: dot.key
-                    str_expr=replace("\""*string(str_expr)," ="=>"\" =>",count=1)
+                     str_expr=replace("\""*string(str_expr)," ="=>"\" =>",count=1)
                     push!(newargs,str_expr)
                 end
             else
@@ -182,7 +151,18 @@ macro el(varname,tag,args...)
                 push!(newargs,e)
             end
         end
-        newargs="Dict($(join(newargs,",")))"
+   return newargs
+end
+
+macro el(varname,tag,args...)
+
+    @assert varname isa Symbol "1st arg should be Variable name"
+    tag_type=typeof(tag)
+
+    @assert tag_type in [String,Symbol] "2nd arg should be tag name or accepted Struct"
+    newargs=treat_kwargs(args)
+        
+    newargs="Dict($(join(newargs,",")))"
 
     ## Special Building Condition (EChart)
     if tag_type==Symbol

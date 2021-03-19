@@ -145,8 +145,10 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
         
        dom_ret=VueJS.activator(menu,dom_ret,"v-menu") 
        path=opts.path=="" ? "" : opts.path*"."
-       if haskey(vuel.attrs,"click") 
-            dom_ret.value[1].value.attrs["click"]=vuel.attrs["click"]
+       if haskey(vuel.attrs,"click")
+            # place @click at list-item level, not at the template level
+            [x.attrs["click"] = vuel.attrs["click"] for x in dom_ret.value[1].value.value if x.tag == "v-list-item"]
+            #dom_ret.value[1].value.attrs["click"]=vuel.attrs["click"]
             delete!(vuel.attrs,"click")
         end
        dom_ret.value[1].value.attrs["v-for"]="(item, index) in $path$(vuel.id).items"

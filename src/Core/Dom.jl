@@ -270,8 +270,8 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     ## Render
     if r.render_func!=nothing
         domvalue=r.render_func(r,opts=opts)
-        if !(domvalue isa Array) && r.cols!=nothing
-            domvalue.cols=r.cols
+        if !(domvalue isa Array) && get(r.attrs, "cols", nothing) !== nothing
+            domvalue.cols = r.attrs["cols"]
         end
     else
        domvalue=dom(r.grid,opts=opts)
@@ -343,7 +343,7 @@ function dom(arr::Array;opts=PAGE_OPTIONS,is_child=false)
         new_el=HtmlElement(grid_class,Dict(),get_cols(domvalue),domvalue)
 
         if ((i!=1 && i_rows[i-1]) || (opts.rows)) && append
-            append!(arr_dom,domvalue)
+            domvalue isa Vector ? append!(arr_dom, domvalue) : push!(arr_dom, domvalue)
         else
             push!(arr_dom,new_el)
         end

@@ -63,7 +63,7 @@ function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=no
 end
 
 dialog(id::String,element;kwargs...)=dialog(id,[element];kwargs...)
-function dialog(id::String,elements::Vector;kwargs...)
+function dialog(id::String,elements::Vector; container::Bool=true, kwargs...)
     
     real_attrs=Dict(string(k)=>v for (k,v) in kwargs)
         
@@ -82,7 +82,8 @@ function dialog(id::String,elements::Vector;kwargs...)
     vs_dial.render_func=(x;opts=PAGE_OPTIONS)->begin
         
         child_dom=VueJS.dom(x.grid,opts=opts)
-        [HtmlElement("v-dialog",get(vs_dial.attrs,"v-dialog",Dict()),12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
+        container_dom(child, container::Bool) = container ? VueJS.HtmlElement("v-container",Dict(),12,child) : child
+        [VueJS.HtmlElement("v-dialog",get(vs_dial.attrs,"v-dialog",Dict()),12,VueJS.HtmlElement("v-card",Dict(),12,container_dom(child_dom, container)))]
     end
     
     return vs_dial

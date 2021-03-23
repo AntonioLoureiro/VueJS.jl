@@ -270,9 +270,6 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     ## Render
     if r.render_func!=nothing
         domvalue=r.render_func(r,opts=opts)
-        if !(domvalue isa Array) && get(r.attrs, "cols", nothing) !== nothing
-            domvalue.cols = r.attrs["cols"]
-        end
     else
        domvalue=dom(r.grid,opts=opts)
     end

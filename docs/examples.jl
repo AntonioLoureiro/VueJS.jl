@@ -89,7 +89,7 @@ push!(items,Dict("title"=>"Title2","subtitle"=>"SubTitle2","icon"=>"mdi-pencil-o
 @el(list2,"v-list",items=[Dict("val"=>"Value1","label"=>"Label1"),Dict("val"=>"Value2","label"=>"Label2")],item=el,cols=3)
 @el(b,"v-btn",click="list2.value.push({val:'',label:'New'})",value="ADD")
 page([[list1,spacer(),[b,list2]]])
-"""
+""",
 "Computed, Async and Mounted"=>"""
 @el(el1,"v-chip",text-color="white",binds=Dict("content"=>"comp2<1 ? 'A' : 'B'","color"=>"comp2<1 ? 'green' : 'blue'"),cols=2)
 @el(el2,"v-text-field",label="Random Triggered",binds=Dict("value"=>"comp1"),cols=2)

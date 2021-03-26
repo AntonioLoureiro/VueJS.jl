@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DocsElements</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>DocsMethods</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14274,14 +14274,12 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="HtmlElement">HtmlElement<a class="anchor-link" href="#HtmlElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic Element</li>
-<li>No JS Data</li>
-<li>Only html attrs and value</li>
-<li>Value can be a String or array of HtmlElements or Strings</li>
-<li>Admits cols argument to define column width</li>
-</ul>
-
+<h3 id="Standard-Methods">Standard Methods<a class="anchor-link" href="#Standard-Methods">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="OPEN">OPEN<a class="anchor-link" href="#OPEN">&#182;</a></h4>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14289,16 +14287,9 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># html(tag,value,attrs;kwargs) </span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;Heading Text&quot;</span><span class="p">,</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;style&quot;</span><span class="o">=&gt;</span><span class="s">&quot;color:red&quot;</span><span class="p">),</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="c"># Special attributes:</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
-
-<span class="c"># Array of values(HtmlElements):</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;div&quot;</span><span class="p">,[</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;first line&quot;</span><span class="p">),</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;second line&quot;</span><span class="p">)])</span>
-
-<span class="c"># Bind of content to element data any attribute present in JS data Structure</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;{{el1.value}}&quot;</span><span class="p">);</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># open method has 2 args 2nd is optional: open(&#39;page&#39;,name)</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;open(&#39;https://www.google.com&#39;)&quot;</span><span class="p">)</span> <span class="c"># name defaults to _self (opens in same tab)</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;open(&#39;https://www.google.com&#39;,&#39;_blank&#39;)&quot;</span><span class="p">);</span> <span class="c"># name _blank (opens in new tab)</span>
 </pre></div>
 
      </div>
@@ -14309,18 +14300,7 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="VueElement">VueElement<a class="anchor-link" href="#VueElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic data structure</li>
-<li>With JS Data</li>
-<li>Reactive</li>
-<li>Input Elements have a value_attr that holds the input value, available using elementid.value</li>
-<li>Binds attrs to JS var using binds argument Dict(“attr”=&gt;”jsvar”)</li>
-<li>Listens to events, e.g. click. Uses event name as arg and Expression to execute click=”el1.value=’new’”</li>
-<li>Admits all attributes available for the specific element</li>
-<li>Admits cols argument to define column width</li>
-<li>Admits style arg to define style</li>
-</ul>
-
+<h4 id="SUBMIT">SUBMIT<a class="anchor-link" href="#SUBMIT">&#182;</a></h4>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14328,19 +14308,54 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># @el(variable,element type;attributes) attributes should be used according to element original framework documentation (e.g. vuetify)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-2&quot;</span><span class="p">,</span><span class="n">storage</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;open(&#39;https://www.google.com&#39;)&quot;</span><span class="p">,</span><span class="n">binds</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;el1.value==&#39;&#39; ? &#39;red&#39; : &#39;green&#39;&quot;</span><span class="p">));</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># submit methods has 4 args function(url, content=null,method=&#39;POST&#39;, async=true) only url is mandatory</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;submit(&#39;sub_page&#39;)&quot;</span><span class="p">);</span> <span class="c"># when no content is provided submits all page elements (value attr) including files and nested structs</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;submit(&#39;sub_page&#39;,{a:tf1.value,b:tf2.value})&quot;</span><span class="p">);</span> <span class="c"># when content is provided submits the object with POST method </span>
 
-<span class="c"># Special attributes:</span>
-<span class="c"># click / change / hover : Standard Vue events captured with code execution, inline expressions or custom methods</span>
-<span class="c"># binds : binds attribute to another element attribute or expression (like a conditional)</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
-<span class="c"># Style: Dict with CSS attribute and value</span>
-<span class="c"># Class (vuetify): margin and padding according to vuetify documentation</span>
-<span class="c"># storage : stores last value of the element in browser</span>
-<span class="c"># tooltip : shows tooltip on mouse over element, see live example</span>
-<span class="c"># menu : shows menu on click, see live example</span>
+<span class="c"># if you need to submit everything with different method you can do it providing null to content</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;submit(&#39;sub_page&#39;,null,&#39;PUT&#39;)&quot;</span><span class="p">);</span>
+
+<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;default text&quot;</span><span class="p">)</span>
+
+<span class="c">## Server side ou should use Standard parse function</span>
+<span class="k">function</span> <span class="n">sub_page</span><span class="p">(</span><span class="n">req</span><span class="o">::</span><span class="n">HTTP</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span>
+   
+    <span class="n">data</span><span class="o">=</span><span class="n">VueJS</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+    
+    <span class="c"># data has body and headers in the correct format</span>
+    
+    <span class="k">return</span> <span class="s">&quot;OK&quot;</span>
+<span class="k">end</span>
+
+<span class="c"># Submits returns a promise, you can deal with it in the standard promise way</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;submit(&#39;sub_page&#39;).then(x=&gt;el1.value=(x.responseText)).catch(x=&gt;el1.value=&#39;error&#39;)&quot;</span><span class="p">);</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Custom-Methods">Custom Methods<a class="anchor-link" href="#Custom-Methods">&#182;</a></h3>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-julia"><pre><span></span><span class="c">## You can create custom methods associated with VueStructs or pages</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Nr1&quot;</span><span class="p">,</span><span class="k">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span><span class="p">)</span>   
+<span class="nd">@el</span><span class="p">(</span><span class="n">el2</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Nr2&quot;</span><span class="p">,</span><span class="k">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span><span class="p">)</span>   
+<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;cfn(el1.value)&quot;</span><span class="p">);</span>
+
+<span class="n">page</span><span class="p">([</span><span class="n">el1</span><span class="p">,</span><span class="n">el2</span><span class="p">,</span><span class="n">bt</span><span class="p">],</span><span class="n">methods</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;cfn&quot;</span><span class="o">=&gt;</span><span class="s">&quot;&quot;&quot;function(arg){this.el2.value=arg*2}&quot;&quot;&quot;</span><span class="p">))</span> <span class="c">## the function code should use &quot;this&quot; keyword</span>
+<span class="c">## The above example can be achieved with only an inline expression in button click, like: click=&quot;el2.value=el1.value*2&quot;</span>
+
+<span class="n">page</span><span class="p">([</span><span class="n">el1</span><span class="p">,</span><span class="n">el2</span><span class="p">,</span><span class="n">bt</span><span class="p">],</span><span class="n">methods</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;cfn&quot;</span><span class="o">=&gt;</span><span class="s">&quot;&quot;&quot;function(arg){window.alert(arg)}&quot;&quot;&quot;</span><span class="p">));</span> <span class="c">## if you invoke a top level function, like alert should be preceded by window object</span>
 </pre></div>
 
      </div>

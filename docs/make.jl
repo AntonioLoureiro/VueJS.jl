@@ -67,7 +67,7 @@ function docs()
     barapp=bar([homeb,"VueJS Documentation"]);
     
     
-    for p in ["DocsElements","DocsStyling","DocsStructs"]
+    for p in ["DocsElements","DocsStyling","DocsHolders","DocsStructs","DocsMethods","DocsComputed","DocsHooks"]
         iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/docs/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
         pbase=page([iframe],navigation=nav,bar=barapp);
     

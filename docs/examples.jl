@@ -52,6 +52,16 @@ side_actions_def=[Dict("title"=>"Query1","val"=>Dict("query"=>"Query1","what"=>"
         
 page([[ch1,ch2,m1,m2, side_menu]],methods=Dict("query_method"=>"function(what, query){open('http://'+what+'/search?q='+query,'_blank') }")) 
 """,
+"Vue Struct"=>"""    
+@el(el1,"v-text-field",label="Element 1",value="Default Value")
+@el(el2,"v-select",value=true,items=[true,false],change="el2.value ? el1.value='Default Value' : el1.value='Triggered Value'",label="Trigger")
+@el(el3,"v-select",value="blue",items=["blue","green","red"],label="Element 3")
+@el(el4,"v-chip",content="Conditional Chip",text-color="white",binds=Dict("color"=>"el3.value"))
+
+@st(vs,[card([[el1,el2,el3,el4]])],data=Dict("el1"=>"Overrided Value in VS"))
+
+page([el1,el2,el3,el4,vs],data=Dict("el1"=>"Overrided Value"))
+""",
 "Basic Datatables"=>"""
 df=DataFrame()
 df[!,:Class]=rand(["A","B","C"],10)

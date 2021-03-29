@@ -55,15 +55,19 @@ function docs()
 
     @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[
         Dict("icon"=>"mdi-file-document-outline","title"=>"Elements","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsElements.html"),
-        Dict("icon"=>"mdi-file-document-outline","title"=>"Styling","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html"),
-        Dict("icon"=>"mdi-file-document-outline","title"=>"Structs","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStructs.html"),
+        Dict("icon"=>"mdi-palette-swatch-outline","title"=>"Styling","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html"),
+        Dict("icon"=>"mdi-account-group-outline","title"=>"Holders","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHolders.html"),
+        Dict("icon"=>"mdi-domain","title"=>"Structs","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStructs.html"),
+        Dict("icon"=>"mdi-laptop","title"=>"Methods","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsMethods.html"),
+        Dict("icon"=>"mdi-calculator","title"=>"Computed","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsComputed.html"),
+        Dict("icon"=>"mdi-hook","title"=>"Hooks","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHooks.html"),
         Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
 
     @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('DocsElements.html')")
     barapp=bar([homeb,"VueJS Documentation"]);
     
     
-    for p in ["DocsElements","DocsStyling","DocsStructs"]
+    for p in ["DocsElements","DocsStyling","DocsHolders","DocsStructs","DocsMethods","DocsComputed","DocsHooks"]
         iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/docs/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
         pbase=page([iframe],navigation=nav,bar=barapp);
     

@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DocsElements</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>DocsComputed</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14274,12 +14274,9 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="HtmlElement">HtmlElement<a class="anchor-link" href="#HtmlElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic Element</li>
-<li>No JS Data</li>
-<li>Only html attrs and value</li>
-<li>Value can be a String or array of HtmlElements or Strings</li>
-<li>Admits cols argument to define column width</li>
+<h3 id="Computed-Props">Computed Props<a class="anchor-link" href="#Computed-Props">&#182;</a></h3><ul>
+<li>Calculated props</li>
+<li>Triggered when the dependent vars change (reactive)</li>
 </ul>
 
 </div>
@@ -14289,58 +14286,12 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># html(tag,value,attrs;kwargs) </span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;Heading Text&quot;</span><span class="p">,</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;style&quot;</span><span class="o">=&gt;</span><span class="s">&quot;color:red&quot;</span><span class="p">),</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="c"># Special attributes:</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@el</span><span class="p">(</span><span class="n">number</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Number&quot;</span><span class="p">,</span><span class="k">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nd">@el</span><span class="p">(</span><span class="n">number2</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Number2&quot;</span><span class="p">,</span><span class="k">type</span><span class="o">=</span><span class="s">&quot;number&quot;</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">binds</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="o">=&gt;</span><span class="s">&quot;comp&quot;</span><span class="p">))</span>
 
-<span class="c"># Array of values(HtmlElements):</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;div&quot;</span><span class="p">,[</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;first line&quot;</span><span class="p">),</span><span class="n">html</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span><span class="s">&quot;second line&quot;</span><span class="p">)])</span>
-
-<span class="c"># Bind of content to element data any attribute present in JS data Structure</span>
-<span class="n">html</span><span class="p">(</span><span class="s">&quot;h1&quot;</span><span class="p">,</span><span class="s">&quot;{{el1.value}}&quot;</span><span class="p">);</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="VueElement">VueElement<a class="anchor-link" href="#VueElement">&#182;</a></h3><h4 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h4><ul>
-<li>Basic data structure</li>
-<li>With JS Data</li>
-<li>Reactive</li>
-<li>Input Elements have a value_attr that holds the input value, available using elementid.value</li>
-<li>Binds attrs to JS var using binds argument Dict(“attr”=&gt;”jsvar”)</li>
-<li>Listens to events, e.g. click. Uses event name as arg and Expression to execute click=”el1.value=’new’”</li>
-<li>Admits all attributes available for the specific element</li>
-<li>Admits cols argument to define column width</li>
-<li>Admits style arg to define style</li>
-</ul>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># @el(variable,element type;attributes) attributes should be used according to element original framework documentation (e.g. vuetify)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">el1</span><span class="p">,</span><span class="s">&quot;v-text-field&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span><span class="n">full</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">style</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;red&quot;</span><span class="p">),</span><span class="n">class</span><span class="o">=</span><span class="s">&quot;ma-2&quot;</span><span class="p">,</span><span class="n">storage</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span>
-<span class="nd">@el</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span><span class="s">&quot;v-btn&quot;</span><span class="p">,</span><span class="n">content</span><span class="o">=</span><span class="s">&quot;Link&quot;</span><span class="p">,</span><span class="n">click</span><span class="o">=</span><span class="s">&quot;open(&#39;https://www.google.com&#39;)&quot;</span><span class="p">,</span><span class="n">binds</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="o">=&gt;</span><span class="s">&quot;el1.value==&#39;&#39; ? &#39;red&#39; : &#39;green&#39;&quot;</span><span class="p">));</span>
-
-<span class="c"># Special attributes:</span>
-<span class="c"># click / change / hover : Standard Vue events captured with code execution, inline expressions or custom methods</span>
-<span class="c"># binds : binds attribute to another element attribute or expression (like a conditional)</span>
-<span class="c"># Cols: Element width in number of columns, default cols is 2 of 12 columns grid</span>
-<span class="c"># Style: Dict with CSS attribute and value</span>
-<span class="c"># Class (vuetify): margin and padding according to vuetify documentation</span>
-<span class="c"># storage : stores last value of the element in browser</span>
-<span class="c"># tooltip : shows tooltip on mouse over element, see live example</span>
-<span class="c"># menu : shows menu on click, see live example</span>
+<span class="n">p1</span><span class="o">=</span><span class="n">page</span><span class="p">([</span><span class="n">number</span><span class="p">,</span><span class="n">number2</span><span class="p">],</span>
+    <span class="n">computed</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;comp&quot;</span><span class="o">=&gt;</span><span class="s">&quot;&quot;&quot;function(){return number*2}&quot;&quot;&quot;</span><span class="p">),</span> <span class="c">## comp will always be number*2 and is updated when number changes</span>
+    <span class="n">asynccomputed</span><span class="o">=</span><span class="kt">Dict</span><span class="p">(</span><span class="s">&quot;comp2&quot;</span><span class="o">=&gt;</span><span class="s">&quot;&quot;&quot;function(){return this.submit(&#39;login&#39;,{a:this.number.value}).then(x=&gt;x.responseText)}&quot;&quot;&quot;</span><span class="p">));</span> <span class="c">## asynccomputed shoould be used with async values e.g promises in submit function</span>
 </pre></div>
 
      </div>

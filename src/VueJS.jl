@@ -4,7 +4,7 @@ using JSON,Dates,DataFrames,HTTP,Namtso
 using SHA,Base64
 
 export WebDependency,html,spacer
-export grid,page,@el,@st,@dialog,response,submit,tabs,bar,card,libraries!
+export grid,page,@el,@st,@dialog,response,submit,tabs,bar,card,libraries!,toolbar,toolbartitle
 export dialog,VueStruct
 export LIBRARY_RULES
 export get_web_dependencies!

@@ -416,3 +416,16 @@ fn=(x)->begin
         x.attrs["value"] = get(x.attrs, "multiple", false) != false ? [] : nothing
     end
 end)
+
+VueJS.UPDATE_VALIDATION["v-toolbar"]=(
+doc="",
+value_attr=nothing,
+fn=(x)->begin
+    x.render_func=(toolbar; opts=PAGE_OPTIONS)->begin
+        opts.rows = true
+        tcols = toolbar.cols isa Nothing ? 12 : toolbar.cols 
+        child_dom = VueJS.dom([toolbar.elements], opts=opts)
+        toolbar.attrs["style"] = join(["$k:$v;" for (k,v) in get(toolbar.attrs, "style", Dict())], " ")
+        return VueJS.HtmlElement(toolbar.tag, toolbar.attrs, tcols, VueJS.HtmlElement("v-container", Dict("class"=>"container--fluid"), 12, child_dom))
+    end
+end)

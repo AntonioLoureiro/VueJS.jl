@@ -227,16 +227,29 @@ function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
         h.attrs=get(opts.style,h.tag,Dict())
-        class=get(opts.class,h.tag,"")
-        class!="" ? h.attrs["class"]=class : nothing
+        class=get(opts.class,h.tag,Dict())
+        class!=Dict() ? h.attrs["class"]=class : nothing
         update_cols!(h.value,context_cols=context_cols,opts=opts)
     elseif h.tag=="v-col"
         h.attrs=get(opts.style,h.tag,Dict())
-        class=get(opts.class,h.tag,"")
-        class!="" ? h.attrs["class"]=class : nothing
+        class=get(opts.class,h.tag,Dict())
+        class!=Dict() ? h.attrs["class"]=class : nothing
         cols=VueJS.get_cols(h.value,rows=false)
         viewport=get(opts.style,"viewport","md")
-        h.attrs[viewport]=Int(round(cols/(context_cols/12)))        
+        precise_cols=cols/(context_cols/12)
+        cols_dec=precise_cols%1
+        h.attrs[viewport]=Int(round(precise_cols))
+        style=get(opts.style,h.tag,Dict())
+        if cols_dec!=0
+           perc_width=Int(round(precise_cols/12*100))
+           if cols_dec>0.5 
+               class!=Dict() ? nothing : h.attrs["class"]="flex-shrink-1"
+               h.attrs["style"]="max-width: $(perc_width)%;"
+            else
+               class!=Dict() ? nothing : h.attrs["class"]="flex-grow-1"
+               h.attrs["style"]="max-width: $(perc_width)%;"
+            end 
+        end
         update_cols!(h.value,context_cols=cols,opts=opts)
     elseif h.value isa VueJS.HtmlElement || h.value isa Array
         update_cols!(h.value,context_cols=context_cols,opts=opts)

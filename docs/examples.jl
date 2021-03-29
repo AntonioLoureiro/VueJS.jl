@@ -54,12 +54,24 @@ page([[ch1,ch2,m1,m2, side_menu]],methods=Dict("query_method"=>"function(what, q
 """,
 "Vue Struct"=>"""
 @el(el1,"v-text-field",label="Element 1",value="Default Value")
-@el(el2,"v-select",value=true,items=[true,false],change="el2.value ? el1.value='Default Value' : el1.value='Triggered Value'",label="Trigger")
+@el(el2,"v-select",value=false,items=[true,false],change="el2.value ? el1.value='Triggered Value' : el1.value='Default Value'",label="Trigger")
 @el(el3,"v-select",value="blue",items=["blue","green","red"],label="Element 3")
-@el(el4,"v-chip",content="Conditional Chip",text-color="white",binds=Dict("color"=>"el3.value"))
+@el(el4,"v-chip",content="Conditional Chip",text-color="white",binds=Dict("color"=>"el3.value"),cols=2)
 
 @st(vs,[card([[el1,el2,el3,el4]])],data=Dict("el1"=>"Overrided Value in VS"))
 page([el1,el2,el3,el4,vs],data=Dict("el1"=>"Overrided Value"))
+""",
+"Iterable Vue Struct"=>"""
+@el(el1,"v-text-field",label="Element 1",value="Default Value")
+@el(el2,"v-select",value=false,items=[true,false],change="el2.value ? el1.value='Triggered Value' : el1.value='Default Value'",label="Trigger")
+@el(el3,"v-select",value="blue",items=["blue","green","red"],label="Element 3",cols=2)
+@el(el4,"v-chip",content="Conditional Chip",text-color="white",binds=Dict("color"=>"el3.value"),cols=2)
+@el(btn_add,"v-btn",content="ADD",click="vs.add()")
+@el(btn_del,"v-btn",content="DELETE",click="vs.remove(index)",cols=1)
+
+@st(vs,[card([[el1,el2,el3,el4,btn_del]])],iterable=true,data=[Dict("el1"=>"Overrided Value","el3"=>"red"),Dict("el3"=>"blue"),Dict("el3"=>"green")])
+
+page([btn_add,vs])
 """,
 "Basic Datatables"=>"""
 df=DataFrame()

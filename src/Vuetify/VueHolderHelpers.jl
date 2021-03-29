@@ -63,7 +63,7 @@ function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=no
 end
 
 dialog(id::String,element;kwargs...)=dialog(id,[element];kwargs...)
-function dialog(id::String,elements::Vector;kwargs...)
+function dialog(id::String,elements::Vector; container::Bool=true, kwargs...)
     
     real_attrs=Dict(string(k)=>v for (k,v) in kwargs)
         
@@ -82,7 +82,8 @@ function dialog(id::String,elements::Vector;kwargs...)
     vs_dial.render_func=(x;opts=PAGE_OPTIONS)->begin
         
         child_dom=VueJS.dom(x.grid,opts=opts)
-        [HtmlElement("v-dialog",get(vs_dial.attrs,"v-dialog",Dict()),12,HtmlElement("v-card",Dict(),12,HtmlElement("v-container",Dict(),12,child_dom)))]
+        container_dom(child, container::Bool) = container ? VueJS.HtmlElement("v-container",Dict(),12,child) : child
+        [VueJS.HtmlElement("v-dialog",get(vs_dial.attrs,"v-dialog",Dict()),12,VueJS.HtmlElement("v-card",Dict(),12,container_dom(child_dom, container)))]
     end
     
     return vs_dial
@@ -106,3 +107,55 @@ macro dialog(varname,els,args...)
 end
 
 dialog(id::String,element,d::Dict)=dialog(id,element;Dict(Symbol(k)=>v for (k,v) in d)...)
+
+"""
+    Toolbar(elements::Vector; kwargs...) :: VueHolder
+
+Arguments
+
+ * style          :: Dict         :: Dict of css style elements
+ * nav            :: Bool         :: Whether to display in nav mode, absolute positioning on the edges of the container 
+ * bottom         :: Bool         :: When in nav mode, whether to place it at the bottom
+ * floating       :: Bool         :: Whether toolbar is a floating bar. This disables nav mode.
+ * collapse       :: Bool        :: Whether it's a collpsed toolbar. 
+ * width          :: String       :: Bar width, default is 100%. Usage of width is prefered over cols
+
+"""
+function toolbar(elements::Vector; style::Dict=Dict(), nav::Bool=true, bottom::Bool=false, width="100%", kwargs...) :: VueJS.VueHolder
+    if isempty(elements) elements = Vector{VueJS.VueElement}() end
+    
+    #default attrs are to be merged with real attributes
+    real_attrs=Dict(string(k)=>v for (k,v) in kwargs)
+    attrs = Dict{String, Any}("color"=>"primary")
+
+    collapse = get(real_attrs, "collapse", false)
+    #check if user wants a floating toolbar
+    floating = get(real_attrs, "floating", false)
+    if floating === true
+        nav = false
+    end
+    #style for usage as nav
+    container_style = Dict{String, Any}("position"=>"absolute", "left"=>"0", "right"=>"0")
+    bottom ? container_style["bottom"] = 0 : container_style["top"] = 0
+    if !collapse container_style["padding"] = "0 12px" end
+    
+    cols = get(real_attrs, "cols",  nothing)
+    delete!(real_attrs, "cols")
+    if cols isa Nothing #cols take priority over 100% width definition
+        collapse ? container_style["max_width"] = width : container_style["min-width"] = width
+    else
+        @warn "v-toolbar | width definition is preferred over cols"
+        container_style["max-width"] = "$(cols/12 * 100)%"
+    end
+    merge!(attrs, real_attrs)
+    attrs["style"] = nav ? merge(container_style, style) : style
+    
+    return VueJS.VueHolder("v-toolbar", attrs, elements, cols, nothing)
+end
+
+function toolbartitle(title::String; style::Dict=Dict(), cols=4, attrs...)
+    attrs      = Dict{String, Any}(string(k)=>v for (k,v) in attrs)
+    base_style = Dict("padding"=>"2% 0", "color"=>"white")
+    attrs["style"] = join(["$k:$v;" for (k,v) in merge(base_style, style)], " ")
+    return html("v-toolbar-title", title, attrs, cols=cols)
+end

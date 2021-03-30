@@ -65,7 +65,7 @@ function docs()
         Dict("icon"=>"mdi-hook","title"=>"Hooks","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHooks.html"),
         ])
 
-    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('DocsElements.html')")
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('components.html')")
     barapp=bar([homeb,"VueJS Documentation"]);
     
     

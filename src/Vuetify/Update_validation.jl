@@ -417,7 +417,7 @@ fn=(x)->begin
     end
 end)
 
-VueJS.UPDATE_VALIDATION["v-toolbar"]=(
+UPDATE_VALIDATION["v-toolbar"]=(
 doc="",
 value_attr=nothing,
 fn=(x)->begin

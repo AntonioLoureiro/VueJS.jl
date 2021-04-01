@@ -1,4 +1,4 @@
-using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights
+using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights,Namtso
 
 function docs()
     

@@ -8,7 +8,7 @@ mutable struct VueElement
     binds::Dict{String,String}
     value_attr::Union{Nothing,String}
     data::Dict{String,Any}
-    slots::Dict{String,T} where T<:Union{String,HtmlElement,Dict}
+    slots::Dict{String,Any}
     cols::Union{Nothing,Int64}
     render_func::Union{Nothing,Function}
     events::Dict{String, Any}
@@ -18,7 +18,7 @@ end
 
 function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     
-    slots=get(attrs, "slots", Dict{String,String}())
+    slots=get(attrs, "slots", Dict{String,Any}())
     haskey(attrs,"slots") ? delete!(attrs,"slots") : nothing
     
     cols=get(attrs, "cols", nothing)
@@ -85,7 +85,7 @@ function VueElement(id::String, tag::String, attrs::Dict)
     if length(vuel.slots)!=0
         child=[]
         for (k,v) in vuel.slots
-            push!(child,html("template",dom(v),Dict("v-slot:$k"=>true)))
+            push!(child,html("template",v,Dict("v-slot:$k"=>true)))
         end
         vuel.child=child
     end

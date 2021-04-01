@@ -94,7 +94,24 @@ end
 dom(d;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=d
 dom(d::Dict;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=JSON.json(d)
 dom(r::String;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=HtmlElement("div",Dict(),1,r)
-dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=r
+function dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)
+   
+    if r.value isa Vector
+       r.value=dom.(r.value,opts=opts) 
+    else
+        r.value=dom(r.value,opts=opts)
+    end
+    
+    for (k,v) in r.attrs
+        if k in DIRECTIVES
+            r.attrs[k]=trf_vue_expr(v,opts=opts)            
+        end
+    end
+    
+    return r
+end
+
+
 
 function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_func=false,is_child=false)
 
@@ -121,7 +138,7 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
         ## cols
         vuel.cols==nothing ? vuel.cols=1 : nothing
     
-        if vuel.child!=nothing
+       if vuel.child!=nothing
            child=vuel.child
        else
            child=child==nothing ? "" : child

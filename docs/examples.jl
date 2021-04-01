@@ -120,7 +120,7 @@ computed=Dict("comp1"=>"function(){this.globals.heart_beat; return Math.random()
 asynccomputed=Dict("comp3"=>"function(){return this.submit('https://httpbin.org/post',{a:this.comp1}).then(x=>JSON.parse(x.responseText).json.a*2)}")
 page([el1,el2,el3],mounted=mounted,computed=computed,asynccomputed=asynccomputed)
 """,
-"ECharts"=>"""    
+"ECharts"=>"""
 ## VueJS uses Namtso Echarts Library. A Namtso Echart object should be created and then attributed to a Vue Element
 points=1000
 ec=EChart("scatter",rand(points),rand(points),title=Dict("text"=>"Double Scatter"),width=800,height=600) ## You can define the aspect ratio, it will be preserved

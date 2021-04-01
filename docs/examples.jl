@@ -119,5 +119,17 @@ mounted="Vue.set(this.globals, 'heart_beat', 0);setInterval(function(){app_state
 computed=Dict("comp1"=>"function(){this.globals.heart_beat; return Math.random()*1000}","comp2"=>"function(){return this.comp1 % 2}")
 asynccomputed=Dict("comp3"=>"function(){return this.submit('https://httpbin.org/post',{a:this.comp1}).then(x=>JSON.parse(x.responseText).json.a*2)}")
 page([el1,el2,el3],mounted=mounted,computed=computed,asynccomputed=asynccomputed)
+""",
+"ECharts"=>"""    
+## VueJS uses Namtso Echarts Library. A Namtso Echart object should be created and then attributed to a Vue Element
+points=1000
+ec=EChart("scatter",rand(points),rand(points),title=Dict("text"=>"Double Scatter"),width=800,height=600) ## You can define the aspect ratio, it will be preserved
+series!(ec,"scatter",rand(points),rand(points),name="Blue Series")
+
+ec2=EChart("bar",["A","B","C","D","E"],[100,130,80,50,60],title=Dict("text"=>"Bar Chart"))
+## Attribute Echart to Vue Element
+@el(v_ec,ec,cols=6) ## Cols defines the cols absolute width, preserving the aspect ratio, default is 6
+@el(v_ec2,ec2,cols=6)
+page([[v_ec,v_ec2]])
 """
 ]

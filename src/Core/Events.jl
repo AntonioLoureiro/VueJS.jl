@@ -158,3 +158,9 @@ function_script = """function (val) {
   return isNaN(n) ? val : n
 }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))
+
+#adjust_to_window_size
+function_script="function(w,h,cols){
+        available_w=window.innerWidth/12*cols;
+        return {width:available_w,height:available_w/w*h}}"
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("adjust_to_window_size","",function_script))

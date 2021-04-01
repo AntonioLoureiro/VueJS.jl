@@ -97,7 +97,7 @@ dom(r::String;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=HtmlEl
 function dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)
    
     if r.value isa Vector
-       r.value=dom.(r.value,opts=opts) 
+       r.value=map(x->dom(x,opts=opts),r.value) 
     else
         r.value=dom(r.value,opts=opts)
     end

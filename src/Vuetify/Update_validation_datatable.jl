@@ -119,9 +119,9 @@ fn=(x)->begin
                 new_col_format[trf_col(k)]=v
             end
             x.attrs["col_format"]=new_col_format
-
+            
             for (k,v) in x.attrs["col_format"]
-				x.slots["item.$k='{item}'"]="""<div v-html="datatable_col_format(item.$k,$(x.id).col_format.$k)"></div>"""
+                x.slots["item.$k='{item}'"]=html("div","",Dict("v-html"=>"datatable_col_format(item.$k,$(x.id).col_format.$k)"))
 			end
         end
 

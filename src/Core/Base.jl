@@ -30,7 +30,7 @@ DEPENDENCIES=[
 
 FRAMEWORK="vuetify"
 
-const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style"]
+const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style","v-show"]
 
 const KNOWN_JS_EVENTS = ["input","click", "mouseover", "mouseenter", "change"]
 const CONTEXT_JS_FUNCTIONS=["submit","add","remove"]

@@ -55,7 +55,7 @@ function card(;title=nothing,subtitle=nothing,text=nothing,actions::htmlTypes=no
        push!(names,v) 
        end
     end
-    elements
+    
     attrs["names"]=names
     
    return VueJS.VueHolder("v-card",attrs,elements,cols,nothing)

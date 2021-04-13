@@ -1,4 +1,4 @@
-using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights
+using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights,Namtso
 
 function docs()
     
@@ -36,7 +36,7 @@ function docs()
     end
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
-    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,cols=3)
+    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,items-per-page=50,cols=3)
 
     df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
     for (k,v) in VueJS.UPDATE_VALIDATION
@@ -54,6 +54,8 @@ function docs()
                     html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
 
     @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[
+        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html"),
+        Dict("divider" => true),
         Dict("icon"=>"mdi-file-document-outline","title"=>"Elements","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsElements.html"),
         Dict("icon"=>"mdi-palette-swatch-outline","title"=>"Styling","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html"),
         Dict("icon"=>"mdi-account-group-outline","title"=>"Holders","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHolders.html"),
@@ -61,9 +63,9 @@ function docs()
         Dict("icon"=>"mdi-laptop","title"=>"Methods","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsMethods.html"),
         Dict("icon"=>"mdi-calculator","title"=>"Computed","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsComputed.html"),
         Dict("icon"=>"mdi-hook","title"=>"Hooks","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHooks.html"),
-        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html")])
+        ])
 
-    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('DocsElements.html')")
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('components.html')")
     barapp=bar([homeb,"VueJS Documentation"]);
     
     

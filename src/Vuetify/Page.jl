@@ -12,7 +12,7 @@ function htmlstring(page_inst::Page)
     
     append!(head_dom.value,includes)   
     
-    push!(head_dom.value,html("style","[v-cloak] {display: none}"))
+    push!(head_dom.value,html("style","[v-cloak] {display: none} "))
         
     scripts=deepcopy(page_inst.scripts)
         

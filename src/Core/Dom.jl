@@ -94,7 +94,24 @@ end
 dom(d;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=d
 dom(d::Dict;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=JSON.json(d)
 dom(r::String;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=HtmlElement("div",Dict(),1,r)
-dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)=r
+function dom(r::HtmlElement;opts=PAGE_OPTIONS,prevent_render_func=false,is_child=false)
+   
+    if r.value isa Vector
+       r.value=map(x->dom(x,opts=opts),r.value) 
+    else
+        r.value=dom(r.value,opts=opts)
+    end
+    
+    for (k,v) in r.attrs
+        if k in DIRECTIVES
+            r.attrs[k]=trf_vue_expr(v,opts=opts)            
+        end
+    end
+    
+    return r
+end
+
+
 
 function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_func=false,is_child=false)
 
@@ -121,7 +138,7 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
         ## cols
         vuel.cols==nothing ? vuel.cols=1 : nothing
     
-        if vuel.child!=nothing
+       if vuel.child!=nothing
            child=vuel.child
        else
            child=child==nothing ? "" : child
@@ -227,16 +244,29 @@ function update_cols!(h::VueJS.HtmlElement;context_cols=12,opts=PAGE_OPTIONS)
 
     if h.tag=="v-row"
         h.attrs=get(opts.style,h.tag,Dict())
-        class=get(opts.class,h.tag,"")
-        class!="" ? h.attrs["class"]=class : nothing
+        class=get(opts.class,h.tag,Dict())
+        class!=Dict() ? h.attrs["class"]=class : nothing
         update_cols!(h.value,context_cols=context_cols,opts=opts)
     elseif h.tag=="v-col"
         h.attrs=get(opts.style,h.tag,Dict())
-        class=get(opts.class,h.tag,"")
-        class!="" ? h.attrs["class"]=class : nothing
+        class=get(opts.class,h.tag,Dict())
+        class!=Dict() ? h.attrs["class"]=class : nothing
         cols=VueJS.get_cols(h.value,rows=false)
         viewport=get(opts.style,"viewport","md")
-        h.attrs[viewport]=Int(round(cols/(context_cols/12)))        
+        precise_cols=cols/(context_cols/12)
+        cols_dec=precise_cols%1
+        h.attrs[viewport]=Int(round(precise_cols))
+        style=get(opts.style,h.tag,Dict())
+        if cols_dec!=0
+           perc_width=Int(round(precise_cols/12*100))
+           if cols_dec>0.5 
+               class!=Dict() ? nothing : h.attrs["class"]="flex-shrink-1"
+               h.attrs["style"]="max-width: $(perc_width)%;"
+            else
+               class!=Dict() ? nothing : h.attrs["class"]="flex-grow-1"
+               h.attrs["style"]="max-width: $(perc_width)%;"
+            end 
+        end
         update_cols!(h.value,context_cols=cols,opts=opts)
     elseif h.value isa VueJS.HtmlElement || h.value isa Array
         update_cols!(h.value,context_cols=context_cols,opts=opts)
@@ -275,7 +305,7 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     end
     
     if r.iterable
-        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true))
+        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true,"style"=>"padding-top:0px;padding-bottom:0px"))
     end
     
     return domvalue

@@ -129,7 +129,7 @@ fn=(x)->begin
             dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)       
             domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
             html("v-date-picker","",Dict("v-model"=>"$path$(y.id).value"))]
-            domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"))
+            domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)
             
             return domvalue
         end
@@ -417,7 +417,7 @@ fn=(x)->begin
     end
 end)
 
-VueJS.UPDATE_VALIDATION["v-toolbar"]=(
+UPDATE_VALIDATION["v-toolbar"]=(
 doc="",
 value_attr=nothing,
 fn=(x)->begin

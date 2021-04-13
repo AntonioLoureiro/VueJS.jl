@@ -10,14 +10,15 @@ doc="",
 library="echarts",
 value_attr=nothing,
 fn=(x)->begin
-
+    x.cols==nothing ? x.cols=6 : nothing
     width=deepcopy(x.attrs["width"])
     delete!(x.attrs,"width")
     height=deepcopy(x.attrs["height"])
     delete!(x.attrs,"height")
-   
-    
-    haskey(x.attrs,"style") ? nothing : x.attrs["style"]=Dict{Any,Any}()
-    x.attrs["style"]["width"]=width
-    x.attrs["style"]["height"]=height
+        
+    if !haskey(x.attrs,"style") && !haskey(x.binds,"style")
+       x.binds["style"]="adjust_to_window_size($width,$height,$(x.cols))"
+    end
+     
+    x.attrs["autoresize"]=true
 end)

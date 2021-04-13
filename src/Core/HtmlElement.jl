@@ -2,7 +2,7 @@
 mutable struct HtmlElement
     tag::String
     attrs::Dict{String, Any}
-    cols::Union{Nothing, Int64}
+    cols::Union{Nothing, Float64}
     value
 end
 

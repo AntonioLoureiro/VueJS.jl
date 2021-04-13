@@ -4,6 +4,7 @@ doc="",
 library="vue2editor",
 fn=(x)->begin
     x.cols==nothing ? x.cols=6 : nothing
+
 end)
 
 UPDATE_VALIDATION["hot-table"]=(

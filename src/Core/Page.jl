@@ -3,6 +3,7 @@ mutable struct WebDependency
     version::String
     kind::String
     components::Dict{String,String}
+    css::String
     sha::String
     local_path::String
 end

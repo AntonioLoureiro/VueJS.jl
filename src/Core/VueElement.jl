@@ -9,7 +9,7 @@ mutable struct VueElement
     value_attr::Union{Nothing,String}
     data::Dict{String,Any}
     slots::Dict{String,Any}
-    cols::Union{Nothing,Int64}
+    cols::Union{Nothing,Float64}
     render_func::Union{Nothing,Function}
     events::Dict{String, Any}
     child
@@ -68,11 +68,11 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     return VueElement(id,tag,attrs,no_dom_attrs,"",binds, "value", Dict(), slots, cols,nothing,events,nothing)
     
 end
-"""
-Defaults to binding on `value` attribute
-"""
-function VueElement(id::String, tag::String, attrs::Dict)
 
+is_valid_var(x::String)=all(c->islowercase(c) || c=='_' || isnumeric(c), x)
+
+function VueElement(id::String, tag::String, attrs::Dict)
+    @assert is_valid_var(id) "Element variable should be lowercase!"
     vuel=create_vuel_update_attrs(id,tag,attrs)
     if haskey(vuel.binds,"value") && vuel.value_attr!="value"
        vuel.binds[vuel.value_attr]=vuel.binds["value"]

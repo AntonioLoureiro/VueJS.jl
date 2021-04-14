@@ -1,18 +1,20 @@
 function htmlstring(page_inst::Page)
     includes=[]
+    css_deps=[]
     for d in page_inst.dependencies
         if d.kind=="js"
             push!(includes,html("script","",Dict("src"=>d.local_path=="" ? d.path : d.local_path)))
         elseif d.kind=="css"
             push!(includes,html("link",nothing,Dict("rel"=>"stylesheet","type"=>"text/css","href"=>d.local_path=="" ? d.path : d.local_path)))
         end
+        push!(css_deps,d.css)
     end
 
     head_dom=deepcopy(HEAD)
     
     append!(head_dom.value,includes)   
     
-    push!(head_dom.value,html("style","[v-cloak] {display: none} "))
+    push!(head_dom.value,html("style",join(css_deps," ")))
         
     scripts=deepcopy(page_inst.scripts)
         

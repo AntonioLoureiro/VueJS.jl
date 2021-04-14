@@ -3,7 +3,7 @@ mutable struct VueHolder
     tag::String
     attrs::Dict{String, Any} 
     elements::Array
-    cols::Union{Nothing,Int64}
+    cols::Union{Nothing,Float64}
     render_func::Union{Nothing,Function}
     
     function VueHolder(tag::String,attrs::Dict,elements::Array,cols::Union{Nothing,Int64},render_func::Union{Nothing,Function})

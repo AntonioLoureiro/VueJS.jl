@@ -6,25 +6,25 @@ HEAD=html("head",
 
 
 DEPENDENCIES=[
-                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js","2.6.11","js",Dict(),"",""),
-                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.3.4/vuetify.min.js","2.3.4","js",Dict(),"",""),
-                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.3.4/vuetify.min.css","2.3.4","css",Dict(),"",""),
-                WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","1.0","css",Dict(),"",""),
-                WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","1.0","css",Dict(),"",""),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js","2.6.11","js",Dict(),"","",""),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.js","2.4.9","js",Dict(),"","",""),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.css","2.4.9","css",Dict(),"[v-cloak] {display: none}","",""),
+                WebDependency("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","1.0","css",Dict(),"","",""),
+                WebDependency("https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","1.0","css",Dict(),"","",""),
                 
-                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","2.6.6","js",Dict("VueEditor"=>"vue2editor.components.VueEditor"),"",""),
-                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","2.6.6","js",Dict(),"",""),
+                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","2.6.6","js",Dict("VueEditor"=>"vue2editor.components.VueEditor"),".ql-container {height:auto !important} .ql-editor {height:auto !important}","",""),
+                WebDependency("https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","2.6.6","js",Dict(),"","",""),
                 
-                WebDependency("https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","4.1.0","js",Dict(),"",""),
-                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","4.0.2","js",Dict("vuechart"=>"VueECharts"),"",""),
+                WebDependency("https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","4.1.0","js",Dict(),"","",""),
+                WebDependency("https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","4.0.2","js",Dict("vuechart"=>"VueECharts"),"","",""),
     
-                WebDependency("https://unpkg.com/vue-async-computed@3.8.1","3.8.1","js",Dict(),"",""),
+                WebDependency("https://unpkg.com/vue-async-computed@3.9.0","3.9.0","js",Dict(),"","",""),
                 
-                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","6.2.2","css",Dict(),"",""),
-                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","6.2.2","js",Dict(),"",""),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","6.2.2","css",Dict(),"","",""),
+                WebDependency("https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","6.2.2","js",Dict(),"","",""),
                 
-                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"",""),
-                WebDependency("https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","3.1.1","js",Dict(),"","")
+                WebDependency("https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","4.1.1","js",Dict("HotTable"=>"Handsontable.vue.HotTable"),"","",""),
+                WebDependency("https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","3.1.1","js",Dict(),"","","")
     
             ]
 

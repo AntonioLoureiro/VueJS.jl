@@ -429,3 +429,32 @@ fn=(x)->begin
         return VueJS.HtmlElement(toolbar.tag, toolbar.attrs, tcols, VueJS.HtmlElement("v-container", Dict("class"=>"container--fluid"), 12, child_dom))
     end
 end)
+
+UPDATE_VALIDATION["v-treeview"]=(
+doc="",
+fn=(x)->begin
+    
+    # Default attributes
+    x.cols==nothing ? x.cols=6 : nothing
+    haskey(x.attrs, "selection-type") ? nothing : x.attrs["selection-type"] = "independent"
+    haskey(x.attrs, "align") ? nothing : x.attrs["align"] = "left"
+    for k in ["hoverable", "dense"]
+        haskey(x.attrs, k) ? nothing : x.attrs[k] = true
+    end
+
+    # Prepend icon to each item based on "prepend-icon-field" attribute.
+    # Each item node has a field with the icon specification e.g. "file" => "mdi-pdf-file"
+    # If it doesn't have this field, it is considered a folder.
+    if haskey(x.attrs, "prepend-icon-field")
+        icon_field = x.attrs["prepend-icon-field"]
+        x.slots = Dict{String, Any}()
+        x.slots["prepend=\"{ item, open }\""] = 
+        "<v-icon v-if='!item.$icon_field'>
+            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+        </v-icon>
+        <v-icon v-else>
+            {{ item.$icon_field }}
+        </v-icon>"
+    end
+end)
+

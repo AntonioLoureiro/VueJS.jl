@@ -16,7 +16,7 @@ function docs()
         ex_style=String(take!(ioh))
         ioh=IOBuffer() 
         highlight(ioh, MIME("text/html"), join(deepcopy(ex_display)), Lexers.JuliaLexer)
-        ex_display="<div v-pre>"*String(take!(ioh))*"</div>"
+        ex_display="""<div style="padding-bottom:10px" v-pre>"""*String(take!(ioh))*"</div>"
 
         ex[end]="global p="*ex[end]
 

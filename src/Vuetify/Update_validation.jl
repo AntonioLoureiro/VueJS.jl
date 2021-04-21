@@ -431,7 +431,29 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-treeview"]=(
-doc="",
+doc="""The <code> v-treeview </code> component is useful for displaying large amounts of nested data by using a tree format.
+Its behaviour is manipulated by using the various props from the vuetify library. Input data must be in tree format (see example <a href="https://github.com/vuetifyjs/vuetify/blob/master/packages/docs/src/examples/v-treeview/usage.vue">here</a> - items)
+
+Default v-treeview; By default it is hoverable, dense, aligns to the left and occupies 6 columns
+<code> @el(tree, "v-treeview", items=tree_data)  </code>
+
+The next examples define the behaviour of a v-treeview using the prepend-icon attribute to define an prepend-icon slot. (Ex: File explorer)
+EX-1: 
+Default prepend. Expects "icon" field to specify icon information, else defaults to folder.
+<code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = true)  </code>
+
+EX-2: 
+Custom default icon. Expects "icon" field to specify icon information, else is equal to the custom default icon "mdi-alarm-note".
+<code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = Dict("default-icon" => "mdi-alarm-note"))  </code>
+
+EX-3: 
+Custom icon field. Expects custom icon field "file" to specify icon information, else defaults to folder.
+<code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = Dict("custom-icon-field" => "file"))  </code>
+
+EX-4: 
+Custom prepend. Expects custom icon field "file" to specify icon information, else defaults to custom default icon "mdi-upload".
+<code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = Dict("default-icon" => "mdi-upload", "custom-icon-field" => "file"))  </code>
+""",
 fn=(x)->begin
     
     # Default attributes
@@ -442,19 +464,36 @@ fn=(x)->begin
         haskey(x.attrs, k) ? nothing : x.attrs[k] = true
     end
 
-    # Prepend icon to each item based on "prepend-icon-field" attribute.
-    # Each item node has a field with the icon specification e.g. "file" => "mdi-pdf-file"
-    # If it doesn't have this field, it is considered a folder.
-    if haskey(x.attrs, "prepend-icon-field")
-        icon_field = x.attrs["prepend-icon-field"]
+    # Prepend icon to each item based on "prepend-icon" attribute.
+    if haskey(x.attrs, "prepend-icon") && (isa(x.attrs["prepend-icon"], Bool) || isa(x.attrs["prepend-icon"], Dict))
         x.slots = Dict{String, Any}()
-        x.slots["prepend=\"{ item, open }\""] = 
-        "<v-icon v-if='!item.$icon_field'>
-            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-        </v-icon>
-        <v-icon v-else>
-            {{ item.$icon_field }}
-        </v-icon>"
+        
+        # Default prepend-behaviour
+        # looks for 'icon' in data for the icon specification and defaults to opened/closed folders when there isn't information.
+        default_icon      = "{{ open ? 'mdi-folder-open' : 'mdi-folder' }}"
+        custom_icon_field = "icon"
+        
+        # Customizable prepend-behaviour
+        if isa(x.attrs["prepend-icon"], Dict) 
+            # Change default icon  
+            if haskey(x.attrs["prepend-icon"], "default-icon")
+                default_icon = x.attrs["prepend-icon"]["default-icon"]
+            end
+            # Change default icon field
+            if haskey(x.attrs["prepend-icon"], "custom-icon-field")
+                custom_icon_field = x.attrs["prepend-icon"]["custom-icon-field"]
+            end
+        end
+            
+        slot = "<v-icon v-if='!item.$custom_icon_field'>
+                    $default_icon
+                 </v-icon>
+                 <v-icon v-else>
+                    {{ item.$custom_icon_field }}
+                </v-icon>"
+        
+        x.slots["prepend=\"{ item, open, active }\""] = slot
     end
+            
 end)
 

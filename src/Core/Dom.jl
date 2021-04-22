@@ -305,7 +305,7 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     end
     
     if r.iterable
-        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true,"style"=>"padding-top:0px;padding-bottom:0px"))
+        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true))
     end
     
     return domvalue

@@ -27,7 +27,7 @@ fn=(x)->begin
     col_pref="col_"
     trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
-    x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
+    x.attrs=Dict(k=> k == "click" ? v : VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
     end
     

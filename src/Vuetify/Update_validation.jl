@@ -497,7 +497,8 @@ fn=(x)->begin
             
 end)
 
-VueJS.UPDATE_VALIDATION["v-progress-linear"]=(
+                                        
+UPDATE_VALIDATION["v-progress-linear"]=(
 doc="""The <code> v-progress-linear </code> component is used to convey data visually to users. It's a practical way to show users that a loading or importing process is being executed at the moment.(see examples <a href="https://vuetifyjs.com/en/components/progress-linear/">here</a>)
 Default v-progress-linear; By default it has width corresponding to the size of its container, is indeterminate and is hidden (inactive).
 <code> @el(loading, "v-progress-linear")  </code>

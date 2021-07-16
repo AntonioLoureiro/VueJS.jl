@@ -497,3 +497,65 @@ fn=(x)->begin
             
 end)
 
+                                        
+UPDATE_VALIDATION["v-progress-linear"]=(
+doc="""The <code> v-progress-linear </code> component is used to convey data visually to users. It's a practical way to show users that a loading or importing process is being executed at the moment.(see examples <a href="https://vuetifyjs.com/en/components/progress-linear/">here</a>)
+Default v-progress-linear; By default it has width corresponding to the size of its container, is indeterminate and is hidden (inactive).
+<code> @el(loading, "v-progress-linear")  </code>
+""",
+fn=(x)->begin
+        x.cols == nothing ? x.cols = 12 : nothing
+        
+        ## Basic Defaults
+        haskey(x.attrs, "indeterminate") ? nothing  : x.attrs["indeterminate"] = true
+        haskey(x.attrs, "active")   ? nothing : x.attrs["active"]  = false
+        haskey(x.attrs, "color")   ? nothing  : x.attrs["color"]   = "secondary"
+        haskey(x.attrs, "style")   ? nothing  : x.attrs["style"]   = Dict("margin" => "-12px", "width" => "auto")
+end)
+
+
+UPDATE_VALIDATION["v-snackbar"] = (
+    doc = """The v-snackbar component is used to display a quick message to a user.
+            <code>
+            ### Snackbars
+            @el(snackbar, "v-snackbar", content = "This is a snackbar", timeout = 3000)
+            </code>
+            Timeout, color and content properties are all binded to the elements data *id*.timeout, *id*.color, *id*.content, so they can be dynamically changed during page interaction.
+          """,
+    value_attr = nothing,
+    fn = (x) -> begin
+        x.cols == nothing ? x.cols = 6 : nothing
+        
+        ## 3 Basic Defaults
+        haskey(x.attrs, "content") ? nothing  : x.attrs["content"] = ""
+        haskey(x.attrs, "value")   ? nothing  : x.attrs["value"] = false
+        haskey(x.attrs, "color")   ? nothing  : x.attrs["color"]   = "success"
+        haskey(x.attrs, "timeout") ? nothing  : x.attrs["timeout"] = 4000
+        haskey(x.attrs, "style")   ? nothing  : x.attrs["style"]   = ""
+        
+        ## Render function
+        x.render_func = (y; opts = PAGE_OPTIONS) -> begin
+            path = opts.path == "" ? "" : opts.path * "."
+            slot = Dict()
+            slot["action=\"{ attrs }\""] = html("v-btn", "<v-icon fab>mdi-close</v-icon>", Dict("icon" => true, "@click" => "$path$(y.id).value = false"))                        
+            slot = [html("template", v, Dict("v-slot:$k" => true)) for (k, v) in slot]
+            
+            y.binds["timeout"] = y.id * ".timeout"
+            y.binds["color"]   = y.id * ".color"
+            y.binds["content"] = y.id * ".content"
+            y.binds["v-html"]  = y.id * ".content"
+            domvalue = VueJS.dom(y, prevent_render_func = true, opts = opts)
+            
+            content = []            
+            push!(content, "{{ snackbar.content }}")
+            push!(content, slot[1])
+            
+            delete!(domvalue.attrs, ":value")
+            domvalue.value = content
+            domvalue["v-model"] = "$path$(y.id).value"
+            
+            return domvalue
+        end
+    end
+)
+

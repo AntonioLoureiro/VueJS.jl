@@ -29,7 +29,7 @@ function htmlstring(page_inst::Page)
     components_dom=[]
     app_state=Dict{String,Any}()
     ## initialize globals
-    app_state["globals"]=Dict()
+    app_state["globals"]=page_inst.globals
 
     ## Other components
     for (k,v) in page_inst.components

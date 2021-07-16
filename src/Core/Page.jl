@@ -13,8 +13,9 @@ mutable struct Page
     components::Dict{String,Any}
     scripts::Vector{String}
     cookiejar::Dict{String, Any}
+    globals::Dict{String, Any}
 end
-Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}())
+Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}(), Dict{String, Any}())
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -75,6 +76,7 @@ function page(
     class=Dict{String,Any}(),
     scripts=[],
     cookies=Dict{String,Any}(),
+    globals = Dict{String, Any}(),
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
@@ -85,13 +87,14 @@ function page(
     
     cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,style=style,class=class;kwargs...)
     
-    return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts,cookies=cookies)
+    return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts,cookies=cookies, globals = globals)
 end
 
 function page(
         cont::VueStruct;
         scripts=[],
         cookies=Dict{String,Any}(),
+	globals = Dict{String, Any}(),
         sysbar::Union{VueElement, Nothing}=nothing,
         bar::Union{VueHolder,Nothing}=nothing,
         navigation::Union{VueElement,Nothing}=nothing,
@@ -111,7 +114,8 @@ function page(
             DEPENDENCIES,
             components,
             scripts,
-            cookies)
+            cookies,
+	    globals)
 
     return page_inst
 end

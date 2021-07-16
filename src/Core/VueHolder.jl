@@ -6,7 +6,7 @@ mutable struct VueHolder
     cols::Union{Nothing,Float64}
     render_func::Union{Nothing,Function}
     
-    function VueHolder(tag::String,attrs::Dict,elements::Array,cols::Union{Nothing,Int64},render_func::Union{Nothing,Function})
+    function VueHolder(tag::String,attrs::Dict,elements::Array,cols::Union{Nothing,Real},render_func::Union{Nothing,Function})
         vueh=new(tag,attrs,elements,cols,render_func)
         
         if haskey(UPDATE_VALIDATION, tag)

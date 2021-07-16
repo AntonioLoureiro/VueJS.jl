@@ -1,0 +1,15 @@
+[{"path":"https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js","version":"2.6.11","kind":"js"},
+{"path":"https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.js","version":"2.4.9","kind":"js"},
+{"path":"https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.css","version":"2.4.9","kind":"css","css":"[v-cloak] {display: none}"},
+{"path":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"1.0","kind":"css"},
+{"path":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css","version":"1.0","kind":"css"},
+{"path":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","version":"2.6.6","kind":"js","components":{"VueEditor":"vue2editor.components.VueEditor"},"css":".ql-container {height:auto !important} .ql-editor {height:auto !important}"},
+{"path":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","version":"2.6.6","kind":"js"},
+{"path":"https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js","version":"4.1.0","kind":"js"},
+{"path":"https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2","version":"4.0.2","kind":"js","components":{"vuechart":"VueECharts"}},
+{"path":"https://unpkg.com/vue-async-computed@3.9.0","version":"3.9.0","kind":"js"},
+{"path":"https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","version":"6.2.2","kind":"css"},
+{"path":"https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","version":"6.2.2","kind":"js"},
+{"path":"https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","version":"4.1.1","kind":"js","components":{"HotTable":"Handsontable.vue.HotTable"}},
+{"path":"https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","version":"3.1.1","kind":"js"} 
+]

@@ -1,0 +1,101 @@
+<html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.js" ></script><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.4.9/vuetify.min.css"  type="text/css" /><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" /><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"  type="text/css" /><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map" ></script><script src="https://cdn.jsdelivr.net/npm/echarts@4.1.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2" ></script><script src="https://unpkg.com/vue-async-computed@3.9.0" ></script><link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css"  type="text/css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js" ></script><script src="https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js" ></script><style>  [v-cloak] {display: none}   .ql-container {height:auto !important} .ql-editor {height:auto !important}        </style></head><body><div v-cloak id="app" ><v-app><v-main><v-container fluid><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><iframe height="1000"  src="https://antonioloureiro.github.io/VueJS.jl/docs/DocsStructs.html"  width="100%"  frameborder="0" ><div></div></iframe></v-col></v-row></v-container></v-main><v-navigation-drawer clipped permanent app width="200" ><v-list @change="nav.value= $event;"  :expand-on-hover="nav.expand_on_hover"  :items="nav.value" ><template v-for="(item, index) in nav.value" ><v-divider :key="index"  class="ma-5"  v-if="item.divider" ></v-divider><v-list-item dense @click="open(item.href)"  v-else link :class="item.class" ><v-list-item-icon><v-icon v-text="item.icon" ><div></div></v-icon></v-list-item-icon><v-list-item-content><v-list-item-title v-text="item.title" ><div></div></v-list-item-title></v-list-item-content></v-list-item></template></v-list></v-navigation-drawer><v-app-bar dense clipped-left color="dark-v accent-4"  dark app><v-btn @click="open('components.html')"  :icon="v_app_bar.homeb.icon" ><div><v-icon>mdi-home</v-icon></div></v-btn><div>VueJS Documentation</div></v-app-bar></v-app></div></body></html><script>xhr=function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}
+ const app_state = {"submit": function(url, sub_content=null,method, async, no_post=false) {
+    
+if (sub_content==null){
+ content={};
+    if (no_post) {
+        return content
+    } else {
+        return xhr(JSON.stringify(content), url, method, async)
+    }
+    } else {
+       if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+       return xhr(JSON.stringify(sub_content), url, method, async)
+    }},"globals":{},"nav":{"value":[{"icon":"mdi-table-settings","href":"https://antonioloureiro.github.io/VueJS.jl/components.html","title":"Components"},{"divider":true},{"icon":"mdi-file-document-outline","href":"https://antonioloureiro.github.io/VueJS.jl/DocsElements.html","title":"Elements"},{"icon":"mdi-palette-swatch-outline","href":"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html","title":"Styling"},{"icon":"mdi-account-group-outline","href":"https://antonioloureiro.github.io/VueJS.jl/DocsHolders.html","title":"Holders"},{"icon":"mdi-domain","href":"https://antonioloureiro.github.io/VueJS.jl/DocsStructs.html","title":"Structs"},{"icon":"mdi-laptop","href":"https://antonioloureiro.github.io/VueJS.jl/DocsMethods.html","title":"Methods"},{"icon":"mdi-calculator","href":"https://antonioloureiro.github.io/VueJS.jl/DocsComputed.html","title":"Computed"},{"icon":"mdi-hook","href":"https://antonioloureiro.github.io/VueJS.jl/DocsHooks.html","title":"Hooks"}],"expand_on_hover":false},"v_app_bar":{"homeb":{"icon":true}}}
+const vuetify = new Vuetify()
+const components = {vuechart:VueECharts,VueEditor:vue2editor.components.VueEditor,HotTable:Handsontable.vue.HotTable}
+var app = new Vue({el: '#app',vuetify: vuetify,components:components,data: app_state,methods : {open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+},datatable_col_format :  function(item,format_script) {
+return format_script(item)
+},filter_dt : function(cont,col,value){
+  idx=cont.headers_idx[col]
+  cont.headers[idx].filter_value=value
+},adjust_to_window_size : function(w,h,cols){
+        available_w=window.innerWidth/12*cols;
+        return {width:available_w,height:available_w/w*h}},getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+,toNumber : function (val) {
+  var n = parseFloat(val);
+  return isNaN(n) ? val : n
+},setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+,xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}}})</script>

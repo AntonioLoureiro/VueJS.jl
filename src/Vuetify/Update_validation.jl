@@ -469,8 +469,6 @@ fn=(x)->begin
 
     # Prepend icon to each item based on "prepend-icon" attribute.
     if haskey(x.attrs, "prepend-icon") && (isa(x.attrs["prepend-icon"], Bool) || isa(x.attrs["prepend-icon"], Dict))
-        x.slots = Dict{String, Any}()
-        
         # Default prepend-behaviour
         # looks for 'icon' in data for the icon specification and defaults to opened/closed folders when there isn't information.
         default_icon      = "{{ open ? 'mdi-folder-open' : 'mdi-folder' }}"

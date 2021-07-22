@@ -559,3 +559,42 @@ UPDATE_VALIDATION["v-snackbar"] = (
     end
 )
 
+VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
+   doc = """
+            The v-expansion-panel component is useful for reducing vertical space with large amounts of information.
+            All v-expansion-panels must be inside a <v-expansion-panels> tag. Here is an example of how to use it:
+
+            @el(ex_panel_1, "v-expansion-panel", header = "Test",         content = "drive")
+            @el(ex_panel_2, "v-expansion-panel", header = "Another test", content = "drive")
+            expansion_panels("ex_panels", [ex_panel_1, ex_panel_2], cols = 7)
+    """,
+   fn = (x) -> begin
+        
+        x.cols == nothing ? x.cols = 4 : nothing
+        
+        x.render_func = (x; opts = PAGE_OPTIONS) -> begin
+            children_elements = []
+
+            # Parse header and content data
+            header  = get(x.attrs, "header", Dict())
+            content = get(x.attrs, "content", Dict())
+            # Assert: They must be specified
+            @assert !isempty(header)  "<v-expansion-panel>[$(x.id)]: Please specify text for the header section  (use kwarg 'header')"
+            @assert !isempty(content) "<v-expansion-panel>[$(x.id)]: Please specify text for the content section (use kwarg 'content')"
+            
+            # Parse header and content style
+            header_style  = get(x.attrs, "header-style", Dict())
+            content_style = get(x.attrs, "content-style", Dict("align" => "left"))
+            
+            # Clean-up root element attributes
+            root_tag_attr = copy(x.attrs)
+            for attr in ["header", "content", "header-style", "content-style"]
+                delete!(root_tag_attr, attr)
+            end
+            
+            push!(children_elements, html("v-expansion-panel-header",  header, header_style, cols = x.cols))
+            push!(children_elements, html("v-expansion-panel-content", dom(content), content_style, cols = x.cols))
+            return html("v-expansion-panel", children_elements, root_tag_attr, cols = x.cols)
+        end
+    end
+)

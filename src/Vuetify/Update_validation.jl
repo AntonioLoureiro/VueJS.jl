@@ -103,12 +103,14 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
+
 UPDATE_VALIDATION["v-text-field"]=(
 doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is number when submited the value will be a valid number in JSON.<br>
     <code>
     @el(tf,"v-text-field",label="Date Field",type="date")<br>
     @el(tf2,"v-text-field",label="Number Field",type="number")<br>
     @el(tf3,"v-text-field",label="Text Field") # default type is text<br>
+    @el(tf4,"v-text-field",label="Number Field",type="date", month = true) # month datepicker <br>
     </code>
     """, 
 fn=(x)->begin
@@ -126,9 +128,10 @@ fn=(x)->begin
             y.binds["menu"]=menu_var
             y.attrs["v-on"]="on"
             delete!(y.attrs,"type")
-            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)       
+            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)
+            date_pick = haskey(y.attrs, "month") && y.attrs["month"] ? "month" : "date" 
             domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-            html("v-date-picker","",Dict("v-model"=>"$path$(y.id).value"))]
+            html("v-date-picker","", Dict("v-model"=>"$path$(y.id).value", "type" => date_pick))]
             domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)
             
             return domvalue

@@ -103,12 +103,14 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
+
 UPDATE_VALIDATION["v-text-field"]=(
 doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is number when submited the value will be a valid number in JSON.<br>
     <code>
     @el(tf,"v-text-field",label="Date Field",type="date")<br>
     @el(tf2,"v-text-field",label="Number Field",type="number")<br>
     @el(tf3,"v-text-field",label="Text Field") # default type is text<br>
+    @el(tf4,"v-text-field",label="Number Field",type="date", month = true) # month datepicker <br>
     </code>
     """, 
 fn=(x)->begin
@@ -126,9 +128,10 @@ fn=(x)->begin
             y.binds["menu"]=menu_var
             y.attrs["v-on"]="on"
             delete!(y.attrs,"type")
-            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)       
+            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)
+            date_pick = haskey(y.attrs, "month") && y.attrs["month"] ? "month" : "date" 
             domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-            html("v-date-picker","",Dict("v-model"=>"$path$(y.id).value"))]
+            html("v-date-picker","", Dict("v-model"=>"$path$(y.id).value", "type" => date_pick))]
             domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)
             
             return domvalue
@@ -466,8 +469,6 @@ fn=(x)->begin
 
     # Prepend icon to each item based on "prepend-icon" attribute.
     if haskey(x.attrs, "prepend-icon") && (isa(x.attrs["prepend-icon"], Bool) || isa(x.attrs["prepend-icon"], Dict))
-        x.slots = Dict{String, Any}()
-        
         # Default prepend-behaviour
         # looks for 'icon' in data for the icon specification and defaults to opened/closed folders when there isn't information.
         default_icon      = "{{ open ? 'mdi-folder-open' : 'mdi-folder' }}"
@@ -559,3 +560,42 @@ UPDATE_VALIDATION["v-snackbar"] = (
     end
 )
 
+VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
+   doc = """
+            The v-expansion-panel component is useful for reducing vertical space with large amounts of information.
+            All v-expansion-panels must be inside a <v-expansion-panels> tag. Here is an example of how to use it:
+
+            @el(ex_panel_1, "v-expansion-panel", header = "Test",         content = "drive")
+            @el(ex_panel_2, "v-expansion-panel", header = "Another test", content = "drive")
+            expansion_panels("ex_panels", [ex_panel_1, ex_panel_2], cols = 7)
+    """,
+   fn = (x) -> begin
+        
+        x.cols == nothing ? x.cols = 4 : nothing
+        
+        x.render_func = (x; opts = PAGE_OPTIONS) -> begin
+            children_elements = []
+
+            # Parse header and content data
+            header  = get(x.attrs, "header", Dict())
+            content = get(x.attrs, "content", Dict())
+            # Assert: They must be specified
+            @assert !isempty(header)  "<v-expansion-panel>[$(x.id)]: Please specify text for the header section  (use kwarg 'header')"
+            @assert !isempty(content) "<v-expansion-panel>[$(x.id)]: Please specify text for the content section (use kwarg 'content')"
+            
+            # Parse header and content style
+            header_style  = get(x.attrs, "header-style", Dict())
+            content_style = get(x.attrs, "content-style", Dict("align" => "left"))
+            
+            # Clean-up root element attributes
+            root_tag_attr = copy(x.attrs)
+            for attr in ["header", "content", "header-style", "content-style"]
+                delete!(root_tag_attr, attr)
+            end
+            
+            push!(children_elements, html("v-expansion-panel-header",  header, header_style, cols = x.cols))
+            push!(children_elements, html("v-expansion-panel-content", dom(content), content_style, cols = x.cols))
+            return html("v-expansion-panel", children_elements, root_tag_attr, cols = x.cols)
+        end
+    end
+)

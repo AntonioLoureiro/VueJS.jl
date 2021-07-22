@@ -159,3 +159,24 @@ function toolbartitle(title::String; style::Dict=Dict(), cols=4, attrs...)
     attrs["style"] = join(["$k:$v;" for (k,v) in merge(base_style, style)], " ")
     return html("v-toolbar-title", title, attrs, cols=cols)
 end
+
+function expansion_panels(id::String, panels::Vector{VueElement}; kwargs...) ::VueStruct
+    # Treat kwargs
+    attrs = Dict(string(k)=>v for (k,v) in kwargs)
+    ex_panels_cols = haskey(attrs, "cols") ? attrs["cols"] : 4
+    
+    # Instatiate VueStruct
+    ex_panels = VueStruct(id, panels)
+    ex_panels.attrs = attrs
+    
+    ex_panels.render_func = (y; opts = PAGE_OPTIONS) -> begin
+        res = ""
+        [res *= htmlstring(dom(child)) for child in y.grid ] 
+        child_dom = dom(res)
+        child_dom.cols = ex_panels_cols
+        return [html("v-expansion-panels", dom([child_dom]), ex_panels.attrs, cols = ex_panels_cols)]
+    end
+
+    return ex_panels
+end
+expansion_panels(id::String, panel::VueJS.VueElement; kwargs...) = expansion_panels(id, [panel]; kwargs...)

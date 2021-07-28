@@ -160,23 +160,18 @@ function toolbartitle(title::String; style::Dict=Dict(), cols=4, attrs...)
     return html("v-toolbar-title", title, attrs, cols=cols)
 end
 
-function expansion_panels(id::String, panels::Vector{VueElement}; kwargs...) ::VueStruct
+function expansion_panels(panels::Vector{VueJS.VueElement}; kwargs...) ::VueJS.VueHolder
     # Treat kwargs
     attrs = Dict(string(k)=>v for (k,v) in kwargs)
     ex_panels_cols = haskey(attrs, "cols") ? attrs["cols"] : 4
     
-    # Instatiate VueStruct
-    ex_panels = VueStruct(id, panels)
-    ex_panels.attrs = attrs
-    
-    ex_panels.render_func = (y; opts = PAGE_OPTIONS) -> begin
-        res = ""
-        [res *= htmlstring(dom(child)) for child in y.grid ] 
-        child_dom = dom(res)
-        child_dom.cols = ex_panels_cols
-        return [html("v-expansion-panels", dom([child_dom]), ex_panels.attrs, cols = ex_panels_cols)]
+    # define render
+    render_func = (x; opts = PAGE_OPTIONS) -> begin
+        res   = ""
+        [res *= VueJS.htmlstring(VueJS.dom(child)) for child in x.elements ] 
+        return html("v-expansion-panels", res, x.attrs, cols = x.cols)
     end
-
-    return ex_panels
+    
+    return VueJS.VueHolder("v-expansion-panels", attrs, panels, ex_panels_cols, render_func)
 end
-expansion_panels(id::String, panel::VueJS.VueElement; kwargs...) = expansion_panels(id, [panel]; kwargs...)
+expansion_panels(panel::VueJS.VueElement; kwargs...) = expansion_panels([panel]; kwargs...)

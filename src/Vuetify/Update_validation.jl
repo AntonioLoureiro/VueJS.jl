@@ -567,7 +567,7 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
 
             @el(ex_panel_1, "v-expansion-panel", header = "Test",         content = "drive")
             @el(ex_panel_2, "v-expansion-panel", header = "Another test", content = "drive")
-            expansion_panels("ex_panels", [ex_panel_1, ex_panel_2], cols = 7)
+            expansion_panels([ex_panel_1, ex_panel_2], cols = 7)
     """,
    fn = (x) -> begin
         
@@ -584,8 +584,8 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
             @assert !isempty(content) "<v-expansion-panel>[$(x.id)]: Please specify text for the content section (use kwarg 'content')"
             
             # Parse header and content style
-            header_style  = get(x.attrs, "header-style", Dict())
-            content_style = get(x.attrs, "content-style", Dict("align" => "left"))
+            header_style  = Dict("style" => get(x.attrs, "header-style", Dict()))
+            content_style = Dict("style" => get(x.attrs, "content-style", Dict("align" => "left")))
             
             # Clean-up root element attributes
             root_tag_attr = copy(x.attrs)
@@ -594,7 +594,7 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
             end
             
             push!(children_elements, html("v-expansion-panel-header",  header, header_style, cols = x.cols))
-            push!(children_elements, html("v-expansion-panel-content", dom(content), content_style, cols = x.cols))
+            push!(children_elements, html("v-expansion-panel-content", VueJS.dom(content), content_style, cols = x.cols))
             return html("v-expansion-panel", children_elements, root_tag_attr, cols = x.cols)
         end
     end

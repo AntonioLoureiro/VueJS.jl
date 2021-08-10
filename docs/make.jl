@@ -81,7 +81,7 @@ function docs()
     
     pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
         
-    # write out entry page 
+    # write out entry page to index.html
     io = open(joinpath(TARGET_DIR, INDEX_PAGE), "w")
     println(io, VueJS.htmlstring(pcomp))
     close(io)

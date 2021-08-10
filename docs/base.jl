@@ -9,4 +9,5 @@ BASE_URL        = "https://antonioloureiro.github.io/VueJS.jl"
 DOCS_PATH       = "docs"
 NOTEBOOKS_PATH  = joinpath(DOCS_PATH, "notebooks")
 TARGET_DIR      = "public"
-INDEX_PAGE      = "components.html"
+INDEX_PAGE      = "index.html"
+INDEX_ALIAS     = "components.html"

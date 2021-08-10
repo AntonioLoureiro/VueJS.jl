@@ -17,8 +17,8 @@ jobs:
       - name: Create Docs
         run: |
              mkdir public
-             cp -r "${GITHUB_WORKSPACE}/docs/" public/docs
-             julia -e 'push!(LOAD_PATH, "${GITHUB_WORKSPACE}"); using VueJS; include("${GITHUB_WORKSPACE}/docs/make.jl")'
+             cp -r "${{github.workspace}}/docs/" public/docs
+             julia -e 'push!(LOAD_PATH, "${{github.workspace}}"); using VueJS; include("$${{github.workspace}}/docs/make.jl")'
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2

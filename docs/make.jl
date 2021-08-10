@@ -31,7 +31,7 @@ function docs()
         close(io)
  
         name_url = HTTP.escapeuri(name)
-        push!(df_examples, (name, "/$(name_url).html"))
+        push!(df_examples, (name, joinpath(BASE_PATH, "$(name_url).html")))
     end
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
@@ -56,11 +56,11 @@ function docs()
                 cols=12),
                 bt_close],width=800)
 
-    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('$INDEX_PAGE')")
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('$INDEX_PATH')")
     barapp=bar([homeb,"VueJS Documentation"]);
 
     nav_items = [
-        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"/$INDEX_PAGE"),
+        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"$INDEX_PATH"),
         Dict("divider" => true)
     ]
     

@@ -12,3 +12,4 @@ NOTEBOOKS_PATH  = joinpath(DOCS_PATH, "notebooks")
 TARGET_DIR      = "public"
 INDEX_PAGE      = "index.html"
 INDEX_ALIAS     = "components.html"
+INDEX_PATH      = joinpath(BASE_PATH, INDEX_PAGE)

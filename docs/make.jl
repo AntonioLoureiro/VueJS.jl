@@ -31,7 +31,7 @@ function docs()
         close(io)
  
         name_url = HTTP.escapeuri(name)
-        push!(df_examples, (name, "$BASE_URL/$(name_url).html"))
+        push!(df_examples, (name, "/$(name_url).html"))
     end
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
@@ -60,13 +60,13 @@ function docs()
     barapp=bar([homeb,"VueJS Documentation"]);
 
     nav_items = [
-        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"$BASE_URL/$INDEX_PAGE"),
+        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"/$INDEX_PAGE"),
         Dict("divider" => true)
     ]
     
     iframes = []
     for (name, details) in notebooks
-        href = joinpath(BASE_URL, NOTEBOOKS_PATH, details.html)
+        href = joinpath(NOTEBOOKS_PATH, details.html)
         push!(nav_items, Dict("icon"=>details.icon, "title"=>name, "href"=>href))
         push!(iframes,   html("iframe","", Dict("src"=>href,"height"=>1000,"width"=>"100%","frameborder"=>0),cols=12))
     end

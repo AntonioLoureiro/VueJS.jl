@@ -1,16 +1,18 @@
-using VueJS,HTTP,Sockets,JSON,DataFrames,Dates,Highlights,Namtso
+using Namtso, VueJS
+using DataFrames, Dates, Highlights, HTTP, JSON, Sockets
+
+include("base.jl")
 
 function docs()
     
     df_examples=DataFrame(Name=[],Link=[])
     
     include("examples.jl")
-    for e in examples
+    for (name, file) in examples
 
-        name=e[1] 
-        ex=split(e[2],"\n")
-        filter!(x->x!="",ex) 
-        ex_display=join(deepcopy(ex),"\n")
+        filepath    = joinpath(EXAMPLES_DIR, file)
+        ex_display  = deepcopy(Base.read(filepath, String))
+
         ioh=IOBuffer() 
         stylesheet(ioh, MIME("text/html"))
         ex_style=String(take!(ioh))
@@ -18,21 +20,18 @@ function docs()
         highlight(ioh, MIME("text/html"), join(deepcopy(ex_display)), Lexers.JuliaLexer)
         ex_display="""<div style="padding-bottom:10px" v-pre>"""*String(take!(ioh))*"</div>"
 
-        ex[end]="global p="*ex[end]
-
-        for r in ex
-            eval(Meta.parse(r))
-        end 
-        html_code=String(response(p).body)
+        ex_page   = include(filepath)
+        html_code = String(response(ex_page).body)
         
         html_code=replace(html_code,"</style>"=>"</style>"*ex_style)
         html_code=replace(html_code,"<v-container fluid>"=>"<v-container fluid>"*ex_display)
-        io = open("public/$(name).html", "w")
+
+        io = open("$TARGET_DIR/$(name).html", "w")
         println(io, html_code)
         close(io)
-        name_url=replace(name," "=>"%20")
-        push!(df_examples,(name, """https://antonioloureiro.github.io/VueJS.jl/$(name_url).html"""))
-        
+ 
+        name_url = HTTP.escapeuri(name)
+        push!(df_examples, (name, "$BASE_URL/$(name_url).html"))
     end
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
@@ -50,41 +49,42 @@ function docs()
     @el(title_el,"v-text-field",value="",v-show="false")
     @el(bt_close,"v-btn",value="Close",click="dial.active.value=false",small=true,outlined=true,color="indigo")
 
-    dial=dialog("dial",[html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),card([
-                    html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],cols=12),bt_close],width=800)
+    dial=dialog("dial",
+                [html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),
+                card([
+                    html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],
+                cols=12),
+                bt_close],width=800)
 
-    @el(nav,"v-navigation-drawer",expand-on-hover=false,items=[
-        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"https://antonioloureiro.github.io/VueJS.jl/components.html"),
-        Dict("divider" => true),
-        Dict("icon"=>"mdi-file-document-outline","title"=>"Elements","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsElements.html"),
-        Dict("icon"=>"mdi-palette-swatch-outline","title"=>"Styling","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStyling.html"),
-        Dict("icon"=>"mdi-account-group-outline","title"=>"Holders","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHolders.html"),
-        Dict("icon"=>"mdi-domain","title"=>"Structs","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsStructs.html"),
-        Dict("icon"=>"mdi-laptop","title"=>"Methods","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsMethods.html"),
-        Dict("icon"=>"mdi-calculator","title"=>"Computed","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsComputed.html"),
-        Dict("icon"=>"mdi-hook","title"=>"Hooks","href"=>"https://antonioloureiro.github.io/VueJS.jl/DocsHooks.html"),
-        ])
-
-    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('components.html')")
+    @el(homeb,"v-btn",icon=true,value="<v-icon>mdi-home</v-icon>",click="open('$INDEX_PAGE')")
     barapp=bar([homeb,"VueJS Documentation"]);
+
+    nav_items = [
+        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"$BASE_URL/$INDEX_PAGE"),
+        Dict("divider" => true)
+    ]
     
-    
-    for p in ["DocsElements","DocsStyling","DocsHolders","DocsStructs","DocsMethods","DocsComputed","DocsHooks"]
-        iframe=html("iframe","",Dict("src"=>"https://antonioloureiro.github.io/VueJS.jl/docs/$p.html","height"=>1000,"width"=>"100%","frameborder"=>0),cols=12)
-        pbase=page([iframe],navigation=nav,bar=barapp);
-    
-        io = open("public/$p.html", "w")
+    iframes = []
+    for (name, details) in notebooks
+        href = joinpath(BASE_URL, NOTEBOOKS_PATH, details.html)
+        push!(nav_items, Dict("icon"=>details.icon, "title"=>name, "href"=>href))
+        push!(iframes,   html("iframe","", Dict("src"=>href,"height"=>1000,"width"=>"100%","frameborder"=>0),cols=12))
+    end
+    @el(nav, "v-navigation-drawer", expand-on-hover = false, items = nav_items)
+    for iframe in iframes
+        pbase = page([iframe],navigation=nav,bar=barapp);
+        # extract filename from iframe.src and write page to public/
+        io    = open("$TARGET_DIR/$(basename(iframe.attrs["src"]))", "w")
         println(io, VueJS.htmlstring(pbase))
         close(io)
     end
     
     pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
         
-    io = open("public/components.html", "w")
+    # write out entry page 
+    io = open(joinpath(TARGET_DIR, INDEX_PAGE), "w")
     println(io, VueJS.htmlstring(pcomp))
     close(io)
-    
-    
 end
 
 docs()

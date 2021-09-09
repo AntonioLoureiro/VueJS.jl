@@ -1,22 +1,8 @@
-HEAD=html("head",
-    [
-    html("meta","", Dict("charset"=>"UTF-8")),
-    html("meta","", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
-    ],Dict())
-
-arr_deps=JSON.parse(read(joinpath(@__DIR__, "../WebDeps/deps.json"),String))
-
-DEPENDENCIES=map(x->WebDependency(x["path"],x["version"],x["kind"],get(x,"components",Dict()),get(x,"css",""),"",""),arr_deps)
-
-
-FRAMEWORK="vuetify"
-
-const DIRECTIVES=["v-html","v-text","v-for","v-if","v-on","v-style","v-show"]
-
-const KNOWN_JS_EVENTS = ["input","click", "mouseover", "mouseenter", "change"]
-const CONTEXT_JS_FUNCTIONS=["submit","add","remove"]
-const JS_FUNCTION_ATTRS=["rules", "filter","col_format","formatter"] ## Formatter is an Echarts Tag
-
+const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
+const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change"]
+const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
+const JS_FUNCTION_ATTRS     = ["rules", "filter", "col_format", "formatter"] ## Formatter is an Echarts Tag
+const KNOWN_EVT_PROPS       = ["methods", "computed", "watch"] 
 const KNOWN_HOOKS = [
     "beforeCreate",
     "created",
@@ -27,13 +13,40 @@ const KNOWN_HOOKS = [
     "beforeDestroy",
     "destroyed",
     "activated",
-    "deactivated"]
-
-const KNOWN_EVT_PROPS = [
-    "methods",
-    "computed",
-    "watch"
+    "deactivated"
 ]
+
+# Structures/types acceptable for HTML conversion
+const htmlTypes = Union{Nothing,String,HtmlElement,VueElement,VueStruct,VueJS.VueHolder}
+
+const JS_VAR_CHARS       = vcat(Char.(48:57),Char.(65:90),Char(95),Char.(97:122))
+const JS_FIRST_VAR_CHARS = vcat(Char.(65:90),Char(95),Char.(97:122))
+
+# Defaults to deps.json @ package root
+const BASE_LIBRARIES = normpath(joinpath(@__DIR__,"..","..", "deps.json"))
+
+FRAMEWORK = "vuetify"
+
+# Default <meta> tags for generated pages
+META = Vector{HtmlElement}([
+    html("meta","", Dict("charset"=>"UTF-8")),
+    html("meta","", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
+])
+
+# Default <head> for generated pages
+HEAD = html("head", META, Dict())
+
+LIBRARY_RULES =
+    Dict("maxchars" => (x->return "value => value.length <= $x || 'Max $x characters' "),
+        "minchars"  => (x->return "value => value.length > $x  || 'Min $x characters' "),
+        "required"  => (x->return "value => !!value || 'Required' "),
+        "min"       => (x->return "value => value >= $x || 'Minimum  value is $x' "),
+        "max"       => (x->return "value => value <= $x || 'Maximum  value is $x' "),
+        "type"      => (x->return "value => typeof(value) === '$x' || 'Please provide a $x'"),
+        "in"        => (x->return "value => $x.includes(value) || 'Value not in $x' ")
+    )
+
+DEPENDENCIES = []
 
 ## Dom Render Opts
 mutable struct Opts
@@ -43,17 +56,14 @@ mutable struct Opts
     path::String
     vars_replace::Dict{String,String}
 end
-const PAGE_OPTIONS=Opts(true,Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),Dict(),"root",Dict())
 
-
-LIBRARY_RULES =
-    Dict("maxchars"=> (x->return """ value => value.length <= $x || 'Max $x characters' """),
-         "minchars"=> (x->return """ value => value.length > $x  || 'Min $x characters' """),
-         "required"=> (x->return " value => !!value || 'Required' "),
-         "min"=>(x->return " value => value >= $x || 'Minimum  value is $x' "),
-         "max"=>(x->return " value => value <= $x || 'Maximum  value is $x' "),
-         "type"=>(x->return "value => typeof(value) === '$x' || 'Please provide a $x'"),
-         "in"=>(x->return """ value => $x.includes(value) || 'Value not in $x' """)
+const PAGE_OPTIONS = 
+    Opts(
+        true,
+        Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),
+        Dict(),
+        "root",
+        Dict()
     )
 
 struct VueElementSettings
@@ -76,7 +86,122 @@ end
 import Base.convert
 Base.convert(::Type{VueElementSettings}, x::NamedTuple) = VueElementSettings(x)
 
-const UPDATE_VALIDATION=Dict{String,VueElementSettings}()
+const UPDATE_VALIDATION = Dict{String,VueElementSettings}()
+
+"""
+    meta(entry::Dict)
+    meta(entries::Vector)
+
+Transform a Dict <meta> entry into an HtmlElement
+
+Examples:
+
+```julia
+
+VueJS.meta(Dict("name"=>"viewport", "content" => "width=device-width, initial-scale=.7"))
+# VueJS.HtmlElement("meta", Dict{String,Any}("name" => "viewport","content" => "width=device-width, initial-scale=.7"), 2.0, "")
+
+VueJS.meta([
+        Dict("name"=>"description", "content"=>"Web page description"), 
+        Dict("name"=>"author", "content"=>"VueJS")
+    ])
+#=
+2-element Array{VueJS.HtmlElement,1}:
+    Main.VueJS.HtmlElement("meta", Dict{String,Any}("name" => "description","content" => "Web page description"), 2.0, "")
+    Main.VueJS.HtmlElement("meta", Dict{String,Any}("name" => "author","content" => "VueJS"), 2.0, "")
+=#
+``
+"""
+meta(entry::Dict)          = html("meta", "", entry)
+meta(entries::Vector)      = meta.(entries)
+meta(element::HtmlElement) = element
+
+"""
+    head(pair::Pair)
+    head(entries::Vector)
+
+Transform a Dict into html tags for <head> inclusion
+
+Examples
+```julia
+
+VueJS.head("title"=>"Page Title")
+# VueJS.HtmlElement("title", Dict{String,Any}(), 2.0, "Page Title")
+
+VueJS.head([
+        "title"=>"Page Title",
+        "link"=>Dict("rel"=>"stylesheet", "href"=>"styles.css")
+    ])
+#= 
+2-element Array{VueJS.HtmlElement,1}:
+    Main.VueJS.HtmlElement("title", Dict{String,Any}(), 2.0, "Page Title")
+    Main.VueJS.HtmlElement("link", Dict{String,Any}("rel" => "stylesheet","href" => "styles.css"), 2.0, "")
+=#
+````
+"""
+function head(pair::Pair)
+    if last(pair) isa String return html(first(pair), last(pair), Dict()) end
+    if last(pair) isa Dict   return html(first(pair), "", last(pair))     end
+end
+head(entries::Vector)               = head.(entries)
+head(element::HtmlElement)          = element
+
+"""
+    extension(path::String)
+
+Given a `path`, if the last component of contains a dot, return the file extension without the dot.
+Returns an empty string if no extension is found for `path`
+
+Examples
+```julia
+
+VueJS.extension("/dir/libs/somefile.jl") # "jl"
+VueJS.extension("/dir/libs/somefile")    # ""
+```
+"""
+extension(path::String) = splitext(path)[end][2:end]
+
+function library(s::String)
+    return VueJS.WebDependency(s,extension(s),Dict(),"","")
+end
+function library(s::String,kind::String)
+    return VueJS.WebDependency(s,kind,Dict(),"","")
+end
+function library(s::String, d::Dict)
+    return VueJS.WebDependency(s,extension(s),Dict(),"","")
+end
+function library(s::String,kind::String,d::Dict)
+    return VueJS.WebDependency(s, kind, d, "", "")
+end
+
+function libraries!(a::Vector)
+    deps_arr = []
+    for r in a
+        if r isa String push!(deps_arr,library(r))    end
+        if r isa Tuple  push!(deps_arr,library(r...)) end
+    end
+    global DEPENDENCIES = deps_arr
+    return nothing;
+end
+
+"""
+    load_libraries!(filepath::String)
+
+Replace `global DEPENDENCIES` with file contents @ `filepath`
+
+Examples
+```julia
+
+VueJS.load_libraries!("/public/mydeps.json")
+```
+"""
+function load_libraries!(filepath::String; replace=true)
+    @assert isfile(filepath) "File $filepath not found"
+    arr_deps = JSON.parse(read(filepath, String))
+    global DEPENDENCIES = map(x->WebDependency(x["path"], x["version"], x["kind"], get(x,"components",Dict()), get(x,"css",""), "", ""), arr_deps)
+end
+# load default dependencies into `global DEPENDENCIES`
+load_libraries!(BASE_LIBRARIES)
 
 function get_web_dependencies!(web_dependency_path::String,deps_url::String)
 
@@ -104,38 +229,7 @@ function get_web_dependencies!(web_dependency_path::String,deps_url::String)
         end
         d.local_path=deps_url*"/"*sha_str*"."*d.kind
     end
-
 end
-
-function library(s::String)
-    kind=String(split(s,".")[end])
-    return VueJS.WebDependency(s,kind,Dict(),"","")
-end
-
-function library(s::String,kind::String)
-    return VueJS.WebDependency(s,kind,Dict(),"","")
-end
-function library(s::String,d::Dict)
-    kind=String(split(s,".")[end])
-    return VueJS.WebDependency(s,kind,Dict(),"","")
-end
-function library(s::String,kind::String,d::Dict)
-    return VueJS.WebDependency(s,kind,Dict(),"","")
-end
-
-function libraries!(a::Vector)
-    deps_arr=[]
-    for r in a
-        r isa String ? push!(deps_arr,library(r)) : nothing
-        r isa Tuple ? push!(deps_arr,library(r...)) : nothing
-    end
-
-    global DEPENDENCIES=deps_arr
-    return nothing
-end
-
-
-htmlTypes=Union{Nothing,String,HtmlElement,VueElement,VueStruct,VueJS.VueHolder}
 
 function assert_html_types(v::Vector)
     for r in v
@@ -147,14 +241,9 @@ function assert_html_types(v::Vector)
     end
 end
 
-const JS_VAR_CHARS=vcat(Char.(48:57),Char.(65:90),Char(95),Char.(97:122))
-const JS_FIRST_VAR_CHARS=vcat(Char.(65:90),Char(95),Char.(97:122))
-
 function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
         
-    if opts.path==""
-        return expr
-    end
+    if opts.path=="" return expr  end
     
     expr=replace(expr,"\""=>"'")
     expr_arr=split(expr,"'")   
@@ -210,7 +299,6 @@ function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
                 end
         end
     end
-   
     return join(expr_out)
 end
 

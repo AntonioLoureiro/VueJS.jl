@@ -14,4 +14,3 @@
     {"url":"https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","version":"4.1.1","type":"js", "name":"vue-handsontable.min.js", "components":{"HotTable":"Handsontable.vue.HotTable"}},
     {"url":"https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","version":"3.1.1","type":"js", "name":"v-currency-field.umd.min.js"} 
 ]
-

@@ -1,4 +1,5 @@
 mutable struct WebDependency
+    name::String
     path::String
     version::String
     kind::String
@@ -7,6 +8,7 @@ mutable struct WebDependency
     sha::String
     local_path::String
 end
+WebDependency(d::Dict) = WebDependency(get(d, "name", basename(d.url)), d["url"], d["version"], d["type"], get(d,"components",Dict()), get(d,"css",""), "", "")
 
 mutable struct Page
     dependencies::Vector{WebDependency}
@@ -14,8 +16,10 @@ mutable struct Page
     scripts::Vector{String}
     cookiejar::Dict{String, Any}
     globals::Dict{String, Any}
+    meta::Vector{HtmlElement}
+    title::Union{String, Nothing}
 end
-Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}(), Dict{String, Any}())
+Page(deps, comps, scripts) = return Page(deps, comps, scripts, Dict{String, Any}(), Dict{String, Any}(), META, nothing)
 
 """
 Build HTML page, inclunding <head>, <body>, <scripts> and vuetify's initialization
@@ -48,21 +52,6 @@ when any of its dependencies changes.
 "Watchers are most useful when performing asynchronous operations in response to changing data"
 
 [`VueJS Computed Properties and Watchers`](https://vuejs.org/v2/guide/computed.html)
-
-
-### Arguments
-
- * garr             :: Array        :: `Grid array`, array of elements to be created and displayed
- * binds            :: Dict         ::
- * methods          :: Dict         :: Collection of functions to associate with a Vue instance
- * computed         :: Dict         :: Collection of computed properties
- * watched          :: Dict         :: Collection of watchers
- * kwargs           :: Any          :: Keyword arguments
-
-### Examples
-```julia
-
-```
 """
 function page(
     garr::Union{Array,VueHolder};
@@ -76,25 +65,28 @@ function page(
     class=Dict{String,Any}(),
     scripts=[],
     cookies=Dict{String,Any}(),
-    globals = Dict{String, Any}(),
+    globals=Dict{String, Any}(),
+    meta::Vector{HtmlElement}=META,
+    title::Union{String, Nothing}=nothing,
     navigation::Union{VueElement,Nothing}=nothing,
     bar::Union{VueHolder,Nothing}=nothing,
     sysbar::Union{VueElement, Nothing}=nothing,
     footer::Union{VueElement, Nothing}=nothing,
     bottom::Union{VueElement, Nothing}=nothing,
     kwargs...)
-
     
     cont=VueStruct("app",garr,data=data,binds=binds,methods=methods,asynccomputed=asynccomputed,computed=computed,watch=watch,style=style,class=class;kwargs...)
-    
-    return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts,cookies=cookies, globals = globals)
+
+    return page(cont, navigation=navigation, bar=bar, sysbar=sysbar, footer=footer, bottom=bottom, scripts=scripts, cookies=cookies, globals=globals, meta=meta, title=title)
 end
 
 function page(
         cont::VueStruct;
         scripts=[],
         cookies=Dict{String,Any}(),
-	globals = Dict{String, Any}(),
+        globals=Dict{String, Any}(),
+        meta::Vector{HtmlElement}=META, 
+        title::Union{String, Nothing}=nothing,   
         sysbar::Union{VueElement, Nothing}=nothing,
         bar::Union{VueHolder,Nothing}=nothing,
         navigation::Union{VueElement,Nothing}=nothing,
@@ -104,18 +96,20 @@ function page(
     @assert cont.iterable==false "Cannot use a iterable VueStruct at top level, please put in inside an array (grid)"
     components=Dict{String,Any}("v-main"=>cont)
 
-    sysbar!=nothing ? components["v-system-bar"]=sysbar : nothing
-    bar!=nothing ? components["v-app-bar"]=bar : nothing
-    navigation!=nothing ? components["v-navigation-drawer"]=navigation : nothing
-    footer!=nothing ? components["v-footer"]=footer : nothing
-    bottom!=nothing ? components["v-bottom-navigation"] : nothing
+    if sysbar != nothing      components["v-system-bar"]        = sysbar     end
+    if bar != nothing         components["v-app-bar"]           = bar        end
+    if navigation != nothing  components["v-navigation-drawer"] = navigation end
+    if footer != nothing      components["v-footer"]            = footer     end
+    if bottom != nothing      components["v-bottom-navigation"] = bottom     end
 
     page_inst=Page(
             DEPENDENCIES,
             components,
             scripts,
             cookies,
-	    globals)
+            globals,
+            meta,
+            title)
 
     return page_inst
 end

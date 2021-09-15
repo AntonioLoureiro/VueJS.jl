@@ -3,26 +3,27 @@ function htmlstring(page_inst::Page)
     css_deps=[]
     for d in page_inst.dependencies
         if d.kind=="js"
-            push!(includes,html("script","",Dict("src"=>d.local_path=="" ? d.path : d.local_path)))
+            push!(includes, head("script"=>Dict("src"=>d.path)))
         elseif d.kind=="css"
-            push!(includes,html("link",nothing,Dict("rel"=>"stylesheet","type"=>"text/css","href"=>d.local_path=="" ? d.path : d.local_path)))
+            push!(includes, head("link"=>Dict("rel"=>"stylesheet", "type"=>"text/css", "href"=>d.path)))
         end
-        push!(css_deps,d.css)
+        push!(css_deps, d.css)
     end
 
-    head_dom=deepcopy(HEAD)
+    head_dom = deepcopy(HEAD)
+    if page_inst.title !== nothing push!(head_dom.value, head("title"=>page_inst.title)) end
     
-    append!(head_dom.value,includes)   
+    [push!(head_dom.value, meta) for meta in page_inst.meta]
     
-    push!(head_dom.value,html("style",join(css_deps," ")))
+    append!(head_dom.value, includes)   
+    
+    push!(head_dom.value, html("style",join(css_deps," ")))
         
     scripts=deepcopy(page_inst.scripts)
         
     push!(scripts,"const vuetify = new Vuetify()")
-    components=Dict{String,String}()
-    for d in page_inst.dependencies
-        length(d.components)!=0 ? merge!(components,d.components) : nothing
-    end
+    components = Dict{String,String}()
+    [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
     
     push!(scripts,"""const components = $(replace(JSON.json(components),"\""=>""))""")
     

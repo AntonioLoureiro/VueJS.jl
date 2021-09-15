@@ -1,3 +1,4 @@
+const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..",".."))
 const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
 const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change"]
 const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
@@ -23,7 +24,7 @@ const JS_VAR_CHARS       = vcat(Char.(48:57),Char.(65:90),Char(95),Char.(97:122)
 const JS_FIRST_VAR_CHARS = vcat(Char.(65:90),Char(95),Char.(97:122))
 
 # Defaults to deps.json @ package root
-const BASE_LIBRARIES = normpath(joinpath(@__DIR__,"..","..", "deps.json"))
+const BASE_LIBRARIES  = normpath(joinpath(@__DIR__,"..","..", "deps.json"))
 
 FRAMEWORK = "vuetify"
 
@@ -195,39 +196,45 @@ Examples
 VueJS.load_libraries!("/public/mydeps.json")
 ```
 """
-function load_libraries!(filepath::String; replace=true)
+function load_libraries!(filepath::String; replace=true, filter_func=(x)->Base.get(x, "repo", "VueJS.jl") == "VueJS.jl")
     @assert isfile(filepath) "File $filepath not found"
     arr_deps = JSON.parse(read(filepath, String))
-    global DEPENDENCIES = map(x->WebDependency(x["path"], x["version"], x["kind"], get(x,"components",Dict()), get(x,"css",""), "", ""), arr_deps)
+
+    global DEPENDENCIES = [
+                        WebDependency(
+                            get(x, "name", basename(x["url"])), 
+                            x["url"], 
+                            x["version"], 
+                            get(x, "type", extension(basename(x["url"]))), 
+                            get(x,"components",Dict()), 
+                            get(x,"css",""), 
+                            "", 
+                            get(x, "path", "")) 
+                        for x in arr_deps if filter_func(x)]
 end
 # load default dependencies into `global DEPENDENCIES`
 load_libraries!(BASE_LIBRARIES)
 
-function get_web_dependencies!(web_dependency_path::String,deps_url::String)
+using Downloads
+function download_web_dependency(dependency::WebDependency; dir=joinpath(MODULE_ROOT, "assets"), output::String=joinpath(dir, dependency.name))
+    !ispath(dir) && mkpath(dir)
+    try 
+        Downloads.download(dependency.path, output)
+    catch err
+        @warn err
+    end
+    return output    
+end
 
-    isdir(web_dependency_path) ? nothing : mkdir(web_dependency_path)
-
-    for d in DEPENDENCIES
-        resp=""
-        try
-            resp=HTTP.get(d.path,require_ssl_verification = false)
-        catch err;
-            error("Error getting $(d.path) please try again!")    
+#use_local_libs!(file::String, args...; kwargs...) = use_local_libs!(JSON.parse)
+function use_local_libs!(;deps::Vector{WebDependency}=DEPENDENCIES, base_uri="/", download=true, dir=joinpath(MODULE_ROOT, "assets"))
+    if download 
+        isdir(dir) || mkpath(dir)
+        for d in DEPENDENCIES
+            file = download_web_dependency(d, dir=dir)
+            d.local_path = file
+            d.path = joinpath(base_uri, split(abspath(normpath(file)), "/", keepempty=false)[2:end-1]..., basename(file))
         end
-        
-        str=String(resp.body)
-        sha_str=bytes2hex(sha256(str))
-        d.sha=sha_str
-        filename=web_dependency_path*"/"*sha_str*"."*d.kind
-        file_exists=isfile(filename)
-
-        if !(file_exists)
-            open(filename, "w") do io
-                   write(io,str)
-            end
-       
-        end
-        d.local_path=deps_url*"/"*sha_str*"."*d.kind
     end
 end
 

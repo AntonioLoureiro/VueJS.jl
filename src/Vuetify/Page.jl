@@ -2,9 +2,9 @@ function htmlstring(page_inst::Page)
     includes=[]
     css_deps=[]
     for d in page_inst.dependencies
-        if d.kind=="js"
+        if d.type == "js"
             push!(includes, head("script"=>Dict("src"=>d.path)))
-        elseif d.kind=="css"
+        elseif d.type == "css"
             push!(includes, head("link"=>Dict("rel"=>"stylesheet", "type"=>"text/css", "href"=>d.path)))
         end
         push!(css_deps, d.css)

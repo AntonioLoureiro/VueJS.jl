@@ -1,16 +1,17 @@
 # Example name => example file (relative to ./examples)
 examples = [
-    "Elements Basics"   =>"element_basics.jl",
-    "Basic Grid"        =>"basic_grid.jl",
-    "Basic Binding"     =>"basic_binding.jl",
-    "Basic Events"      =>"basic_events.jl",
+    "Elements Basics"           =>"element_basics.jl",
+    "Basic Grid"                =>"basic_grid.jl",
+    "Basic Binding"             =>"basic_binding.jl",
+    "Basic Events"              =>"basic_events.jl",
     "Elements Special args Tooltip and Menu" => "element_special_tooltip_menus.jl",
-    "Vue Struct"        =>"vuestruct.jl",
-    "Basic Datatables"  =>"basic_datatables.jl",
-    "Navigation and Bar"=>"navigation_bars.jl",
-    "Lists"             =>"lists.jl",
+    "Vue Struct"                =>"vuestruct.jl",
+    "Iterable Vue Struct"       =>"iterable_vuestruct.jl",
+    "Basic Datatables"          =>"basic_datatables.jl",
+    "Navigation and Bar"        =>"navigation_bars.jl",
+    "Lists"                     =>"lists.jl",
     "Computed, Async and Mounted" => "lifecycle.jl",
-    "ECharts"           =>"echarts.jl"
+    "ECharts"                   =>"echarts.jl"
 ]
 
 # Example name => (notebook = "notebook file", html = "html file", icon = "mdi-icon") (files are relative to ./notebooks)

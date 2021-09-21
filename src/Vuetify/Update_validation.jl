@@ -103,38 +103,60 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
 
+UPDATE_VALIDATION["v-color-picker"]=(
+doc="""Simple Element, allows you to select a color using a variety of input methods. Is invoked when v-text-field element has type color!. Can be used without v-text-field<br>
+    <code>
+    @el(color_picker_in_txt_field, "v-text-field", label="Color", type="color", value="")<br>
+    @el(color_picker, "v-color-picker") # utilization without text field
+    </code>
+    """,    
+fn=(x)->begin
+
+    x.cols==nothing ? x.cols=3 : nothing
+end)
+
+
 
 UPDATE_VALIDATION["v-text-field"]=(
-doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is number when submited the value will be a valid number in JSON.<br>
+doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is color invokes a color picker and finally, if type is number when submited the value will be a valid number in JSON.<br>
     <code>
-    @el(tf,"v-text-field",label="Date Field",type="date")<br>
-    @el(tf2,"v-text-field",label="Number Field",type="number")<br>
-    @el(tf3,"v-text-field",label="Text Field") # default type is text<br>
-    @el(tf4,"v-text-field",label="Number Field",type="date", month = true) # month datepicker <br>
+    @el(tf1, "v-text-field", label="Text Field")                              <br>
+    @el(tf2, "v-text-field", label="Number Field", type="number")             <br>
+    @el(tf3, "v-text-field", label="Date Field"  , type="date")               <br>
+    @el(tf4, "v-text-field", label="Date Field"  , type="date",  date-attrs = Dict("type" => "month")) <br>
+    @el(tf5, "v-text-field", label="Color Field" , type="color", value="")              <br>
+    @el(tf6, "v-text-field", label="Color Field" , type="color", value="", color-attrs = Dict("show-swatches" => true))  <br>
     </code>
-    """, 
+""",
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
     
-    ## type date
-    if get(x.attrs,"type","")=="date"
-    
-        x.attrs["menu"]=false
-        
-        x.render_func=(y;opts=PAGE_OPTIONS)->begin
-            path=opts.path=="" ? "" : opts.path*"."
-            menu_var=path*y.id*".menu"
-            y.binds["menu"]=menu_var
-            y.attrs["v-on"]="on"
-            delete!(y.attrs,"type")
-            dom_txt=VueJS.dom(y,prevent_render_func=true,opts=opts)
-            date_pick = haskey(y.attrs, "month") && y.attrs["month"] ? "month" : "date" 
-            domcontent=[html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-            html("v-date-picker","", Dict("v-model"=>"$path$(y.id).value", "type" => date_pick))]
-            domvalue=html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)
+   # -- Render "v-text-field" with date-picker or color-picker.
+    if get(x.attrs,"type","") == "date" || get(x.attrs,"type","") == "color"
             
-            return domvalue
+        render_type = x.attrs["type"]
+        type_attrs = Dict{String, Any}(get(x.attrs, "$(render_type)-attrs", Dict()))
+        type_id    = render_type == "date" ? "v-date-picker" : "v-color-picker"
+                        
+        x.render_func=(y;opts=PAGE_OPTIONS)->begin
+            path=opts.path == "" ? "" : opts.path*"."
+            menu_var = "$path$(y.id).menu"
+            y.binds["menu"]  = menu_var
+            y.attrs["v-on"]  = "on"
+            type_attrs["v-model"] = "$path$(y.id).value"
+            
+            # -- Cleanup of attrs not relevant to "v-text-field" element
+            delete!(y.attrs,"type")
+            delete!(y.attrs,"$(render_type)-attrs")
+            delete!(y.binds,"$(render_type)-attrs")
+            dom_txt    = VueJS.dom(y,prevent_render_func=true,opts=opts)
+            domcontent = [ 
+                    html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
+                    html(type_id,"", type_attrs) 
+            ]
+                
+            return html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)    
         end
     end
 end)
@@ -567,7 +589,7 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
 
             @el(ex_panel_1, "v-expansion-panel", header = "Test",         content = "drive")
             @el(ex_panel_2, "v-expansion-panel", header = "Another test", content = "drive")
-            expansion_panels("ex_panels", [ex_panel_1, ex_panel_2], cols = 7)
+            expansion_panels([ex_panel_1, ex_panel_2], cols = 7)
     """,
    fn = (x) -> begin
         
@@ -584,8 +606,8 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
             @assert !isempty(content) "<v-expansion-panel>[$(x.id)]: Please specify text for the content section (use kwarg 'content')"
             
             # Parse header and content style
-            header_style  = get(x.attrs, "header-style", Dict())
-            content_style = get(x.attrs, "content-style", Dict("align" => "left"))
+            header_style  = Dict("style" => get(x.attrs, "header-style", Dict()))
+            content_style = Dict("style" => get(x.attrs, "content-style", Dict("align" => "left")))
             
             # Clean-up root element attributes
             root_tag_attr = copy(x.attrs)
@@ -594,7 +616,7 @@ VueJS.UPDATE_VALIDATION["v-expansion-panel"]=(
             end
             
             push!(children_elements, html("v-expansion-panel-header",  header, header_style, cols = x.cols))
-            push!(children_elements, html("v-expansion-panel-content", dom(content), content_style, cols = x.cols))
+            push!(children_elements, html("v-expansion-panel-content", VueJS.dom(content), content_style, cols = x.cols))
             return html("v-expansion-panel", children_elements, root_tag_attr, cols = x.cols)
         end
     end

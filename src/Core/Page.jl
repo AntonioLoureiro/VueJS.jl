@@ -1,14 +1,14 @@
-mutable struct WebDependency
+Base.@kwdef mutable struct WebDependency
     name::String
     path::String
-    version::String
-    kind::String
-    components::Dict{String,String}
-    css::String
-    sha::String
-    local_path::String
+    version::String                 = ""
+    type::String                    = extension(path)
+    components::Dict{String,String} = Dict{String, String}()
+    css::String                     = ""
+    sha::String                     = ""
+    local_path::String              = ""
 end
-WebDependency(d::Dict) = WebDependency(get(d, "name", basename(d.url)), d["url"], d["version"], d["type"], get(d,"components",Dict()), get(d,"css",""), "", "")
+WebDependency(d::Dict) = WebDependency(get(d, "name", basename(d["url"])), d["url"], get(d, "version", ""), get(d, "type", extension(d["url"])), get(d,"components",Dict()), get(d,"css",""), "", "")
 
 mutable struct Page
     dependencies::Vector{WebDependency}

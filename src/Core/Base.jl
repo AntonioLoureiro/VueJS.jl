@@ -1,4 +1,4 @@
-const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..",".."))
+const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..","..", ".."))
 const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
 const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change"]
 const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
@@ -90,6 +90,7 @@ Base.convert(::Type{VueElementSettings}, x::NamedTuple) = VueElementSettings(x)
 const UPDATE_VALIDATION = Dict{String,VueElementSettings}()
 
 """
+    meta(entry::Pair)
     meta(entry::Dict)
     meta(entries::Vector)
 
@@ -113,6 +114,7 @@ VueJS.meta([
 =#
 ``
 """
+meta(entry::Pair)          = meta(Dict(entry))
 meta(entry::Dict)          = html("meta", "", entry)
 meta(entries::Vector)      = meta.(entries)
 meta(element::HtmlElement) = element
@@ -162,33 +164,31 @@ VueJS.extension("/dir/libs/somefile")    # ""
 """
 extension(path::String) = splitext(path)[end][2:end]
 
-function library(s::String)
-    return VueJS.WebDependency(s,extension(s),Dict(),"","")
+function library(url::String)
+    return VueJS.WebDependency(name=basename(url), path=url, type=extension(url))
 end
-function library(s::String,kind::String)
-    return VueJS.WebDependency(s,kind,Dict(),"","")
+function library(url::String, type::String)
+    return VueJS.WebDependency(name=basename(url), path=url, type=type)
 end
-function library(s::String, d::Dict)
-    return VueJS.WebDependency(s,extension(s),Dict(),"","")
+function library(url::String, components::Dict)
+    return VueJS.WebDependency(name=basename(url), path=url, type=extension(url), components=components)
 end
-function library(s::String,kind::String,d::Dict)
-    return VueJS.WebDependency(s, kind, d, "", "")
-end
+library(;kwargs...) = WebDependency(kwargs...)
 
 function libraries!(a::Vector)
     deps_arr = []
     for r in a
-        if r isa String push!(deps_arr,library(r))    end
-        if r isa Tuple  push!(deps_arr,library(r...)) end
+        if r isa String push!(deps_arr, library(r))    end
+        if r isa Tuple  push!(deps_arr, library(r...)) end
     end
     global DEPENDENCIES = deps_arr
-    return nothing;
+    return;
 end
 
 """
     load_libraries!(filepath::String)
 
-Replace `global DEPENDENCIES` with file contents @ `filepath`
+Replace or append to `global DEPENDENCIES` with file contents @ `filepath`
 
 Examples
 ```julia
@@ -199,18 +199,21 @@ VueJS.load_libraries!("/public/mydeps.json")
 function load_libraries!(filepath::String; replace=true, filter_func=(x)->Base.get(x, "repo", "VueJS.jl") == "VueJS.jl")
     @assert isfile(filepath) "File $filepath not found"
     arr_deps = JSON.parse(read(filepath, String))
-
-    global DEPENDENCIES = [
-                        WebDependency(
-                            get(x, "name", basename(x["url"])), 
-                            x["url"], 
-                            x["version"], 
-                            get(x, "type", extension(basename(x["url"]))), 
-                            get(x,"components",Dict()), 
-                            get(x,"css",""), 
-                            "", 
-                            get(x, "path", "")) 
-                        for x in arr_deps if filter_func(x)]
+    webdeps  = [WebDependency(
+                    get(x, "name", basename(x["url"])), 
+                    x["url"], 
+                    x["version"], 
+                    get(x, "type", extension(basename(x["url"]))), 
+                    get(x,"components",Dict()), 
+                    get(x,"css",""), 
+                    "", 
+                    get(x, "path", "")) 
+            for x in arr_deps if filter_func(x)]
+    if replace
+        global DEPENDENCIES = webdeps
+    else
+        append!(DEPENDENCIES, webdeps)
+    end
 end
 # load default dependencies into `global DEPENDENCIES`
 load_libraries!(BASE_LIBRARIES)
@@ -218,22 +221,20 @@ load_libraries!(BASE_LIBRARIES)
 using Downloads
 function download_web_dependency(dependency::WebDependency; dir=joinpath(MODULE_ROOT, "assets"), output::String=joinpath(dir, dependency.name))
     !ispath(dir) && mkpath(dir)
-    try 
-        Downloads.download(dependency.path, output)
-    catch err
-        @warn err
-    end
-    return output    
+    return Downloads.download(dependency.path, output)  
 end
 
-#use_local_libs!(file::String, args...; kwargs...) = use_local_libs!(JSON.parse)
 function use_local_libs!(;deps::Vector{WebDependency}=DEPENDENCIES, base_uri="/", download=true, dir=joinpath(MODULE_ROOT, "assets"))
     if download 
         isdir(dir) || mkpath(dir)
         for d in DEPENDENCIES
-            file = download_web_dependency(d, dir=dir)
-            d.local_path = file
-            d.path = joinpath(base_uri, split(abspath(normpath(file)), "/", keepempty=false)[2:end-1]..., basename(file))
+            try 
+                file = download_web_dependency(d, dir=dir)
+                d.local_path = file
+                d.path = joinpath(base_uri, split(abspath(normpath(file)), "/", keepempty=false)[2:end-1]..., basename(file))
+            catch err 
+                @warn err
+            end
         end
     end
 end

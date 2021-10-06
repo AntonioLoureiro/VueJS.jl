@@ -27,8 +27,8 @@ fn=(x)->begin
     col_pref="col_"
     trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
     trf_dom=x->begin
-    x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
-    x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
+        x.attrs = Dict(k => k in vcat(KNOWN_JS_EVENTS, KNOWN_HOOKS) ? v : VueJS.vue_escape(v) for (k,v) in x.attrs)
+        x.value = x.value isa String ? VueJS.vue_escape(x.value) : x.value
     end
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
@@ -138,10 +138,10 @@ fn=(x)->begin
                 value_dom=nothing
                 if v isa VueJS.HtmlElement
                     value_dom=v
-                     new_d=Dict{String,Any}()
+                    new_d=Dict{String,Any}()
                     for (kk,vv) in value_dom.attrs
                         if vv isa AbstractString && occursin("item.",vv)
-                            new_d[":$kk"]=vue_escape(vv)
+                            new_d[":$kk"]= vue_escape(vv)
                         else
                             new_d[kk]=vv
                         end

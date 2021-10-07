@@ -11,7 +11,7 @@ df[!,:Value]=rand(10).*10000 .-5000
 
 df[!,:Action]=df[!,:Text]
 @el(alert,"v-alert",type="success",text=true,cols=3)
-@el(btn,"v-btn",content="{{item.Text}}",binds=Dict("color"=>"item.Value<0 ? 'red' : 'blue'"),click="alert.content=item.Text;alert.value=true")
+@el(btn,"v-btn",content="{{item.Text}}",binds=Dict("color"=>"item.Value<0 ? 'red' : 'blue'"),click="alert.content=item.text;alert.value=true")
 @el(d3,"v-data-table",items=df,col_template=Dict("Action"=>btn),cols=3)
 
 page([[[st,d1],spacer(),[sel,d2],spacer(),[spacer(rows=4),d3,alert]]])

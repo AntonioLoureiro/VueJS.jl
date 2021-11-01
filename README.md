@@ -24,7 +24,7 @@ function home(req::HTTP.Request)
     @el(slider,"v-slider",value=20,label="Use Slider",cols=4)
     @el(sel,"v-select",items=["red","green","blue"],label="Select Color",value="red")
     @el(chip,"v-chip",text-color="white",
-        binds=Dict("content"=>"slider.value","color"=>"sel.value")) ## Binding See Documentation
+        binds=Dict("content"=>"slider.value","color"=>"sel.value"))
         
     tx=html("h2","{{slider.value}}")
     

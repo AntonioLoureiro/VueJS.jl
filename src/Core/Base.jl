@@ -54,6 +54,7 @@ mutable struct Opts
     rows::Bool
     style::Dict{String,Any}
     class::Dict{String,Any}
+    css::Dict{String,Dict{String,String}}
     path::String
     vars_replace::Dict{String,String}
 end
@@ -62,6 +63,7 @@ const PAGE_OPTIONS =
     Opts(
         true,
         Dict("viewport"=>"md","v-col"=>Dict("align"=>"center","align-content"=>"center","justify"=>"center")),
+        Dict(),
         Dict(),
         "root",
         Dict()

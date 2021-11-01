@@ -33,6 +33,11 @@ fn=(x)->begin
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
     
+    if haskey(x.attrs,"item-class")
+        x.binds["item-class"]=x.attrs["item-class"]
+        delete!(x.attrs,"item-class")
+    end
+    
     x.attrs["value"]=[]
     x.cols==nothing ? x.cols=4 : nothing
 

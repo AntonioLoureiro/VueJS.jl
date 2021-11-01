@@ -17,6 +17,7 @@ function htmlstring(page_inst::Page)
     
     append!(head_dom.value, includes)   
     
+    push!(css_deps,css_str(PAGE_OPTIONS.css))
     push!(head_dom.value, html("style",join(css_deps," ")))
         
     scripts=deepcopy(page_inst.scripts)

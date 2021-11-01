@@ -66,3 +66,21 @@ macro class(tag_name,class_string)
        PAGE_OPTIONS.class[$tag_name]=$class_string
     end
 end
+
+macro css(css_tag,css_dict)
+       
+    return quote
+       @assert $css_tag isa AbstractString "1st arg should be css selector"
+       @assert $css_dict isa Dict{String,String} "2nd arg should be a Dict of css properties and values of type Dict{String,String}"
+        
+       VueJS.PAGE_OPTIONS.css[$css_tag]=$css_dict
+    end
+end
+
+function css_str(css_dict::Dict{String,Dict{String,String}})
+    css_arr=[]
+    for (k,v) in css_dict
+        push!(css_arr,"$k {"*join(["$kk:$vv;" for (kk,vv) in v])*"}")
+    end
+    return join(css_arr," ")
+end

@@ -8,7 +8,7 @@ export grid,page,@el,@st,@dialog,response,submit,tabs,bar,card,libraries!,toolba
 export dialog, expansion_panels, VueStruct
 export LIBRARY_RULES
 export get_web_dependencies!
-export @style,@class
+export @style,@class,@css
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

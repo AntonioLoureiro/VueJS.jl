@@ -44,7 +44,6 @@ value_attr="input-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
-    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
 end)
 
 UPDATE_VALIDATION["v-checkbox"]=(
@@ -57,7 +56,6 @@ value_attr="input-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
-    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
 end)
 
 

@@ -123,6 +123,11 @@ function update_validate!(vuel::VueElement)
         vuel.binds[vuel.value_attr]=vuel.id.*".value"
     end
 
+    ## Clean Auto Bind of non value value_attr
+    if vuel.value_attr!="value" && haskey(vuel.binds,"value")
+       delete!(vuel.binds,"value")
+    end
+    
     return nothing
 end
 

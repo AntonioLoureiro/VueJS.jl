@@ -14,6 +14,7 @@ htmlstring(n::Nothing)=nothing
 htmlstring(a::Vector)=join(htmlstring.(a))
 
 function attr_render(k,v)
+    @assert !isnothing(v) "Invalid attr value (nothing)"
     k=is_event(k) ? "@$k" : k
     if (v isa Bool && v) || v isa Missing  #either true or explicitly missing
         return " $k"

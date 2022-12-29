@@ -9,12 +9,14 @@ export dialog, expansion_panels, VueStruct
 export LIBRARY_RULES
 export get_web_dependencies!
 export @style,@class,@css
+export VueSFC, sfc_page, sfc_response
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")
 include("Core/VueHolder.jl")
 include("Core/Events.jl")
 include("Core/VueStruct.jl")
+include("Core/SFC.jl")
 include("Core/Binding.jl")
 include("Core/Data.jl")
 include("Core/Dom.jl")

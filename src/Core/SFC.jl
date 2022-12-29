@@ -86,7 +86,7 @@ function components(paths::Vector{String}) :: Vector{VueSFC}
         if file_extension(file) in SFC_EXTENSIONS
             web_root = joinpath(pop!(splitpath(root)))
             comp_name = String(file[1:(last(findlast(".", file))-1)])
-            push!(res, VueSFC(comp_name, web_root))        
+            push!(res, VueSFC(comp_name, joinpath(web_root, file)))        
         end        
     end
 

@@ -22,5 +22,6 @@ notebooks = [
     "Structs"       => (notebook = "DocsStructs.ipynb",   html = "DocsStructs.html",  icon = "mdi-domain"),
     "Methods"       => (notebook = "DocsMethods.ipynb",   html = "DocsMethods.html",  icon = "mdi-laptop"),
     "Computed"      => (notebook = "DocsComputed.ipynb",  html = "DocsComputed.html", icon = "mdi-calculator"),
-    "Hooks"         => (notebook = "DocsHooks.ipynb",     html = "DocsHooks.html",    icon = "mdi-hook")
+    "Hooks"         => (notebook = "DocsHooks.ipynb",     html = "DocsHooks.html",    icon = "mdi-hook"),
+    "SFC"           => (notebook = "DocsSFC.ipynb",       html = "DocSFC.html",       icon = "mdi-view-grid-outline"),
 ]

@@ -176,9 +176,10 @@ end
 get_def_obj(o)=Dict()
 function get_def_obj(vue::VueJS.VueElement)
     rd=Dict(vue.id=>Dict())
-    
+    value_attr=vue.value_attr
     for (k,v) in vue.binds
-        rd[vue.id][k]=get(vue.attrs,k,nothing)
+         nk=(value_attr!="value" && k==value_attr) ? "value" : k			
+         rd[vue.id][nk]=get(vue.attrs,k,nothing)
     end
     
     return length(rd[vue.id])==0 ? Dict() : rd

@@ -142,9 +142,12 @@ var app = new Vue({
             
     end
 
-    body_dom=html("body",[html("div",components_dom,Dict("id"=>"app","v-cloak"=>true))],Dict())
+    body_dom = html("body",[
+                        html("div", components_dom, Dict("id"=>"app", "v-cloak"=>true)),
+                        """<script>xhr=$(xhr_script)\n$(join(scripts,"\n"))</script>"""
+                        ],Dict())
 
-    htmlpage=html("html",[head_dom,body_dom],Dict())
-    
-    return join([htmlstring(htmlpage), """<script>xhr=$(xhr_script)\n $(join(scripts,"\n"))</script>"""])
+    htmlpage = html("html", [head_dom, body_dom], Dict())
+
+    return htmlstring(htmlpage)
 end

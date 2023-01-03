@@ -26,10 +26,10 @@ const JS_FIRST_VAR_CHARS = vcat(Char.(65:90),Char(95),Char.(97:122))
 # Defaults to deps.json @ package root
 const BASE_LIBRARIES  = normpath(joinpath(@__DIR__,"..","..", "deps.json"))
 
-FRAMEWORK = "vuetify"
+const FRAMEWORK = "vuetify"
 
 # Default <meta> tags for generated pages
-META = Vector{HtmlElement}([
+const META = Vector{HtmlElement}([
     html("meta","", Dict("charset"=>"UTF-8")),
     html("meta","", Dict("name"=>"viewport","content" => "width=device-width, initial-scale=1")),
 ])

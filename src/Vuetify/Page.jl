@@ -9,25 +9,22 @@ function htmlstring(page_inst::Page)
         end
         push!(css_deps, d.css)
     end
+    push!(css_deps, css_str(PAGE_OPTIONS.css))
 
-    head_dom = deepcopy(HEAD)
-    if page_inst.title !== nothing push!(head_dom.value, head("title"=>page_inst.title)) end
-    
-    [push!(head_dom.value, meta) for meta in page_inst.meta]
-    
-    append!(head_dom.value, includes)   
-    
-    push!(css_deps,css_str(PAGE_OPTIONS.css))
-    push!(head_dom.value, html("style",join(css_deps," ")))
-        
-    scripts=deepcopy(page_inst.scripts)
-        
-    push!(scripts,"const vuetify = new Vuetify()")
-    components = Dict{String,String}()
-    [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
-    
-    push!(scripts,"""const components = $(replace(JSON.json(components),"\""=>""))""")
-    
+    # Prepare HEAD
+    head_items = HtmlElement[]
+    if page_inst.title !== nothing push!(head_items, head("title"=>page_inst.title)) end
+    [push!(head_items, meta) for meta in page_inst.meta]
+
+    append!(head_items, includes)   
+
+    push!(head_items, html("style", join(css_deps," ")))
+    head_dom = html("head", head_items, Dict())
+
+    # Prepare SCRIPTS
+    scripts = deepcopy(page_inst.scripts)
+    push!(scripts, "const vuetify = new Vuetify()")
+
     components_dom=[]
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
@@ -90,6 +87,11 @@ var app = new Vue({
         push!(scripts, sfc_loader)
 
     else
+
+        # Add components to scripts
+        components = Dict{String,String}()
+        [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
+        push!(scripts,"""const components = $(replace(JSON.json(components),"\""=>""))""")
 
         app_state=Dict{String,Any}()
         ## initialize globals

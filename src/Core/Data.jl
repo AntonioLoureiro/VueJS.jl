@@ -27,6 +27,14 @@ function update_data!(el::VueElement,datavalue)
         
         if k==el.value_attr
             new_k="value"
+            
+            ## real_data is in attr value
+            if real_data==nothing && haskey(el.attrs,"value")
+               real_data=deepcopy(el.attrs["value"])
+               delete!(el.attrs,"value") 
+            end
+            
+            ## value injected through datavalue    
             if datavalue!=nothing
                real_data=datavalue
             end

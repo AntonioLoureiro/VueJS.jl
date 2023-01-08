@@ -29,7 +29,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
             if value isa AbstractString && occursin("item.",value)
                 r.attrs[":$k"]=trf_vue_expr(value,opts=opts)               
                 if k==r.value_attr 
-                    event=r.value_attr=="value" ? "input" : "change"
+                    event=r.value_attr=="model-value" ? "update:$(r.value_attr)" : "update:$(r.value_attr)"
                     ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
                       if haskey(r.attrs,event)
                         r.attrs[event]=ev_expr*r.attrs[event]*";"
@@ -78,7 +78,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
     if haskey(r.binds,r.value_attr)
         v=r.binds[r.value_attr]
         value=opts.path=="" ? v : opts.path*"."*v
-        event=r.value_attr=="value" ? "input" : "change"
+        event=r.value_attr=="model-value" ? "update:$(r.value_attr)" : "update:$(r.value_attr)"
         ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
         if haskey(r.attrs,event)
             r.attrs[event]=ev_expr*r.attrs[event]*";"

@@ -15,9 +15,7 @@ Namtso = "14fc9687-df25-4852-9e56-61a08c6e8132"
 SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [compat]
-DataFrames = "1.2"
-HTTP = "0.9"
-Namtso = "0.1"
+DataFrames = "1"
 JSON = "0.21"
-Highlights = "0.5"
-julia = "1.5"
+Namtso = "0.1"
+julia = "1"

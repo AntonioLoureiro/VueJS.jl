@@ -305,7 +305,8 @@ function dom(r::VueStruct;opts=PAGE_OPTIONS)
     end
     
     if r.iterable
-        domvalue=html("v-container",domvalue,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true))
+        iter_cols=get_cols(domvalue,rows=true) ## Iterable VS assumes row based
+        domvalue=html("v-container",domvalue,cols=iter_cols,Dict("v-for"=>"($(opts.path),index) in $(vs_path).value","fluid"=>true))
     end
     
     return domvalue

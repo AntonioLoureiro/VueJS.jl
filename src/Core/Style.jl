@@ -36,7 +36,27 @@ function update_style!(el::VueStruct,opts::Opts)
 
 end
 
-update_style!(vueh::VueHolder,opts::Opts)=update_style!(vueh.elements,opts)
+function update_style!(el::VueHolder,opts::Opts)
+       el_new_style=convert(Dict{String,Any},get(opts.style,el.tag,Dict{String,Any}()))
+    
+    if length(el_new_style)!=0
+        if haskey(el.attrs,"style")
+           merge!(el_new_style,el.attrs["style"])    
+        end
+        el.attrs["style"]=el_new_style
+    end
+    
+    el_new_class=get(opts.class,el.tag,Dict{Any,Any}())
+    
+    if length(el_new_class)!=0
+        if haskey(el.attrs,"class")
+           el_new_class=el.attrs["class"]*" "*el_new_class
+        end
+        el.attrs["class"]=el_new_class
+    end
+    
+   update_style!(el.elements,opts)
+end
 
 
 macro style(tag_name,args...)

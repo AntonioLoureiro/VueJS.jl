@@ -23,7 +23,7 @@ function htmlstring(page_inst::Page)
 
     # Prepare SCRIPTS
     scripts = deepcopy(page_inst.scripts)
-    push!(scripts, "const vuetify = new Vuetify()")
+    push!(scripts, "const vuetify = Vuetify.createVuetify()")
 
     components_dom=[]
 
@@ -106,13 +106,13 @@ var app = new Vue({
                 merge!(app_state,v.def_data)
                 
                 comp_script=[]
-                push!(comp_script,"el: '#app'")
-                push!(comp_script,"vuetify: vuetify")
+                push!(comp_script,"template: '#app-template'")
+                #push!(comp_script,"vuetify: vuetify")
                 push!(comp_script,"components:components")
-                push!(comp_script,"data: app_state")
+                push!(comp_script,"data(){return app_state}")
                 push!(comp_script, v.scripts)
                 
-                comp_script="var app = new Vue({"*join(comp_script,",")*"})"
+                comp_script="const app = Vue.createApp({"*join(comp_script,",")*"}).use(vuetify).mount('#app')"
                 push!(scripts,comp_script)
                 opts=PAGE_OPTIONS
                 opts.path="root"
@@ -143,11 +143,9 @@ var app = new Vue({
         scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
             
     end
-
-    body_dom = html("body",[
-                        html("div", components_dom, Dict("id"=>"app", "v-cloak"=>true)),
-                        """<script>xhr=$(xhr_script)\n$(join(scripts,"\n"))</script>"""
-                        ],Dict())
+    body_dom=html("body",[html("script",html("v-app",components_dom),Dict("type"=>"text/x-template","id"=>"app-template","v-cloak"=>true)),html("div","",Dict("id"=>"app")),
+                 """<script>xhr=$(xhr_script)\n$(join(scripts,"\n"))</script>"""            
+                ],Dict())
 
     htmlpage = html("html", [head_dom, body_dom], Dict())
 

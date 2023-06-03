@@ -93,7 +93,22 @@ function VueElement(id::String, tag::String, attrs::Dict)
     return vuel
 end
 
-is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(k,"keydown")
+function is_event(k::String)
+    if k in KNOWN_JS_EVENTS
+        return true
+    elseif startswith(k,"keyup") || startswith(k,"keydown")
+        return true
+    else
+        ret=false
+        for r in KNOWN_JS_EVENTS_COLLON
+            if startswith(k,r)
+                ret=true
+               break
+            end
+        end
+        return ret
+    end
+end
 
 function update_validate!(vuel::VueElement)
 

@@ -30,6 +30,7 @@ doc="""Should be used as a argument in other elements, normally v-btn. Example:<
 value_attr=nothing,
 fn=(x)->begin
     haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
+    haskey(x.attrs,"items") ? nothing : x.attrs["items"]=[]    
     @el(menu_list,"v-list",items=x.attrs["items"])
     x.child=menu_list
 end)
@@ -195,6 +196,7 @@ doc="""Simple Element, value attribute is items. Items are the options available
     @el(sel,"v-select",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
@@ -396,7 +398,7 @@ value_attr=nothing,
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=12 : nothing
-    
+   
     ## Validations
     haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
     
@@ -405,10 +407,12 @@ fn=(x)->begin
     haskey(x.attrs,"type") ? nothing : x.attrs["type"]="success"
     haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
     
+        
     ## 3 Basic Bindings
     x.binds["content"]=x.id*".content"
     x.binds["type"]=x.id*".type"
     x.binds["value"]=x.id*".value"
+    x.binds["model-value"]=x.id*".value"
     
     x.binds["v-html"]=x.id*".content"
     

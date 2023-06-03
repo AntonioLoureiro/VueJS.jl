@@ -153,25 +153,41 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
     ## Tooltip 
     tooltip=get(vuel.no_dom_attrs,"tooltip",nothing)
     if tooltip!=nothing
-       dom_ret=VueJS.activator(tooltip,dom_ret,"v-tooltip") 
+        tooltip_dom=dom(tooltip,opts=opts,is_child=true)
+        if tooltip_dom isa HtmlElement
+            tooltip_dom.tag=="v-tooltip" ? nothing : tooltip_dom=HtmlElement("v-tooltip", Dict(), tooltip_dom.cols, tooltip_dom)
+            tooltip_dom.attrs["activator"]="parent"
+        end
+        if dom_ret.value==""
+            dom_ret.value=tooltip_dom
+        else
+            dom_ret.value=[dom_ret.value,tooltip_dom]
+        end
     end
     
     ## Menu 
     menu=get(vuel.no_dom_attrs,"menu",nothing)
     if menu!=nothing
-        
-       dom_ret=VueJS.activator(menu,dom_ret,"v-menu") 
-       path=opts.path=="" ? "" : opts.path*"."
-       if haskey(vuel.attrs,"click")
-            # place @click at list-item level, not at the template level
-            [x.attrs["click"] = vuel.attrs["click"] for x in dom_ret.value[1].value.value if x.tag == "v-list-item"]
-            #dom_ret.value[1].value.attrs["click"]=vuel.attrs["click"]
-            delete!(vuel.attrs,"click")
+        if menu isa VueElement
+           @assert menu.tag=="v-menu" "Menu value shall be a v-menu Element"
+            
+           delete!(menu.attrs,"items") 
+           delete!(menu.binds,"items")
+        else
+            
         end
-       dom_ret.value[1].value.attrs["v-for"]="(item, index) in $path$(vuel.id).items"
-       delete!(dom_ret.attrs,"items")
-       delete!(dom_ret.value[1].attrs,"items")
-       
+        menu_dom=dom(menu,opts=opts,is_child=true)
+        if menu_dom isa HtmlElement
+            menu_dom.tag=="v-menu" ? nothing : menu_dom=HtmlElement("v-menu", Dict(), menu_dom.cols, menu_dom)
+            menu_dom.attrs["activator"]="parent"
+        end
+        if dom_ret.value==""
+            dom_ret.value=menu_dom
+        else
+            dom_ret.value=[dom_ret.value,menu_dom]
+        end
+
+
     end
     
     return dom_ret

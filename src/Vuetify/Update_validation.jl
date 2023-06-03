@@ -4,7 +4,7 @@ doc="Component for file upload, allows multiple files. When used, the submit fun
     function example(req::HTTP.Request)<br>
     VueJS.parse(req)
     </code>",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     haskey(x.attrs,"multiple") ? nothing : x.attrs["multiple"]=false
 end)
@@ -40,7 +40,7 @@ doc="""Simple element, value attribute is input-value. Switch value on is true, 
     @el(sw,"v-switch",label="Switch",value=false)<br>
     </code>
     """,
-value_attr="input-value",    
+value_attr="model-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
@@ -53,7 +53,7 @@ doc="""Simple element, value attribute is input-value. CheckBox ticked value is 
     @el(sw,"v-checkbox",label="Check",value=false)<br>
     </code>
     """,
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
@@ -77,6 +77,7 @@ doc="""Simple Element, value attribute is value. Important attributes are min an
     @el(slid,"v-slider",value=0,min=0,max=50,thumb-label="always",thumb-color="red")
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
@@ -87,6 +88,7 @@ doc="""Simple Element, value attribute is value, return is an array of low and h
     @el(slid,"v-range-slider",value=[10,20],min=0,max=50,thumb-label="always",thumb-color="red")
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
@@ -109,7 +111,8 @@ doc="""Simple Element, allows you to select a color using a variety of input met
     @el(color_picker_in_txt_field, "v-text-field", label="Color", type="color", value="")<br>
     @el(color_picker, "v-color-picker") # utilization without text field
     </code>
-    """,    
+    """,  
+value_attr="model-value",
 fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
@@ -128,6 +131,7 @@ doc="""Simple Element, value attribute is value. If type is date invokes a date 
     @el(tf6, "v-text-field", label="Color Field" , type="color", value="", color-attrs = Dict("show-swatches" => true))  <br>
     </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
@@ -209,6 +213,7 @@ doc="""Simple Element, value attribute is items. Items are the options available
     @el(sel,"v-autocomplete",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify autocomplete element with no arg items!"
@@ -223,7 +228,7 @@ end)
 
 UPDATE_VALIDATION["v-radio-group"]=(
 doc="",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=1 : nothing
@@ -237,7 +242,7 @@ end)
 
 UPDATE_VALIDATION["v-radio"]=(
 doc="",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=1 : nothing
 end)
@@ -434,6 +439,7 @@ doc="""Simple Element. Items are the options available to select. Value is the s
     @el(sel,"v-combobox",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=2 : nothing
     
@@ -479,6 +485,7 @@ EX-4:
 Custom prepend. Expects custom icon field "file" to specify icon information, else defaults to custom default icon "mdi-upload".
 <code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = Dict("default-icon" => "mdi-upload", "custom-icon-field" => "file"))  </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
     
     # Default attributes
@@ -526,6 +533,7 @@ doc="""The <code> v-progress-linear </code> component is used to convey data vis
 Default v-progress-linear; By default it has width corresponding to the size of its container, is indeterminate and is hidden (inactive).
 <code> @el(loading, "v-progress-linear")  </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
         x.cols == nothing ? x.cols = 12 : nothing
         

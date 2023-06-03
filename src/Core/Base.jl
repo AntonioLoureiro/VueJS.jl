@@ -1,7 +1,8 @@
 const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..","..", ".."))
 const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
 const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change"]
-const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
+const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change","update"]
+const KNOWN_JS_EVENTS_COLLON=map(x->x*":",KNOWN_JS_EVENTS)
 const JS_FUNCTION_ATTRS     = ["rules", "filter", "col_format", "formatter"] ## Formatter is an Echarts Tag
 const KNOWN_EVT_PROPS       = ["methods", "computed", "watch"] 
 const KNOWN_HOOKS = [

@@ -36,4 +36,3 @@ const ROUTER = HTTP.Router()
 HTTP.@register(ROUTER, "GET", "/home", home)
 HTTP.serve(ROUTER,"127.0.0.1", 80)
 ```
-

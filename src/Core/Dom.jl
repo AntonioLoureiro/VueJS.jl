@@ -168,69 +168,35 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
     ## Menu 
     menu=get(vuel.no_dom_attrs,"menu",nothing)
     if menu!=nothing
-        if menu isa VueElement
-           @assert menu.tag=="v-menu" "Menu value shall be a v-menu Element"
             
-           delete!(menu.attrs,"items") 
-           delete!(menu.binds,"items")
-        else
-            
+        if menu isa Vector
+            menu_items=deepcopy(menu)
+            @el(menu,"v-menu",items=menu_items)
         end
-        menu_dom=dom(menu,opts=opts,is_child=true)
-        if menu_dom isa HtmlElement
-            menu_dom.tag=="v-menu" ? nothing : menu_dom=HtmlElement("v-menu", Dict(), menu_dom.cols, menu_dom)
+
+       @assert menu.tag=="v-menu" "Menu value shall be a v-menu Element"
+       delete!(menu.attrs,"items")
+       menu_dom=dom(menu,opts=opts,is_child=true)
+       items_path=vuel.attrs[":items"]
+       menu_dom.value=html("v-list",html("v-list-item",html("v-list-item-title","{{item.title}}",Dict()),
+                Dict("v-for"=>"(item, index) in $items_path",":key"=>"index",":value"=>"index")))
+       if haskey(vuel.attrs,"click") 
+            menu_dom.value.value.attrs["click"]=vuel.attrs["click"]
+            delete!(vuel.attrs,"click")
+       else
+            menu_dom.value.value.attrs["click"]="open(item.href)"
+       end
+       delete!(vuel.attrs,":items")
+      
+       if menu isa VueJS.VueElement
             menu_dom.attrs["activator"]="parent"
-        end
-        if dom_ret.value==""
-            dom_ret.value=menu_dom
-        else
-            dom_ret.value=[dom_ret.value,menu_dom]
-        end
-
-
+       end
+        
+       dom_ret.value=dom_ret.value=="" ? menu_dom : [dom_ret.value,menu_dom]
+        
     end
     
     return dom_ret
-end
-
-function activator(activated::VueJS.VueElement,dom_ret::VueJS.HtmlElement,act_type::String)
-    
-    dom_act=dom(activated,is_child=true)
-    
-    return activator(dom_act,dom_ret,act_type)
-end
-
-function activator(dom_act::VueJS.HtmlElement,dom_ret::VueJS.HtmlElement,act_type::String)
-    @assert dom_act.tag==act_type "Element $dom_act cannot be activated!"
-    dom_ret.attrs["v-on"]="on"
-    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
-    dom_act.cols=dom_ret.cols
-    
-    if dom_ret.value==nothing
-       dom_act.value=dom_template
-    else
-        dom_act.value=[dom_act.value,dom_template]
-    end
-
-    return dom_act
-end
-
-function activator(dom_act::String,dom_ret::VueJS.HtmlElement,act_type::String)
-    
-    dom_ret.attrs["v-on"]="on"
-    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
-    dom_act=html(act_type,[dom_act,dom_template])
-    dom_act.cols=dom_ret.cols
-
-    return dom_act
-end
-
-function activator(items::Vector,dom_ret::VueJS.HtmlElement,act_type::String)
-      @el(new_menu,"v-menu",items=items)
-      dom_act=VueJS.dom(new_menu,is_child=true)
-      dom_act=activator(dom_act,dom_ret,act_type)
-
-    return dom_act
 end
 
 function get_cols(v::Array;rows=true)

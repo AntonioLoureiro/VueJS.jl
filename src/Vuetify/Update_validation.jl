@@ -31,8 +31,7 @@ value_attr=nothing,
 fn=(x)->begin
     haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
     haskey(x.attrs,"items") ? nothing : x.attrs["items"]=[]    
-    @el(menu_list,"v-list",items=x.attrs["items"])
-    x.child=menu_list
+    
 end)
 
 UPDATE_VALIDATION["v-switch"]=(
@@ -118,8 +117,6 @@ fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
 end)
-
-
 
 UPDATE_VALIDATION["v-text-field"]=(
 doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is color invokes a color picker and finally, if type is number when submited the value will be a valid number in JSON.<br>
@@ -257,66 +254,6 @@ fn=(x)->begin
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
 
-    if haskey(x.attrs,"item") || haskey(x.attrs,"content")
-        
-    
-        if haskey(x.attrs,"item")
-            x.child=x.attrs["item"]
-            delete!(x.attrs,"item")
-        else
-            x.child=x.attrs["content"]
-            delete!(x.attrs,"content")
-        end
-        
-        x.render_func=(y;opts=PAGE_OPTIONS)->begin
-            path=opts.path=="" ? "" : opts.path*"."
-            dom_list=VueJS.dom(y,prevent_render_func=true,opts=opts)
-            
-            opts_item=deepcopy(opts)
-            opts_item.rows=false
-            
-            dom_item=VueJS.dom(y.child,opts=opts_item,is_child=true)
-                        
-            dom_item=html("v-list-item",dom_item)
-            dom_item.attrs["v-for"]="(item, index) in $path$(x.id).value"
-            dom_item.attrs[":key"]="index"
-            
-            dom_list.value=dom_item
-            dom_list
-        end
-    else
-        items=x.attrs["items"]
-            
-        temp = html("template", [], Dict("v-for" => "(item, index) in $(x.id).value"))
-        push!(temp.value, html("v-divider", [], Dict("v-if" => "item.divider", ":key" => "index", "class" => "ma-5")))
-    
-        child = html("v-list-item",[],Dict(":class" => "item.class", "dense" => true, "v-else" => true))
-        
-        #child.attrs["v-for"]="(item, index) in $(x.id).value"
-        #child.attrs[":key"]="index"
-                        
-        sum(map(x->haskey(x,"avatar"),items))>0 ? push!(child.value,html("v-list-item-avatar",html("v-img","",Dict(":src"=>"item.avatar")))) : ""
-        sum(map(x->haskey(x,"icon"),items))>0 ? push!(child.value,html("v-list-item-icon",html("v-icon","",Dict("v-text"=>"item.icon")))) : ""
-        if sum(map(x->haskey(x,"title"),items))>0 
-            contents=[]
-            push!(contents,html("v-list-item-title","",Dict("v-text"=>"item.title")))
-            sum(map(x->haskey(x,"subtitle"),items))>0 ? push!(contents,html("v-list-item-subtitle","",Dict("v-text"=>"item.subtitle"))) : ""
-            push!(child.value,html("v-list-item-content",contents))
-        end
-        
-        has_href=sum(map(x->haskey(x,"href"),items))>0 
-        has_click=sum(map(x->haskey(x,"click"),items))>0 
-        
-        @assert !(has_href && haskey(child.attrs,"click")) "You must choose between href and click!"
-        
-        if has_href
-            child.attrs["link"]=true
-            child.attrs["click"]="open(item.href)"
-        end
-            
-        push!(temp.value, child)
-        x.child=temp            
-    end
 end)
 
 UPDATE_VALIDATION["v-tabs"]=(
@@ -342,30 +279,26 @@ fn=(x)->begin
     end
 end)
 
-UPDATE_VALIDATION["v-navigation-drawer"]=(
+VueJS.UPDATE_VALIDATION["v-navigation-drawer"]=(
 doc="",
-value_attr=nothing,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
     @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
-
-    item_names=collect(keys(x.attrs["items"][1]))
-    x.tag="v-list"
-            
-    VueJS.update_validate!(x)
-
+    
     x.render_func=(y;opts=PAGE_OPTIONS)->begin
-
-        dom_nav=VueJS.dom(y,prevent_render_func=true,opts=PAGE_OPTIONS)
-
-        nav_attrs=Dict()
-
-        for (k,v) in Dict("clipped"=>true,"width"=>200, "expand-on-hover"=>true, "permanent"=>true, "right"=>false)
-            haskey(y.attrs,k) ? nav_attrs[k]=y.attrs[k] : nav_attrs[k]=v
-        end
-
-        html("v-navigation-drawer",dom_nav,nav_attrs,cols=12)
+    
+        domvalue = VueJS.dom(y, prevent_render_func = true, opts = opts)
+        
+        items_path=domvalue.attrs[":items"]    
+        delete!(domvalue.attrs,":items")
+       
+        dom_list=html("v-list","",Dict(":items"=>items_path,"item-props"=>true),cols=y.cols)
+        
+        domvalue.value=dom_list
+        
+        return domvalue    
     end
 end)
 

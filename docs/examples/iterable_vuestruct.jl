@@ -1,5 +1,5 @@
 @el(el1,"v-text-field",label="Element 1",value="Default Value")
-@el(el2,"v-select",value=false,items=[true,false],change="el2.value ? el1.value='Triggered Value' : el1.value='Default Value'",label="Trigger",cols=1)
+@el(el2,"v-select",value="A",items=["A","B"],update="el2.value=='B' ? el1.value='Triggered Value' : el1.value='Default Value'",label="Trigger",cols=1)
 @el(el3,"v-select",value="blue",items=["blue","green","red"],label="Color",cols=1)
 @el(el4,"v-checkbox",value=true,label="Visible",cols=1)
 @el(el5,"v-chip",content="Conditional Chip",text-color="white",v-show="el4.value",binds=Dict("color"=>"el3.value"),cols=2)

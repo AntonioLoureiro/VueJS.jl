@@ -76,7 +76,7 @@ function update_data!(el::VueStruct,datavalue)
     new_def_data=deepcopy(el.def_data)
 
     if el.iterable
-        el=deepcopy(el)
+       # el=deepcopy(el)
         updated_data=Vector{Dict{String,Any}}()
         if length(new_data)==0 
             new_data=[Dict{String,Any}()]

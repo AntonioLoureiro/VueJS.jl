@@ -1,7 +1,7 @@
 name = "VueJS"
 uuid = "dd23b82c-c6e2-490f-8a36-5dab9c7f2253"
 authors = ["Antonio Loureiro <ajose.loureiro@gmail.com>"]
-version = "1.1.0"
+version = "1.2.0"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -15,9 +15,7 @@ Namtso = "14fc9687-df25-4852-9e56-61a08c6e8132"
 SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [compat]
-DataFrames = "1.2"
-HTTP = "0.9"
-Namtso = "0.1"
+DataFrames = "1"
 JSON = "0.21"
-Highlights = "0.5"
-julia = "1.5"
+Namtso = "0.2"
+julia = "1"

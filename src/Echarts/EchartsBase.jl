@@ -1,6 +1,6 @@
 function VueElement(id::String, ec::EChart,attrs::Dict)
     
-    attrs_ec=Dict("options"=>ec.options,"width"=>ec.width,"height"=>ec.height)
+    attrs_ec=Dict("option"=>ec.options,"width"=>ec.width,"height"=>ec.height)
     merge!(attrs_ec,attrs)
     return VueElement(id, "vuechart", attrs_ec)   
 end

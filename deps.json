@@ -1,10 +1,10 @@
 [
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.prod.min.js","version":"3.2.3","type":"js", "name":"vue.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.4/dist/vuetify.min.js","version":"3.3.4","type":"js", "name":"vuetify.min.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.4/dist/vuetify-labs.js","version":"3.3.4","type":"js", "name":"vuetify-labs.js"},
+    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.prod.min.js","version":"3.2.30","type":"js", "name":"vue.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.14/dist/vuetify.min.js","version":"3.3.14","type":"js", "name":"vuetify.min.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.14/dist/vuetify-labs.js","version":"3.3.14","type":"js", "name":"vuetify-labs.js"},
     
-    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.4/dist/vuetify.min.css","version":"3.3.4","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
-       {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.4/dist/vuetify-labs.css","version":"3.3.4","type":"css", "name":"vuetify-labs.css"},
+    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.14/dist/vuetify.min.css","version":"3.3.14","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
+       {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.3.14/dist/vuetify-labs.css","version":"3.3.14","type":"css", "name":"vuetify-labs.css"},
  
     {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"5.0","type":"css", "name":"googlefonts.css"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css","version":"5.0","type":"css", "name":"materialdesignicons.min.css"},

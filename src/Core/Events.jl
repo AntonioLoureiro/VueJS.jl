@@ -116,8 +116,13 @@ push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_form
 
 #### Filter DataTable ####
 filter_dt_script="""function(cont,col,value){
-      idx=cont.headers_idx[col]
-      cont.headers[idx].filter_value=value
+      var col_out=col.replace(" ", "");
+      var col_out=col_out.replace("-","_");
+      var col_out=col_out.replace("%","_perc");
+      var col_out="$col_pref"+col_out.toLowerCase()
+      var obj_search = JSON.parse(cont.search);
+      obj_search[col_out]=value;
+      cont.search=JSON.stringify(obj_search); 
     }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))
 

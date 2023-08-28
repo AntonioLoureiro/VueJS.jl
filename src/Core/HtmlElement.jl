@@ -79,3 +79,7 @@ function keys_id_fix(s::String)
     s=replace(s,"keydown."=>"keydown")
     return s
 end
+
+### Transform Col Name for dataframe ###
+col_pref="col_"
+trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))

@@ -142,7 +142,7 @@ function htmlstring(page_inst::VueJS.Page)
                  """<script>xhr=$(VueJS.xhr_script)\n$(join(scripts,"\n"))</script>"""            
                 ],Dict())
 
-    htmlpage = html("html", [head_dom, body_dom], Dict())
+    htmlpage = html("!DOCTYPE html", [head_dom, body_dom], Dict())
 
     return htmlstring(htmlpage)
 end

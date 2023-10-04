@@ -18,6 +18,6 @@
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.woff2?v=4.9.95", "version":"4.9.95", "type":"woff2", "name":"materialdesignicons-webfont.woff2"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.woff?v=4.9.95", "version":"4.9.95", "type":"woff", "name":"materialdesignicons-webfont.woff"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.ttf?v=4.9.95", "version":"4.9.95", "type":"ttf", "name":"materialdesignicons-webfont.ttf"},
-    {"url":"https://unpkg.com/vue-router@3", "version":"3.6.5", "type":"js", "name":"vue-router.js"},
+    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.6.5/vue-router.js", "version":"3.6.5", "type":"js", "name":"vue-router.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader@0.8.4/dist/vue2-sfc-loader.js", "version":"0.8.4", "type":"js", "name":"vue2-sfc-loader.js"}
 ]

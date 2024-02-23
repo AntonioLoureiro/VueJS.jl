@@ -77,7 +77,7 @@ function dialog(id::String,elements::Vector; container::Bool=true, kwargs...)
     vs_dial=VueStruct(id,elements)
     merge!(vs_dial.attrs,Dict("v-dialog"=>dial_attrs))
     vs_dial.def_data["active"]=Dict("value"=>dial_attrs["active"])    
-    dial_attrs[":value"]=id*".active.value"
+    dial_attrs[":model-value"]=id*".active.value"
     
     vs_dial.render_func=(x;opts=PAGE_OPTIONS)->begin
         

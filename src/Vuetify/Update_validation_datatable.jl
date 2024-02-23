@@ -61,11 +61,12 @@ fn=(x)->begin
             if !(haskey(x.attrs,"headers"))
                 x.attrs["headers"]=[Dict{String,Any}("key"=>trf_col(n),"title"=>n,"key_orig"=>n) for n in string.(names(df))]
             else
-                @assert all(y->"key" in keys(y), x.attrs["headers"]) "Headers declared without key"
+                @assert all(y->"key" in keys(y), x.attrs["headers"]) "Headers declared without value"
                 for (i,header) in enumerate(x.attrs["headers"])
                     val = header["key"]
                     title = get(header, "title", val)
                     x.attrs["headers"][i]["title"] = title
+                    
                     x.attrs["headers"][i]["key"] = trf_col(val)
                     x.attrs["headers"][i]["key_orig"] = val
                 end
@@ -104,12 +105,13 @@ fn=(x)->begin
                 new_col=trf_col(k)
                 fn=dt_filter_dispatcher(v)
                 x.attrs["custom-key-filter"][new_col]="""function (value,item,c){
+                    
                 var col_name='$new_col' 
                 var fn=$fn    
                 var filter_values=JSON.parse(item)
                 var filter_value=filter_values[col_name];
                
-                return  fn(c[col_name],filter_value)
+                return  fn(c["columns"][col_name],filter_value)
                 }
                 """
             end          
@@ -133,7 +135,7 @@ fn=(x)->begin
             x.attrs["col_format"]=new_col_format
             
             for (k,v) in x.attrs["col_format"]
-                x.slots["item.$k='{item}'"]=html("div","",Dict("v-html"=>"datatable_col_format(item.columns.$k,$(x.id).col_format.$k)"))
+                x.slots["item.$k='{item}'"]=html("div","{{datatable_col_format(item.$k,$(x.id).col_format.$k)}}")
 			end
         end
 
@@ -175,7 +177,7 @@ fn=(x)->begin
 
                 v isa String ? value_str=VueJS.vue_escape(v) : nothing
                 
-                value_str=replace(value_str,"item."=>"item.columns.$(col_pref)")
+                value_str=replace(value_str,"item."=>"item.$(col_pref)")
                 x.slots["item.$k='{item}'"]=value_str
 					
                 haskey(x.attrs["headers"][col_idx[k]], "align") ? nothing : x.attrs["headers"][col_idx[k]]["align"]="center"

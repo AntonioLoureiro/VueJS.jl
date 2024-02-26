@@ -50,9 +50,9 @@ function docs()
     @el(bt_close,"v-btn",value="Close",click="dial.active.value=false",small=true,outlined=true,color="indigo")
 
     dial=dialog("dial",
-                [html("h2","",Dict("v-html"=>"title_el.value","align"=>"left"),cols=12),
+                [html("h2","{{title_el.value}}",Dict("align"=>"left"),cols=12),
                 card([
-                    html("div","",Dict("v-html"=>"doc_el.value","align"=>"left"),cols=12)],
+                    html("div","{{doc_el.value}}",Dict("align"=>"left"),cols=12)],
                 cols=12),
                 bt_close],width=800)
 

@@ -50,7 +50,7 @@ function docs()
     @el(bt_close,"v-btn",value="Close",click="dial.active.value=false",small=true,outlined=true,color="indigo")
 
     dial=dialog("dial",
-                ["""<h2 v-html="title_el.value" align="left"></h2>"""),
+                ["""<h2 v-html="title_el.value" align="left"></h2>""",
                 card(["""<div v-html="doc_el.value" align="left"></div>"""],
                 cols=12),
                 bt_close],width=800)

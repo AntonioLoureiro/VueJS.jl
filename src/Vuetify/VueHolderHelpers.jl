@@ -1,9 +1,12 @@
 
 spacer(;cols=1,rows=1)=VueJS.VueElement("","v-spacer",Dict("cols"=>cols,"content"=>join(fill("<br>",rows-1))))
 
-function tabs(ts::Array;cols=nothing,kwargs...)
+function tabs(ts::Array;cols=12,kwargs...)
    names=[]
    elements=[]
+   push!(names,"_v_tabs_")
+   @el(v_tabs_state, "v-text-field") ## Just a placeholder for v-tabs-data
+   push!(elements,v_tabs_state) 
    for t in ts
         @assert t isa Pair "tabs should use Pair of String (name of Tab) and Elements"
         push!(names,t[1])

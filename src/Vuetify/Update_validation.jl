@@ -99,7 +99,8 @@ doc="""Simple Element, value attribute is value. Is invoked when v-text-field el
     @el(dpt,"v-text-field",label="Date",type="date")<br>
     @el(dp,"v-date-picker",color="red") # utilization without text field
     </code>
-    """,    
+    """,
+value_attr="model-value",    
 fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
@@ -269,13 +270,19 @@ fn=(x)->begin
     @assert length(x.attrs["names"])==length(x.elements) "Vuetify Tabs elements should have the same number of names!"
 
     x.render_func=(y;opts=PAGE_OPTIONS)->begin
-       content=[]
+       content1=[]
+       content2=[]
        for (i,r) in enumerate(y.elements)
-           push!(content,HtmlElement("v-tab",Dict(),nothing,y.attrs["names"][i]))
-           value=r isa Array ? VueJS.dom(r,opts=opts) : VueJS.dom([r],opts=opts)
-           push!(content,HtmlElement("v-tab-item",Dict(),12,value))
+            if i>1     
+               push!(content1,HtmlElement("v-tab",Dict("value"=>y.attrs["names"][i]),nothing,y.attrs["names"][i]))
+               value=r isa Array ? VueJS.dom(r,opts=opts) : VueJS.dom([r],opts=opts)
+               push!(content2,HtmlElement("v-window-item",Dict("value"=>y.attrs["names"][i]),nothing,value))
+            end
+            
        end
-       HtmlElement("v-tabs",y.attrs,12,content)
+       el_path=y.elements[1].path=="" ? y.elements[1].id*".value" : y.elements[1].path*"."*y.elements[1].id*".value"
+       state_dict=Dict("v-model"=>el_path)
+       HtmlElement("div",Dict(),nothing,[HtmlElement("v-tabs",state_dict,nothing,content1),HtmlElement("v-window",state_dict,nothing,content2)])
     end
 end)
 
@@ -304,7 +311,8 @@ end)
 
 
 UPDATE_VALIDATION["v-card"]=(
-doc="", 
+doc="",
+value_attr=nothing,    
 fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify card with no names, please define names array!"
@@ -363,7 +371,8 @@ doc="""Simple Element, value attribute is value. Text Box bigger than v-text-fie
     <code>
     @el(tf,"v-textarea",label="Text Field",rows=10)<br>
     </code>
-    """, 
+    """,
+value_attr="model-value",    
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=3 : nothing

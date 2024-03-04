@@ -138,7 +138,7 @@ function htmlstring(page_inst::VueJS.Page)
         scripts=vcat("const app_state = $(VueJS.vue_json(app_state))",scripts)
             
     end
-    body_dom=html("body",[html("script",html("v-app",components_dom),Dict("type"=>"text/x-template","id"=>"app-template","v-cloak"=>true)),html("div","",Dict("id"=>"app","style"=>"width:auto,height:auto;")),
+    body_dom=html("body",[html("script",components_dom,Dict("type"=>"text/x-template","id"=>"app-template","v-cloak"=>true)),html("div","",Dict("id"=>"app")),
                  """<script>xhr=$(VueJS.xhr_script)\n$(join(scripts,"\n"))</script>"""            
                 ],Dict())
 

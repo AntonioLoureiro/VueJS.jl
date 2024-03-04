@@ -165,7 +165,7 @@ function_script = """function (val) {
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))
 
 #adjust_to_window_size
-function_script="function(w,h,cols){
+function_script="""function(w,h,cols){
         available_w=window.innerWidth/12*cols;
-        return {width:available_w,height:available_w/w*h}}"
+        return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("adjust_to_window_size","",function_script))

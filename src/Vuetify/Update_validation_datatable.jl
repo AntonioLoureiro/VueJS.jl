@@ -32,9 +32,13 @@ fn=(x)->begin
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
     
-    if haskey(x.attrs,"item-class")
-        x.binds["item-class"]=x.attrs["item-class"]
-        delete!(x.attrs,"item-class")
+    if haskey(x.attrs,"cell-props")
+        x.binds["cell-props"]=x.attrs["cell-props"]
+        delete!(x.attrs,"cell-props")
+    end
+    if haskey(x.attrs,"row-props")
+        x.binds["row-props"]=x.attrs["row-props"]
+        delete!(x.attrs,"row-props")
     end
     
     x.attrs["model-value"]=[]

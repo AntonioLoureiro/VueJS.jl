@@ -59,7 +59,7 @@ function docs()
     barapp=bar([homeb,"VueJS Documentation"]);
 
     nav_items = [
-        Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"$INDEX_PATH"),
+        Dict("prepend-icon"=>"mdi-table-settings","title"=>"Components","href"=>"$INDEX_PATH"),
         Dict("type" => "divider")
     ]
     

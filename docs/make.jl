@@ -35,7 +35,7 @@ function docs()
     end
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
-    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,items-per-page=50,cols=3)
+    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",dense=true,items-per-page=50,cols=3.5)
 
     df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
     for (k,v) in VueJS.UPDATE_VALIDATION

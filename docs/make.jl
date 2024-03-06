@@ -60,13 +60,13 @@ function docs()
 
     nav_items = [
         Dict("icon"=>"mdi-table-settings","title"=>"Components","href"=>"$INDEX_PATH"),
-        Dict("divider" => true)
+        Dict("type" => "divider")
     ]
     
     iframes = []
     for (name, details) in notebooks
         href = joinpath(NOTEBOOKS_PATH, details.html)
-        push!(nav_items, Dict("icon"=>details.icon, "title"=>name, "href"=>joinpath(BASE_PATH, details.html)))
+        push!(nav_items, Dict("icon"=>details.icon, "title"=>name, "href"=>joinpath(BASE_PATH, details.html),"prepend-icon"=>details.icon))
         push!(iframes,   html("iframe","", Dict("src"=>href,"height"=>1000,"width"=>"100%","frameborder"=>0),cols=12))
     end
     @el(nav, "v-navigation-drawer", expand-on-hover = false, items = nav_items)

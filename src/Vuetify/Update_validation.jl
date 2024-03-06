@@ -263,6 +263,7 @@ doc="""Holder Element, helper function is the correct method to use. Accepts arr
     tabs(["Tab1"=>[el1,el2,el3],"Tab2"=>[el4,[el5,el6]]])
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"

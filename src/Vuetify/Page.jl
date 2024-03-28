@@ -1,3 +1,4 @@
+#=const=# SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
 function htmlstring(page_inst::VueJS.Page)
     includes=[]
     css_deps=[]
@@ -36,53 +37,25 @@ function htmlstring(page_inst::VueJS.Page)
         delete!(page_inst.components, "_placeholder")
 
         # prepare components instantiation
-        sfc_component   = String[]
-        sfc_route       = String[]
+        sfc_component_inst  = String[]
+        sfc_component_dec   = String[]
+        sfc_route           = String[]
         for (k,comp) in page_inst.components
-            push!(sfc_component, "Vue.component('$(k)', () => loadModule('$(comp.url)', options));")
+            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options));")
+            push!(sfc_component_dec, "'$k': $k,")
             if !isnothing(comp.path)
-                push!(sfc_route, "{ path: '$(comp.path)', component: () => loadModule('$(comp.url)', options) },")
+                push!(sfc_route, "{ path: '$(comp.path)', component: $k },")
             end
         end
 
         # prepare page instantiation
-        sfc_loader = """
-                    const { loadModule, vueVersion } = window['vue2-sfc-loader'];
-                    const options = {
-                        moduleCache: {
-                            vue: Vue,
-                        },
-                        getFile(url) {
-                            return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-                        },
-                        addStyle(styleStr) {
-                            const style = document.createElement('style');
-                            style.textContent = styleStr;
-                            const ref = document.head.getElementsByTagName('style')[0] || null;
-                            document.head.insertBefore(style, ref);
-                        },
-                        log(type, ...args) {
-                            console.log(type, ...args);
-                        }
-                    }
-
-                    $(join(sfc_component, "\n"))
-
-                    Vue.use(VueRouter)
-
-                    const routes = [
-                    $(join(sfc_route, "\n"))]
-
-                    var app = new Vue({
-                        el: '#app',
-                        vuetify: vuetify,
-                        data: $(vue_json(page_inst.globals)),
-                        router: new VueRouter({
-                            routes
-                        }),
-                        template: '<$sfc_placeholder $sfc_props/>',
-                    })
-                    """
+        sfc_loader = replace(SFC_LOADER,
+            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, "\n"),
+            "__SFC_COMPONENT_DEC__"     => join(sfc_component_dec, "\n"),
+            "__SFC_ROUTES__"            => join(sfc_route, "\n"),
+            "__SFC_PLACEHOLDER__"       => sfc_placeholder,
+            "__SFC_PROPS__"             => sfc_props,
+        )
 
         push!(scripts, sfc_loader)
 

@@ -1,16 +1,16 @@
 [
     {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.15/vue.global.prod.min.js","version":"3.4.15","type":"js", "name":"vue.js"},
+
     {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.js","version":"3.5.6","type":"js", "name":"vuetify.min.js"},
-       
     {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.css","version":"3.5.6","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
      
- 
+
     {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"5.0","type":"css", "name":"googlefonts.css"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css","version":"5.0","type":"css", "name":"materialdesignicons.min.css"},
     
     {"url":"https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.js","version":"5.4.1","type":"js", "name":"echarts.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vue-echarts@6.6.0","version":"6.6.0","type":"js", "name":"vue-echarts.js", "components":{"vuechart":"VueECharts"}},
     
-    {"url":"https://unpkg.com/vue-router@3", "version":"3.6.5", "type":"js", "name":"vue-router.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader@0.8.4/dist/vue2-sfc-loader.js", "version":"0.8.4", "type":"js", "name":"vue2-sfc-loader.js"}
+    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js", "version":"4.2.2", "type":"js", "name":"vue-router.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js", "version":"0.9.5", "type":"js", "name":"vue3-sfc-loader.js"}
 ]

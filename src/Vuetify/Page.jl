@@ -22,7 +22,8 @@ function htmlstring(page_inst::VueJS.Page)
     push!(head_items, html("style", join(css_deps," ")))
     head_dom = html("head", head_items, Dict())
 
-    components_dom=[]
+    scripts         = []
+    components_dom  = []
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
     if is_sfc
@@ -56,8 +57,7 @@ function htmlstring(page_inst::VueJS.Page)
         push!(scripts, sfc_loader)
 
     else
-        # Prepare SCRIPTS
-        scripts = ["const vuetify = Vuetify.createVuetify()"]
+        push!(scripts, "const vuetify = Vuetify.createVuetify()")
 
         # Add components to scripts
         components = Dict{String,String}()

@@ -34,6 +34,9 @@ const router = VueRouter.createRouter({
 // Load Vue SFC Loader
 const { loadModule } = window['vue3-sfc-loader'];
 
+// Instantiate Vuetify
+const vuetify = Vuetify.createVuetify()
+
 // Instantiate app
 const app = Vue.createApp({
     template: `<__SFC_PLACEHOLDER__ __SFC_PROPS__/>`,
@@ -42,4 +45,5 @@ const app = Vue.createApp({
     }
 });
 app.use(router);
+app.use(vuetify);
 router.isReady().then(() => app.mount('#app'));

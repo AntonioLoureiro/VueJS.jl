@@ -17,4 +17,4 @@ df[!,:Action]=df[!,:Text]
 @el(d3,"v-data-table",items=df,col_template=Dict("Action"=>btn),cols=3,density="comfortable")
 
 page([[[st,d1],spacer(),[[sel,rs],d2],spacer(),[spacer(rows=4),d3,alert]]],
-    methods=Dict("cond_form"=>"""function(item){return item.item.col_value<0 ? {class:'custom_css'} : {} }"""))   
+    methods=Dict("cond_form"=>"""function(data){return data.item.col_value<0 ? {class:'custom_css'} : {} }"""))   

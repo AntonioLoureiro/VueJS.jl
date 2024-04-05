@@ -10,7 +10,11 @@
     
     {"url":"https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.js","version":"5.4.1","type":"js", "name":"echarts.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vue-echarts@6.6.0","version":"6.6.0","type":"js", "name":"vue-echarts.js", "components":{"vuechart":"VueECharts"}},
+
     
     {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js", "version":"4.2.2", "type":"js", "name":"vue-router.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js", "version":"0.9.5", "type":"js", "name":"vue3-sfc-loader.js"}
+    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js", "version":"0.9.5", "type":"js", "name":"vue3-sfc-loader.js"},
+
+    {"url":"https://unpkg.com/@vueup/vue-quill@1.2.0","version":"1.2.0","type":"js", "name":"vue-quill.js", "components":{"QuillEditor": "VueQuill.QuillEditor"}},
+    {"url":"https://unpkg.com/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.css","version":"1.2.0","type":"css", "name":"vue-quill.snow.prod.css","css":".ql-container{height:auto}"}
 ]

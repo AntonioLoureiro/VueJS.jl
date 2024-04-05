@@ -5,6 +5,7 @@ examples = [
     "Basic Binding"             =>"basic_binding.jl",
     "Basic Events"              =>"basic_events.jl",
     "Elements Special args Tooltip and Menu" => "element_special_tooltip_menus.jl",
+    "Rich Text Editor" => "rich_text.jl",
     "Vue Struct"                =>"vuestruct.jl",
     "Iterable Vue Struct"       =>"iterable_vuestruct.jl",
     "Basic Datatables"          =>"basic_datatables.jl",

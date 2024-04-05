@@ -1,17 +1,16 @@
 
-UPDATE_VALIDATION["vue-editor"]=(
-doc="",
-library="vue2editor",
+UPDATE_VALIDATION["quill-editor"]=(
+doc="""
+    Rich Text Element. See Documentation in <a href="https://vueup.github.io/vue-quill/""
+    <code>
+     @el(q,"quill-editor",value="<b>Bold Text</b>",toolbar=["strike","bold", "italic", "underline","link","image"],cols=4) 
+    </code>
+    """,
+library="quill-editor",
+value_attr="content",
 fn=(x)->begin
-    x.cols==nothing ? x.cols=6 : nothing
-
+  haskey(x.attrs,"contentType") ? nothing : x.attrs["contentType"]="html"
 end)
-
-UPDATE_VALIDATION["hot-table"]=(
-doc="",
-library="handsontable",
-value_attr="data",
-fn=(x)->x)
 
 UPDATE_VALIDATION["v-currency-field"]=(
 doc="""Simple Element allows to input number values with flexile format. Default locale is pt-PT. See Documentation in <a href="https://phiny1.github.io/v-currency-field/config.html#component-props">Currency Field</a>

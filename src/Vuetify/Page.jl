@@ -1,4 +1,4 @@
-#=const=# SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
+const SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
 function htmlstring(page_inst::VueJS.Page)
     includes=[]
     css_deps=[]
@@ -22,11 +22,8 @@ function htmlstring(page_inst::VueJS.Page)
     push!(head_items, html("style", join(css_deps," ")))
     head_dom = html("head", head_items, Dict())
 
-    # Prepare SCRIPTS
-    scripts = deepcopy(page_inst.scripts)
-    push!(scripts, "const vuetify = Vuetify.createVuetify()")
-
-    components_dom=[]
+    scripts         = []
+    components_dom  = []
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
     if is_sfc
@@ -60,6 +57,7 @@ function htmlstring(page_inst::VueJS.Page)
         push!(scripts, sfc_loader)
 
     else
+        push!(scripts, "const vuetify = Vuetify.createVuetify()")
 
         # Add components to scripts
         components = Dict{String,String}()
@@ -75,7 +73,7 @@ function htmlstring(page_inst::VueJS.Page)
             if k=="v-main"
                 ## component script
                 VueJS.update_data!(v,v.data)
-                VueJS.update_events!(v)
+                VueJS.update_events!(v, page_inst.scripts)
                 merge!(app_state,v.def_data)
                 
                 comp_script=[]

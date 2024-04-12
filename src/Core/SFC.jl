@@ -30,7 +30,7 @@ function sfc_page(
     placeholder ::String,
     sfc         ::Vector{VueSFC};
     props       ::Dict                      = Dict(),
-    scripts     ::Vector{String}            = String[],
+    scripts     ::Vector                    = String[],
     cookies     ::Dict                      = Dict{String, Any}(),
     globals     ::Dict                      = Dict{String, Any}(),
     meta        ::Vector{HtmlElement}       = META,

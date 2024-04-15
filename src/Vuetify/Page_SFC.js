@@ -1,8 +1,11 @@
+// Global scripts
+__SFC_SCRIPTS__
+
+// Vue SFC Loader options
 const options = {
     moduleCache: {
         vue: Vue,
-        'vue-router': VueRouter
-    },
+        'vue-router': VueRouter    },
     async getFile(url) {
         const res = await fetch(url);
         if ( !res.ok )
@@ -41,7 +44,7 @@ const vuetify = Vuetify.createVuetify()
 const app = Vue.createApp({
     template: `<__SFC_PLACEHOLDER__ __SFC_PROPS__/>`,
     components: {
-        __SFC_COMPONENT_DEC__
+        __SFC_COMPONENT_DECL__
     }
 });
 app.use(router);

@@ -38,20 +38,21 @@ function htmlstring(page_inst::VueJS.Page)
         sfc_component_dec   = String[]
         sfc_route           = String[]
         for (k,comp) in page_inst.components
-            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options));")
-            push!(sfc_component_dec, "'$k': $k,")
+            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options))")
+            push!(sfc_component_dec, "'$k': $k")
             if !isnothing(comp.path)
-                push!(sfc_route, "{ path: '$(comp.path)', component: $k },")
+                push!(sfc_route, "{ path: '$(comp.path)', component: $k }")
             end
         end
 
         # prepare page instantiation
         sfc_loader = replace(SFC_LOADER,
-            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, "\n"),
-            "__SFC_COMPONENT_DEC__"     => join(sfc_component_dec, "\n"),
-            "__SFC_ROUTES__"            => join(sfc_route, "\n"),
+            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, ";"),
+            "__SFC_COMPONENT_DECL__"    => join(sfc_component_dec, ","),
+            "__SFC_ROUTES__"            => join(sfc_route, ","),
             "__SFC_PLACEHOLDER__"       => sfc_placeholder,
             "__SFC_PROPS__"             => sfc_props,
+            "__SFC_SCRIPTS__"           => join(page_inst.scripts,","),
         )
 
         push!(scripts, sfc_loader)

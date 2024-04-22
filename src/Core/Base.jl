@@ -3,7 +3,7 @@ const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-s
 const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change","update"]
 const KNOWN_JS_EVENTS_COLLON=map(x->x*":",KNOWN_JS_EVENTS)
 const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
-const JS_FUNCTION_ATTRS     = ["rules", "fn","custom_filter" ,"custom_key_filter","filter","col_format", "formatter"] ## Formatter is an Echarts Tag
+
 const KNOWN_EVT_PROPS       = ["methods", "computed", "watch"] 
 const KNOWN_HOOKS = [
     "beforeCreate",

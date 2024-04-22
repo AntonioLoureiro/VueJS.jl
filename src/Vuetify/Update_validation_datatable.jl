@@ -89,7 +89,7 @@ fn=(x)->begin
                             digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                             eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
                             haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
-                            x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                            x.attrs["col_format"][n]=js"x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
                         end
                     end
                 end
@@ -108,7 +108,7 @@ fn=(x)->begin
             for (k,v) in x.attrs["filter"]      
                 new_col=trf_col(k)
                 fn=dt_filter_dispatcher(v)
-                x.attrs["custom-key-filter"][new_col]="""function (value,item,c){
+                x.attrs["custom-key-filter"][new_col]=js"""function (value,item,c){
                     
                 var col_name='$new_col' 
                 var fn=$fn    
@@ -123,7 +123,7 @@ fn=(x)->begin
                 
             x.binds["search"]=x.id*".search"
             x.attrs["search"]="{}"
-            x.attrs["custom-filter"]="""function (value,item,c){return true}"""
+            x.attrs["custom-filter"]=js"""function (value,item,c){return true}"""
             x.binds["custom-filter"]=x.id*".custom_filter"    
             x.binds["custom-key-filter"]=x.id*".custom_key_filter"
         end

@@ -108,7 +108,7 @@ fn=(x)->begin
             for (k,v) in x.attrs["filter"]      
                 new_col=trf_col(k)
                 fn=dt_filter_dispatcher(v)
-                x.attrs["custom-key-filter"][new_col]=js"""function (value,item,c){
+                x.attrs["custom-key-filter"][new_col]=JSFunc("""function (value,item,c){
                     
                 var col_name='$new_col' 
                 var fn=$fn    
@@ -117,7 +117,7 @@ fn=(x)->begin
                
                 return  fn(c["columns"][col_name],filter_value)
                 }
-                """
+                """)
             end          
             delete!(x.attrs,"filter")
                 

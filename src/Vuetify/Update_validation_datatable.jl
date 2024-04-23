@@ -89,7 +89,7 @@ fn=(x)->begin
                             digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                             eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
                             haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
-                            x.attrs["col_format"][n]=js"x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                            x.attrs["col_format"][n]=JSFunc("x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})")
                         end
                     end
                 end

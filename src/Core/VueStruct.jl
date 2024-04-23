@@ -246,7 +246,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         
         ### add fn
         def_data[vs.id]["empty_obj"]=VueJS.get_def_obj(vs)[vs.id]
-        empty_obj_str=VueJS.vue_json(VueJS.get_def_obj(vs)[vs.id],false)
+        empty_obj_str=VueJS.vue_json(VueJS.get_def_obj(vs)[vs.id])
         def_data[vs.id]["add"]="""function(){this.value.push($empty_obj_str)}"""
         
         ### delete fn

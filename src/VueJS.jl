@@ -10,6 +10,7 @@ export LIBRARY_RULES
 export get_web_dependencies!
 export @style,@class,@css
 export VueSFC, sfc_page, sfc_response
+export @js_str
 
 include("Core/HtmlElement.jl")
 include("Core/VueElement.jl")

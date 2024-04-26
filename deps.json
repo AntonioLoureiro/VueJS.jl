@@ -15,6 +15,8 @@
     {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js", "version":"4.2.2", "type":"js", "name":"vue-router.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js", "version":"0.9.5", "type":"js", "name":"vue3-sfc-loader.js"},
 
-    {"url":"https://unpkg.com/@vueup/vue-quill@1.2.0","version":"1.2.0","type":"js", "name":"vue-quill.js", "components":{"QuillEditor": "VueQuill.QuillEditor"}},
-    {"url":"https://unpkg.com/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.css","version":"1.2.0","type":"css", "name":"vue-quill.snow.prod.css","css":".ql-container{height:auto}"}
+    {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js","version":"1.2.0","type":"js", "name":"vue-quill.js", "components":{"QuillEditor": "VueQuill.QuillEditor"}},
+    {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css","version":"1.2.0","type":"css", "name":"vue-quill.snow.prod.css","css":".ql-container{height:auto}"},
+        {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid.umd.js","version":"3.7.0","type":"js", "name":"Vue3Revogrid.js","css":"revo-grid .main-viewport {flex-grow:0; height:auto}"}
+    
 ]

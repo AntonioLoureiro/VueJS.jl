@@ -39,23 +39,18 @@ function htmlstring(el::HtmlElement)
     end
 end
 
-function vue_json(v,f_mode)
-    if f_mode
-        return v
-    else
-        return JSON.json(v)
-    end
-end
+vue_json(v)=JSON.json(v)
+vue_json(v::JSFunc)=v.content
 
-vue_json(a::Array,f_mode)="[$(join(vue_json.(a,f_mode),","))]"
+vue_json(a::Array)="[$(join(vue_json.(a),","))]"
 
-function vue_json(d::Dict,f_mode::Bool=false)
+function vue_json(d::Dict)
     els=[]
     for (k,v) in d
-        if k in JS_FUNCTION_ATTRS || k in CONTEXT_JS_FUNCTIONS
-            j="\"$k\": $(vue_json(v,true))"
+        if k in CONTEXT_JS_FUNCTIONS
+            j="\"$k\": $(v)"
         else
-            j="\"$k\":"*vue_json(v,f_mode==false ? false : true)
+            j="\"$k\": $(vue_json(v))"
         end
         push!(els,j)
     end

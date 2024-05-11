@@ -202,16 +202,7 @@ VueJS.load_libraries!("/public/mydeps.json")
 function load_libraries!(filepath::String; replace=true, filter_func=(x)->Base.get(x, "repo", "VueJS.jl") == "VueJS.jl")
     @assert isfile(filepath) "File $filepath not found"
     arr_deps = JSON.parse(read(filepath, String))
-    webdeps  = [WebDependency(
-                    get(x, "name", basename(x["url"])), 
-                    x["url"], 
-                    x["version"], 
-                    get(x, "type", extension(basename(x["url"]))), 
-                    get(x,"components",Dict()), 
-                    get(x,"css",""), 
-                    "", 
-                    get(x, "path", "")) 
-            for x in arr_deps if filter_func(x)]
+    webdeps  = [WebDependency(x) for x in arr_deps if filter_func(x)]
     if replace
         global DEPENDENCIES = webdeps
     else

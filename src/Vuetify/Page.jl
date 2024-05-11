@@ -25,7 +25,7 @@ function htmlstring(page_inst::VueJS.Page)
     # Prepare SCRIPTS
     scripts = deepcopy(page_inst.scripts)
     push!(scripts, "const vuetify = Vuetify.createVuetify()")
-
+               
     components_dom=[]
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
@@ -60,12 +60,7 @@ function htmlstring(page_inst::VueJS.Page)
         push!(scripts, sfc_loader)
 
     else
-
-        # Add components to scripts
-        components = Dict{String,String}()
-        [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
-        push!(scripts,"""const components = $(replace(VueJS.JSON.json(components),"\""=>""))""")
-
+                
         app_state=Dict{String,Any}()
         ## initialize globals
         app_state["globals"]=page_inst.globals
@@ -78,7 +73,7 @@ function htmlstring(page_inst::VueJS.Page)
                 VueJS.update_events!(v)
                 merge!(app_state,v.def_data)
                 
-                comp_script=[]
+                comp_script=[]                    
                 push!(comp_script,"template: '#app-template'")
                 push!(comp_script,"components:components")
                 push!(comp_script,"data(){return app_state}")
@@ -107,8 +102,14 @@ function htmlstring(page_inst::VueJS.Page)
             end
         end
         components_dom = html("v-app", components_dom)
-    
-        scripts=vcat("const app_state = $(VueJS.vue_json(app_state))",scripts)
+        
+        # Add components to scripts
+        components = Dict{String,String}()
+        [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
+                
+        scripts=vcat(["""const components = $(replace(VueJS.JSON.json(components),"\""=>""))""",
+        join(map(x->x.init_script,filter(x->x.init_script!="",page_inst.dependencies)),"\n"),
+        "const app_state = $(VueJS.vue_json(app_state))"],scripts)
             
     end
     body_dom=html("body",[html("script",components_dom,Dict("type"=>"text/x-template","id"=>"app-template","v-cloak"=>true)),html("div","",Dict("id"=>"app")),

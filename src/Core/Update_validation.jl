@@ -15,8 +15,8 @@ end)
 
 function revo_grid_data(df::DataFrame)
    
-    columns=[]
-    columnTypes=Dict()
+    columns=Vector{Dict{String,Any}}()
+    columnTypes=Dict{String,Any}()
     (row_n,col_n)=size(df)
     rows=[Dict{String,Any}() for r in 1:row_n]
     

@@ -9,6 +9,7 @@ examples = [
     "Vue Struct"                =>"vuestruct.jl",
     "Iterable Vue Struct"       =>"iterable_vuestruct.jl",
     "Basic Datatables"          =>"basic_datatables.jl",
+    "Revogrid (Excel Like Tables)"=>"vgrid.jl",
     "Navigation and Bar"        =>"navigation_bars.jl",
     "Lists"                     =>"lists.jl",
     "Computed, Async and Mounted" => "lifecycle.jl",

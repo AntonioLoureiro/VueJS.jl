@@ -135,31 +135,35 @@ fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
     
-   # -- Render "v-text-field" with date-picker or color-picker.
-    if get(x.attrs,"type","") == "date" || get(x.attrs,"type","") == "color"
-            
-        render_type = x.attrs["type"]
+    # -- Render "v-text-field" with date-picker or color-picker.
+    render_type = get(x.attrs,"type","")
+    if render_type in ["date", "color"]
+
         type_attrs = Dict{String, Any}(get(x.attrs, "$(render_type)-attrs", Dict()))
         type_id    = render_type == "date" ? "v-date-picker" : "v-color-picker"
-                        
+
         x.render_func=(y;opts=PAGE_OPTIONS)->begin
+
             path=opts.path == "" ? "" : opts.path*"."
-            menu_var = "$path$(y.id).menu"
-            y.binds["menu"]  = menu_var
-            y.attrs["v-on"]  = "on"
-            type_attrs["v-model"] = "$path$(y.id).value"
-            
+
+            y.attrs["v-bind"]   = "props"
+            y.attrs["v-model"]  = "$(path)$(y.id).value"
+            y.attrs["readonly"] = true # TODO:
+
+            type_attrs["v-model"]            = "$(path)$(y.id).date"
+            type_attrs["@update:modelValue"] = "$(path)$(y.id).value = dateToString($(path)$(y.id).date)"
+
             # -- Cleanup of attrs not relevant to "v-text-field" element
             delete!(y.attrs,"type")
             delete!(y.attrs,"$(render_type)-attrs")
             delete!(y.binds,"$(render_type)-attrs")
-            dom_txt    = VueJS.dom(y,prevent_render_func=true,opts=opts)
-            domcontent = [ 
-                    html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-                    html(type_id,"", type_attrs) 
+            dom_txt = VueJS.dom(y,prevent_render_func=true,opts=opts)
+            domcontent = [
+                html("template",dom_txt,Dict("v-slot:activator"=>"{ props }")),
+                html(type_id,"",type_attrs) 
             ]
-                
-            return html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)    
+
+            return html("v-menu", domcontent, Dict("v-model"=>"$(path)$(y.id).isMenuOpen", ":close-on-content-click"=>"false", "nudge-right"=>40, "transition"=>"scale-transition", "min-width"=>"290px"), cols = x.cols)
         end
     end
 end)

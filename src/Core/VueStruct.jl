@@ -371,7 +371,7 @@ function create_events(vs::Union{VueElement,VueStruct})
 end
 
 
-function update_events!(vs::VueStruct)
+function update_events!(vs::VueStruct, page_scripts::Vector = [])
 	all_events=[]
     #standard events
     append!(all_events, STANDARD_APP_EVENTS)
@@ -387,11 +387,11 @@ function update_events!(vs::VueStruct)
         in_context_functions!(vs,Dict("submit"=>[],"submit_files"=>[],"mp_mode"=>false),"app_state",vs.def_data)
     end
     
-    vs.scripts=events_script(convert(Vector{EventHandler},all_events))
+    vs.scripts=events_script(convert(Vector{EventHandler},all_events), page_scripts::Vector)
 end
 
 
-function events_script(handlers::Vector{MethodsEventHandler}) 
+function events_script(handlers::Vector{MethodsEventHandler}, page_scripts::Vector = []) 
     evs_dict=Dict()
     for (i, handler) in enumerate(handlers)
         handler.path=="" ? nothing : handler.script=replace(handler.script,"this."=>"this.$(handler.path).")
@@ -412,11 +412,11 @@ function events_script(handlers::Vector{MethodsEventHandler})
     
     handlers_filt=[handlers[v.i] for (k,v) in evs_dict]
     
-   return "methods : {"*join(map(x->"$(x.id) : $(x.script)", handlers_filt),",")*"}"
+   return "methods : {"*join(map(x->"$(x.id) : $(x.script)", handlers_filt),", ")*", $(join(page_scripts,", ")) }"
     
 end
 
-function events_script(handlers::Vector{ComputedEventHandler}) 
+function events_script(handlers::Vector{ComputedEventHandler}, _::Vector = []) 
     
     for handler in handlers
         handler.path=="" ? nothing : handler.script=replace(handler.script,"this."=>"this.$(handler.path).")
@@ -424,7 +424,7 @@ function events_script(handlers::Vector{ComputedEventHandler})
    return "computed : {"*join(map(x->"$(x.id) : $(x.script) ", handlers),",")*"}"
 end
 
-function events_script(handlers::Vector{AsyncComputedEventHandler}) 
+function events_script(handlers::Vector{AsyncComputedEventHandler}, _::Vector = []) 
     
     for handler in handlers
         handler.path=="" ? nothing : handler.script=replace(handler.script,"this."=>"this.$(handler.path).")
@@ -432,7 +432,7 @@ function events_script(handlers::Vector{AsyncComputedEventHandler})
    return "asyncComputed : {"*join(map(x->"$(x.id) : $(x.script) ", handlers),",")*"}"
 end
 
-function events_script(handlers::Vector{WatchEventHandler})
+function events_script(handlers::Vector{WatchEventHandler}, _::Vector = [])
     for handler in handlers
         handler.id=handler.path=="" ? handler.id : handler.path*"."*handler.id
         handler.path=="" ? nothing : handler.script=replace(handler.script,"this."=>"this.$(handler.path).")
@@ -443,7 +443,7 @@ function events_script(handlers::Vector{WatchEventHandler})
     return "watch : {"*join(map(x->"$(x.id) : $(x.script)", handlers),",")*"}"
 end
 
-function events_script(handlers::Vector{HookEventHandler})
+function events_script(handlers::Vector{HookEventHandler}, _::Vector = [])
     hooks = Dict()
 	sort!(handlers,by=x->length(x.path),rev=true)
     for handler in handlers
@@ -462,12 +462,12 @@ function events_script(handlers::Vector{HookEventHandler})
     return join(out, ",")
 end
 
-function events_script(events::Vector{EventHandler})
+function events_script(events::Vector{EventHandler}, page_scripts::Vector = [])
     els=[]
     for typ in [MethodsEventHandler,AsyncComputedEventHandler,ComputedEventHandler,WatchEventHandler,HookEventHandler]
         ef=filter(x->x isa typ,events)
         if length(ef)!=0
-            push!(els,events_script(convert(Vector{typ},ef)))
+            push!(els,events_script(convert(Vector{typ},ef), page_scripts))
         end
     end
     return join(els,",")

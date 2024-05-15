@@ -1,4 +1,4 @@
-#=const=# SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
+const SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
 function htmlstring(page_inst::VueJS.Page)
     includes=[]
     css_deps=[]
@@ -22,11 +22,8 @@ function htmlstring(page_inst::VueJS.Page)
     push!(head_items, html("style", join(css_deps," ")))
     head_dom = html("head", head_items, Dict())
 
-    # Prepare SCRIPTS
-    scripts = deepcopy(page_inst.scripts)
-    push!(scripts, "const vuetify = Vuetify.createVuetify()")
-               
-    components_dom=[]
+    scripts         = []
+    components_dom  = []
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
     if is_sfc
@@ -41,26 +38,29 @@ function htmlstring(page_inst::VueJS.Page)
         sfc_component_dec   = String[]
         sfc_route           = String[]
         for (k,comp) in page_inst.components
-            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options));")
-            push!(sfc_component_dec, "'$k': $k,")
+            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options))")
+            push!(sfc_component_dec, "'$k': $k")
             if !isnothing(comp.path)
-                push!(sfc_route, "{ path: '$(comp.path)', component: $k },")
+                push!(sfc_route, "{ path: '$(comp.path)', component: $k }")
             end
         end
 
         # prepare page instantiation
         sfc_loader = replace(SFC_LOADER,
-            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, "\n"),
-            "__SFC_COMPONENT_DEC__"     => join(sfc_component_dec, "\n"),
-            "__SFC_ROUTES__"            => join(sfc_route, "\n"),
+            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, ";"),
+            "__SFC_COMPONENT_DECL__"    => join(sfc_component_dec, ","),
+            "__SFC_ROUTES__"            => join(sfc_route, ","),
             "__SFC_PLACEHOLDER__"       => sfc_placeholder,
             "__SFC_PROPS__"             => sfc_props,
+            "__SFC_SCRIPTS__"           => join(page_inst.scripts,","),
         )
 
         push!(scripts, sfc_loader)
 
     else
-                
+        # Prepare SCRIPTS
+        push!(scripts, "const vuetify = Vuetify.createVuetify()")
+
         app_state=Dict{String,Any}()
         ## initialize globals
         app_state["globals"]=page_inst.globals
@@ -70,7 +70,7 @@ function htmlstring(page_inst::VueJS.Page)
             if k=="v-main"
                 ## component script
                 VueJS.update_data!(v,v.data)
-                VueJS.update_events!(v)
+                VueJS.update_events!(v, page_inst.scripts)
                 merge!(app_state,v.def_data)
                 
                 comp_script=[]                    

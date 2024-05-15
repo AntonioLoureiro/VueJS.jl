@@ -164,6 +164,19 @@ function_script = """function (val) {
 }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))
 
+#dateToString
+function_script = """function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("dateToString","",function_script))
+
+#stringToDate
+function_script = """function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("stringToDate","",function_script))
+
 #adjust_to_window_size
 function_script="""function(w,h,cols){
         available_w=window.innerWidth/12*cols;

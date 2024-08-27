@@ -18,9 +18,9 @@
     {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js","version":"1.2.0","type":"js", "name":"vue-quill.js", "components":{"QuillEditor": "VueQuill.QuillEditor"}},
     {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css","version":"1.2.0","type":"css", "name":"vue-quill.snow.prod.css","css":".ql-container{height:auto}"},
     {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid.umd.js","version":"3.7.0","type":"js", "name":"Vue3Revogrid.js","css":"revo-grid .main-viewport {flex-grow:0; height:auto}"},
-    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid-numeric.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridNumeric","init_script":"const NumberColumnType=VgridNumeric.default","components":{"VgridNumeric":"VgridNumeric"}},
-    {"url":" https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js","version":"3.7.0","type":"js", "name":"revo-dropdown"},   
-    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridSelect","init_script":"const SelectTypePlugin=RevoGridColumnSelect.default","components":{"RevoGridColumnSelect":"RevoGridColumnSelect"}}
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid-numeric.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridNumeric.js","init_script":"const NumberColumnType=VgridNumeric.default","components":{"VgridNumeric":"VgridNumeric"}},
+    {"url":" https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js","version":"3.7.0","type":"js", "name":"revo-dropdown.js"},   
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridSelect.js","init_script":"const SelectTypePlugin=RevoGridColumnSelect.default","components":{"RevoGridColumnSelect":"RevoGridColumnSelect"}}
     
     
 ]

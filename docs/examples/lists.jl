@@ -2,25 +2,28 @@
 items = []
 
 push!(items,
+    Dict("type"=>"subheader","title"=>"LIST"))
+push!(items,
     Dict("title"=>"Title1",
          "subtitle"=>"SubTitle1",
-         "icon"=>"mdi-clock",
+         "append-icon"=>"mdi-clock",
          "href"=>"https://www.sapo.pt",
-         "avatar"=>"https://cdn.vuetifyjs.com/images/lists/2.jpg"))
+         "prepend-avatar"=>"https://cdn.vuetifyjs.com/images/lists/2.jpg"))
 push!(items,
     Dict("title"=>"Title2",
          "subtitle"=>"SubTitle2",
-         "icon"=>"mdi-pencil-outline",
+         "append-icon"=>"mdi-pencil-outline",
          "href"=>"https://www.sapo.pt",
-         "avatar"=>"https://cdn.vuetifyjs.com/images/lists/3.jpg"))
+         "prepend-avatar"=>"https://cdn.vuetifyjs.com/images/lists/3.jpg"))
+push!(items,
+    Dict("type"=>"divider","inset"=>true))
 
-@el(list1,"v-list", items=items, cols=2)
+## List with Item-props
+@el(list1,"v-list", item-props=true,items=items, cols=2)
 
-# Using this v-text-field as a template for dynamically created items for `list2`
-@el(el, "v-text-field", binds=Dict("label"=>"item.label","value"=>"item.val"))
-# keyword `item` is used to specify the template item
-@el(list2,"v-list", items=[Dict("val"=>"Value1","label"=>"Label1"),Dict("val"=>"Value2","label"=>"Label2")],item=el,cols=3)
-# A button that will add new items to `list2`
-@el(b2,"v-btn",click="list2.value.push({val:'',label:'New item'})",value="ADD")
+# Using this v-text-field as the field text to push to list
+@el(el, "v-text-field",label="Title")
 
-page([[list1, spacer(), [b2, list2]]])
+@el(b2,"v-btn",value="ADD",click="list1.value.push({title:el.value,subtitle:'sub',href:'https://www.google.pt'})")
+
+page([[list1, spacer(), [el,b2]]])

@@ -1,8 +1,9 @@
 const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..","..", ".."))
-const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
-const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change"]
+const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show","v-number"]
+const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change","update"]
+const KNOWN_JS_EVENTS_COLLON=map(x->x*":",KNOWN_JS_EVENTS)
 const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
-const JS_FUNCTION_ATTRS     = ["rules", "filter", "col_format", "formatter"] ## Formatter is an Echarts Tag
+
 const KNOWN_EVT_PROPS       = ["methods", "computed", "watch"] 
 const KNOWN_HOOKS = [
     "beforeCreate",
@@ -201,16 +202,7 @@ VueJS.load_libraries!("/public/mydeps.json")
 function load_libraries!(filepath::String; replace=true, filter_func=(x)->Base.get(x, "repo", "VueJS.jl") == "VueJS.jl")
     @assert isfile(filepath) "File $filepath not found"
     arr_deps = JSON.parse(read(filepath, String))
-    webdeps  = [WebDependency(
-                    get(x, "name", basename(x["url"])), 
-                    x["url"], 
-                    x["version"], 
-                    get(x, "type", extension(basename(x["url"]))), 
-                    get(x,"components",Dict()), 
-                    get(x,"css",""), 
-                    "", 
-                    get(x, "path", "")) 
-            for x in arr_deps if filter_func(x)]
+    webdeps  = [WebDependency(x) for x in arr_deps if filter_func(x)]
     if replace
         global DEPENDENCIES = webdeps
     else
@@ -312,3 +304,4 @@ function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
     return join(expr_out)
 end
 
+trf_vue_expr(expr;opts=PAGE_OPTIONS)=expr

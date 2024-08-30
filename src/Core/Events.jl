@@ -116,8 +116,13 @@ push!(STANDARD_APP_EVENTS,MethodsEventHandler("datatable_col_format","",col_form
 
 #### Filter DataTable ####
 filter_dt_script="""function(cont,col,value){
-      idx=cont.headers_idx[col]
-      cont.headers[idx].filter_value=value
+      var col_out=col.replace(" ", "");
+      var col_out=col_out.replace("-","_");
+      var col_out=col_out.replace("%","_perc");
+      var col_out="$col_pref"+col_out.toLowerCase()
+      var obj_search = JSON.parse(cont.search);
+      obj_search[col_out]=value;
+      cont.search=JSON.stringify(obj_search); 
     }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("filter_dt","",filter_dt_script))
 
@@ -153,14 +158,41 @@ function(name, value, days) {
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("setcookie","",function_script))
 
 #toNumber
-function_script = """function (val) {
+function_script = """function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
   var n = parseFloat(val);
+    
   return isNaN(n) ? val : n
 }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))
 
+#dateToString
+function_script = """function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("dateToString","",function_script))
+
+#stringToDate
+function_script = """function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}"""
+push!(STANDARD_APP_EVENTS,MethodsEventHandler("stringToDate","",function_script))
+
 #adjust_to_window_size
-function_script="function(w,h,cols){
+function_script="""function(w,h,cols){
         available_w=window.innerWidth/12*cols;
-        return {width:available_w,height:available_w/w*h}}"
+        return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("adjust_to_window_size","",function_script))

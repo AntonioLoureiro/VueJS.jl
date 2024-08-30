@@ -1,18 +1,19 @@
-function htmlstring(page_inst::Page)
+const SFC_LOADER = read(joinpath(@__DIR__, "Page_SFC.js"), String)
+function htmlstring(page_inst::VueJS.Page)
     includes=[]
     css_deps=[]
     for d in page_inst.dependencies
         if d.type == "js"
-            push!(includes, head("script"=>Dict("src"=>d.path)))
+            push!(includes, VueJS.head("script"=>Dict("src"=>d.path)))
         elseif d.type == "css"
-            push!(includes, head("link"=>Dict("rel"=>"stylesheet", "type"=>"text/css", "href"=>d.path)))
+            push!(includes, VueJS.head("link"=>Dict("rel"=>"stylesheet", "type"=>"text/css", "href"=>d.path)))
         end
         push!(css_deps, d.css)
     end
-    push!(css_deps, css_str(PAGE_OPTIONS.css))
+    push!(css_deps, VueJS.css_str(VueJS.PAGE_OPTIONS.css))
 
     # Prepare HEAD
-    head_items = HtmlElement[]
+    head_items = VueJS.HtmlElement[]
     if page_inst.title !== nothing push!(head_items, head("title"=>page_inst.title)) end
     [push!(head_items, meta) for meta in page_inst.meta]
 
@@ -21,11 +22,8 @@ function htmlstring(page_inst::Page)
     push!(head_items, html("style", join(css_deps," ")))
     head_dom = html("head", head_items, Dict())
 
-    # Prepare SCRIPTS
-    scripts = deepcopy(page_inst.scripts)
-    push!(scripts, "const vuetify = new Vuetify()")
-
-    components_dom=[]
+    scripts         = []
+    components_dom  = []
 
     is_sfc = haskey(page_inst.components, "_placeholder") && page_inst.components["_placeholder"] isa VueSFC
     if is_sfc
@@ -36,62 +34,32 @@ function htmlstring(page_inst::Page)
         delete!(page_inst.components, "_placeholder")
 
         # prepare components instantiation
-        sfc_component   = String[]
-        sfc_route       = String[]
+        sfc_component_inst  = String[]
+        sfc_component_dec   = String[]
+        sfc_route           = String[]
         for (k,comp) in page_inst.components
-            push!(sfc_component, "Vue.component('$(k)', () => loadModule('$(comp.url)', options));")
+            push!(sfc_component_inst, "const $k = Vue.defineAsyncComponent(() => loadModule('$(comp.url)', options))")
+            push!(sfc_component_dec, "'$k': $k")
             if !isnothing(comp.path)
-                push!(sfc_route, "{ path: '$(comp.path)', component: () => loadModule('$(comp.url)', options) },")
+                push!(sfc_route, "{ path: '$(comp.path)', component: $k }")
             end
         end
 
         # prepare page instantiation
-        sfc_loader = """
-const { loadModule, vueVersion } = window['vue2-sfc-loader'];
-const options = {
-    moduleCache: {
-        vue: Vue,
-    },
-    getFile(url) {
-        return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-    },
-    addStyle(styleStr) {
-        const style = document.createElement('style');
-        style.textContent = styleStr;
-        const ref = document.head.getElementsByTagName('style')[0] || null;
-        document.head.insertBefore(style, ref);
-    },
-    log(type, ...args) {
-        console.log(type, ...args);
-    }
-}
-
-$(join(sfc_component, "\n"))
-
-Vue.use(VueRouter)
-
-const routes = [
-$(join(sfc_route, "\n"))]
-
-var app = new Vue({
-    el: '#app',
-    vuetify: vuetify,
-    data: $(vue_json(page_inst.globals)),
-    router: new VueRouter({
-        routes
-    }),
-    template: '<$sfc_placeholder $sfc_props/>',
-})
-"""
+        sfc_loader = replace(SFC_LOADER,
+            "__SFC_COMPONENT_INST__"    => join(sfc_component_inst, ";"),
+            "__SFC_COMPONENT_DECL__"    => join(sfc_component_dec, ","),
+            "__SFC_ROUTES__"            => join(sfc_route, ","),
+            "__SFC_PLACEHOLDER__"       => sfc_placeholder,
+            "__SFC_PROPS__"             => sfc_props,
+            "__SFC_SCRIPTS__"           => join(page_inst.scripts,","),
+        )
 
         push!(scripts, sfc_loader)
 
     else
-
-        # Add components to scripts
-        components = Dict{String,String}()
-        [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
-        push!(scripts,"""const components = $(replace(JSON.json(components),"\""=>""))""")
+        # Prepare SCRIPTS
+        push!(scripts, "const vuetify = Vuetify.createVuetify()")
 
         app_state=Dict{String,Any}()
         ## initialize globals
@@ -101,55 +69,60 @@ var app = new Vue({
         for (k,v) in page_inst.components
             if k=="v-main"
                 ## component script
-                update_data!(v,v.data)
-                update_events!(v)
+                VueJS.update_data!(v,v.data)
+                VueJS.update_events!(v, page_inst.scripts)
                 merge!(app_state,v.def_data)
                 
-                comp_script=[]
-                push!(comp_script,"el: '#app'")
-                push!(comp_script,"vuetify: vuetify")
+                comp_script=[]                    
+                push!(comp_script,"template: '#app-template'")
                 push!(comp_script,"components:components")
-                push!(comp_script,"data: app_state")
+                push!(comp_script,"directives:directives")        
+                push!(comp_script,"data(){return app_state}")
                 push!(comp_script, v.scripts)
                 
-                comp_script="var app = new Vue({"*join(comp_script,",")*"})"
+                comp_script="const app = Vue.createApp({"*join(comp_script,",")*"}).use(vuetify).mount('#app')"
                 push!(scripts,comp_script)
-                opts=PAGE_OPTIONS
+                opts=VueJS.PAGE_OPTIONS
                 opts.path="root"
-                push!(components_dom,html("v-main",html("v-container",dom(v,opts=opts),Dict("fluid"=>true)),Dict()))
+                push!(components_dom,html("v-main",html("v-container",VueJS.dom(v,opts=opts),Dict("fluid"=>true)),Dict()))
             else
-                    
-                opts=PAGE_OPTIONS
-                if v isa VueHolder
-                    vsid=vue_escape(k)
-                    vs=VueStruct("",[VueStruct(vsid,[v])])
-                    opts.path=vsid
-                else
-                    vs=VueStruct(vue_escape(k),[v])
-                    opts.path=""
-                end
+                  
+                opts=VueJS.PAGE_OPTIONS
+                vsid=VueJS.vue_escape(k)
+                v isa VueJS.VueHolder ? opts.path=vsid : opts.path=""
+                vs=VueStruct(VueJS.vue_escape(k),[v])
                 
-                update_data!(vs,vs.data)
-                update_events!(vs)
+                found_data=convert(Dict{String,Any},VueJS.update_data!(vs,vs.data))
+                vs.def_data=found_data
+                VueJS.update_events!(vs)
                 merge!(app_state,vs.def_data)
-                
+                                
                 comp_el=VueJS.dom([vs],opts=opts)[1].value.value        
                 comp_el.attrs["app"]=true
                 push!(components_dom,comp_el)
             end
         end
         components_dom = html("v-app", components_dom)
-    
-        scripts=vcat("const app_state = $(vue_json(app_state))",scripts)
+        
+        # Add components to scripts
+        components = Dict{String,String}()
+        [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
+
+        # Add directives to scripts
+        directives = Dict{String,String}()
+        [merge!(directives, d.directives) for d in page_inst.dependencies if length(d.directives) > 0]
+                
+        scripts=vcat(["""const components = $(replace(VueJS.JSON.json(components),"\""=>""))""",
+        """const directives = $(replace(VueJS.JSON.json(directives),"\""=>""))""",               
+        join(map(x->x.init_script,filter(x->x.init_script!="",page_inst.dependencies)),"\n"),
+        "const app_state = $(VueJS.vue_json(app_state))"],scripts)
             
     end
+    body_dom=html("body",[html("script",components_dom,Dict("type"=>"text/x-template","id"=>"app-template","v-cloak"=>true)),html("div","",Dict("id"=>"app")),
+                 """<script>xhr=$(VueJS.xhr_script)\n$(join(scripts,"\n"))</script>"""            
+                ],Dict())
 
-    body_dom = html("body",[
-                        html("div", components_dom, Dict("id"=>"app", "v-cloak"=>true)),
-                        """<script>xhr=$(xhr_script)\n$(join(scripts,"\n"))</script>"""
-                        ],Dict())
-
-    htmlpage = html("html", [head_dom, body_dom], Dict())
+    htmlpage = html("!DOCTYPE html", [head_dom, body_dom], Dict())
 
     return htmlstring(htmlpage)
 end

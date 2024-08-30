@@ -17,7 +17,7 @@ SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 [compat]
 DataFrames = "1"
 JSON = "0.21"
-Namtso = "0.2"
+Namtso = "0.3.1"
 julia = "1"
 HTTP = "1"
 Highlights = "0.5"

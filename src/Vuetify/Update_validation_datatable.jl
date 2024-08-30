@@ -1,31 +1,30 @@
 #### Filter DataTable to put in header ####
 dt_filter_modes=Dict()
 dt_filter_modes["range"]="""(item, filter) =>    {return item >= filter[0] && item <= filter[1] }"""
-dt_filter_modes[">="]="""   (item, filter) =>    {return item >= filter}"""
-dt_filter_modes[">"]="""    (item, filter) =>    {return item > filter}"""
-dt_filter_modes["<="]="""   (item, filter) =>    {return item <= filter}"""
-dt_filter_modes["<"]="""    (item, filter) =>    {return item < filter}"""
-dt_filter_modes["=="]="""   (item, filter) =>    {return item == filter}"""
+dt_filter_modes[">="]="""(item, filter) =>    {return item >= filter}"""
+dt_filter_modes[">"]="""(item, filter) =>    {return item > filter}"""
+dt_filter_modes["<="]="""(item, filter) =>    {return item <= filter}"""
+dt_filter_modes["<"]="""(item, filter) =>    {return item < filter}"""
+dt_filter_modes["=="]="""(item, filter) =>    {return item == filter}"""
 dt_filter_modes["contains"]="""(item, filter) => {return String(item).toLowerCase().includes(String(filter).toLowerCase())}"""
 
 dt_filter_dispatcher(mode::String; callback=dt_filter_modes[mode]) = """
-    function(value, search, item) {
+    function(item,filter) {
         c = $callback;        
-        if (this.filter_value == null || this.filter_value == '') { return true; }
+        if (filter == null || filter == '') { return true; }
         
-        if (Array.isArray(this.filter_value) && '$mode'.toLowerCase() !== 'range') {
-            return this.filter_value.some((x) => c(value, x));  
+        if (Array.isArray(filter) && '$mode'.toLowerCase() !== 'range') {
+            return filter.some((x) => c(value, x));  
         }
-        return c(value, this.filter_value)
+        return c(item, filter)
     }
 """
 
-UPDATE_VALIDATION["v-data-table"]=(
+VueJS.UPDATE_VALIDATION["v-data-table"]=(
 doc="",
-value_attr="value",
+value_attr="model-value",
 fn=(x)->begin
-    col_pref="col_"
-    trf_col=x->startswith(string(x),col_pref) ? string(x) : col_pref*VueJS.vue_escape(string(x))
+ 
     trf_dom=x->begin
     x.attrs=Dict(k=>VueJS.vue_escape(v) for (k,v) in x.attrs)
     x.value=x.value isa String ? VueJS.vue_escape(x.value) : x.value
@@ -33,12 +32,16 @@ fn=(x)->begin
     
     haskey(x.attrs,"item-key") ? x.attrs["item-key"]=trf_col(x.attrs["item-key"]) : nothing
     
-    if haskey(x.attrs,"item-class")
-        x.binds["item-class"]=x.attrs["item-class"]
-        delete!(x.attrs,"item-class")
+    if haskey(x.attrs,"cell-props")
+        x.binds["cell-props"]=x.attrs["cell-props"]
+        delete!(x.attrs,"cell-props")
+    end
+    if haskey(x.attrs,"row-props")
+        x.binds["row-props"]=x.attrs["row-props"]
+        delete!(x.attrs,"row-props")
     end
     
-    x.attrs["value"]=[]
+    x.attrs["model-value"]=[]
     x.cols==nothing ? x.cols=4 : nothing
 
     ####### Has Items ###########
@@ -60,15 +63,16 @@ fn=(x)->begin
             end
             x.attrs["items"]=arr
             if !(haskey(x.attrs,"headers"))
-                x.attrs["headers"]=[Dict{String,Any}("value"=>trf_col(n),"text"=>n,"value_orig"=>n) for n in string.(names(df))]
+                x.attrs["headers"]=[Dict{String,Any}("key"=>trf_col(n),"title"=>n,"key_orig"=>n) for n in string.(names(df))]
             else
-                @assert all(y->"value" in keys(y), x.attrs["headers"]) "Headers declared without value key"
+                @assert all(y->"key" in keys(y), x.attrs["headers"]) "Headers declared without value"
                 for (i,header) in enumerate(x.attrs["headers"])
-                    val = header["value"]
-                    text = get(header, "text", val)
-                    x.attrs["headers"][i]["text"] = text
-                    x.attrs["headers"][i]["value"] = trf_col(val)
-                    x.attrs["headers"][i]["value_orig"] = val
+                    val = header["key"]
+                    title = get(header, "title", val)
+                    x.attrs["headers"][i]["title"] = title
+                    
+                    x.attrs["headers"][i]["key"] = trf_col(val)
+                    x.attrs["headers"][i]["key_orig"] = val
                 end
             end
 
@@ -77,7 +81,7 @@ fn=(x)->begin
                 n=string(n)
                 ### Numbers
                 if eltype(df[!,i])<:Union{Missing,Number}
-                    map(x->x["text"]==n ? x["align"]="end" : nothing ,x.attrs["headers"])
+                    map(x->x["title"]==n ? x["align"]="end" : nothing ,x.attrs["headers"])
 
                     ## Default Renders
                     if !haskey(x.attrs,"col_format") || (haskey(x.attrs,"col_format") && !haskey(x.attrs["col_format"],n))
@@ -85,7 +89,7 @@ fn=(x)->begin
                             digits=maximum(skipmissing(df[:,Symbol(n)]))>=1000 ? 0 : 2
                             eltype(df[!,i])<:Union{Missing,Int} ? digits=0 : nothing
                             haskey(x.attrs,"col_format") ? nothing : x.attrs["col_format"]=Dict{String,Any}()
-                            x.attrs["col_format"][n]="x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})"
+                            x.attrs["col_format"][n]=JSFunc("x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: $digits, maximumFractionDigits: $digits})")
                         end
                     end
                 end
@@ -93,26 +97,35 @@ fn=(x)->begin
         end
 
         ####### normalize Headers if not internally built #########
-        map(c->c["value"]=trf_col(c["value"]),x.attrs["headers"])
+        map(c->c["key"]=trf_col(c["key"]),x.attrs["headers"])
         
-
-        #### Filter and create Headers Index #####
-        x.attrs["headers_idx"]=Dict()
-        filter_arg=get(x.attrs,"filter",Dict())
-        haskey(x.attrs,"filter") ? delete!(x.attrs,"filter") : nothing
-        @assert filter_arg isa Dict "Filter arg should be a Dict of Column Name and Filter Operator=> $(keys(dt_filter_modes))"
-		x.attrs["headers"] = convert(Vector{Dict{String, Any}}, x.attrs["headers"])
-        for (i,r) in enumerate(x.attrs["headers"])
-            x.attrs["headers_idx"][r["value_orig"]]=i-1
-            
-            ### has filter indication in filter arg
-            filt_oper=get(filter_arg,x.attrs["headers"][i]["value_orig"],nothing)
-            
-            if filt_oper!=nothing
-                @assert filt_oper in keys(dt_filter_modes) "Filter arg should be a Dict of Column Name and Filter Operator=> $(keys(dt_filter_modes))"
-                x.attrs["headers"][i]["filter_value"]=nothing
-                x.attrs["headers"][i]["filter"] = dt_filter_dispatcher(filt_oper) # pass `filtering operator` to construct the generic filter function        
-            end
+        
+        #### Filter #####
+        if haskey(x.attrs,"filter")
+            @assert get(x.attrs,"filter",Dict()) isa Dict "Filter arg should be a Dict of Column Name and Filter Operator=> $(keys(dt_filter_modes))"
+            x.attrs["headers"] = convert(Vector{Dict{String, Any}}, x.attrs["headers"])
+            x.attrs["custom-key-filter"]=Dict()
+            for (k,v) in x.attrs["filter"]      
+                new_col=trf_col(k)
+                fn=dt_filter_dispatcher(v)
+                x.attrs["custom-key-filter"][new_col]=JSFunc("""function (value,item,c){
+                    
+                var col_name='$new_col' 
+                var fn=$fn    
+                var filter_values=JSON.parse(item)
+                var filter_value=filter_values[col_name];
+               
+                return  fn(c["columns"][col_name],filter_value)
+                }
+                """)
+            end          
+            delete!(x.attrs,"filter")
+                
+            x.binds["search"]=x.id*".search"
+            x.attrs["search"]="{}"
+            x.attrs["custom-filter"]=js"""function (value,item,c){return true}"""
+            x.binds["custom-filter"]=x.id*".custom_filter"    
+            x.binds["custom-key-filter"]=x.id*".custom_key_filter"
         end
 
 
@@ -126,7 +139,7 @@ fn=(x)->begin
             x.attrs["col_format"]=new_col_format
             
             for (k,v) in x.attrs["col_format"]
-                x.slots["item.$k='{item}'"]=html("div","",Dict("v-html"=>"datatable_col_format(item.$k,$(x.id).col_format.$k)"))
+                x.slots["item.$k='{item}'"]=html("div","{{datatable_col_format(item.$k,$(x.id).col_format.$k)}}")
 			end
         end
 
@@ -146,7 +159,7 @@ fn=(x)->begin
                      new_d=Dict{String,Any}()
                     for (kk,vv) in value_dom.attrs
                         if vv isa AbstractString && occursin("item.",vv)
-                            new_d[":$kk"]=vue_escape(vv)
+                            new_d[":$kk"]=VueJS.vue_escape(vv)
                         else
                             new_d[kk]=vv
                         end
@@ -158,8 +171,8 @@ fn=(x)->begin
                     vd=deepcopy(v)
                     value_dom=VueJS.dom(vd,is_child=true)
                                         
-                    if value_dom.value isa HtmlElement && value_dom.value.value isa AbstractString && occursin("item.",value_dom.value.value)
-                       value_dom.value.value=vue_escape(value_dom.value.value)
+                    if value_dom.value isa VueJS.HtmlElement && value_dom.value.value isa AbstractString && occursin("item.",value_dom.value.value)
+                       value_dom.value.value=VueJS.vue_escape(value_dom.value.value)
                     end
                     
                 end

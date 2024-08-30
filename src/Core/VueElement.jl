@@ -52,7 +52,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     ## Menu
     menu=get(attrs, "menu", nothing)
     if menu!=nothing
-        @assert (menu isa VueJS.VueElement || menu isa Array) "Menu shoulbe be a VueElement Menu or Vector of items"
+        @assert (menu isa VueJS.VueElement || menu isa Array) "Menu should be a VueElement Menu or Vector of items"
         if menu isa VueJS.VueElement
             items=get(menu.attrs, "items", [])
             attrs["items"]=items
@@ -74,12 +74,24 @@ is_valid_var(x::String)=all(c->islowercase(c) || c=='_' || isnumeric(c), x)
 function VueElement(id::String, tag::String, attrs::Dict)
     @assert is_valid_var(id) "Element variable should be lowercase!"
     vuel=create_vuel_update_attrs(id,tag,attrs)
-    if haskey(vuel.binds,"value") && vuel.value_attr!="value"
-       vuel.binds[vuel.value_attr]=vuel.binds["value"]
+    vuel_value_attr=try VueJS.UPDATE_VALIDATION[vuel.tag].value_attr catch; "value "end
+    
+    if haskey(vuel.binds,"value") && vuel_value_attr!="value"
+       vuel.binds[vuel_value_attr]=vuel.binds["value"]
        delete!(vuel.binds,"value")
     end
     
-    update_validate!(vuel) 
+    VueJS.update_validate!(vuel) 
+    
+    ## Change/Update sufix value_attr Vue 3
+    if vuel.value_attr!=nothing
+        for (k,v) in vuel.attrs
+            if k in ["change","update","input"]
+               vuel.attrs[k*":"*vuel.value_attr]=v
+               delete!(vuel.attrs,k) 
+            end
+        end
+    end
     
     ## Slots
     if length(vuel.slots)!=0
@@ -93,7 +105,22 @@ function VueElement(id::String, tag::String, attrs::Dict)
     return vuel
 end
 
-is_event(k::String)=k in KNOWN_JS_EVENTS || startswith(k,"keyup") || startswith(k,"keydown")
+function is_event(k::String)
+    if k in KNOWN_JS_EVENTS
+        return true
+    elseif startswith(k,"keyup") || startswith(k,"keydown")
+        return true
+    else
+        ret=false
+        for r in KNOWN_JS_EVENTS_COLLON
+            if startswith(k,r)
+                ret=true
+               break
+            end
+        end
+        return ret
+    end
+end
 
 function update_validate!(vuel::VueElement)
 

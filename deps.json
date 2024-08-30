@@ -1,23 +1,26 @@
 [
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.14/vue.js","version":"2.7.14","type":"js", "name":"vue.js"},
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.6.14/vuetify.min.js","version":"2.6.14","type":"js", "name":"vuetify.min.js"},
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.6.14/vuetify.min.css","version":"2.6.14","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
-    {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"1.0","type":"css", "name":"roboto.css"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css","version":"6.0","type":"css", "name":"materialdesignicons.min.css"},
-    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js","version":"2.6.6","type":"js","name":"vue2editor.umd.min.js", "components":{"VueEditor":"vue2editor.components.VueEditor"},"css":".ql-container {height:auto !important} .ql-editor {height:auto !important}"},
-    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue2editor.umd.min.js.map","version":"2.6.6","type":"js", "name":"vue2editor.umd.min.js.map"},
+    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.15/vue.global.prod.min.js","version":"3.4.15","type":"js", "name":"vue.js"},
+
+    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.js","version":"3.5.6","type":"js", "name":"vuetify.min.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.css","version":"3.5.6","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
+     
+
+    {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"5.0","type":"css", "name":"googlefonts.css"},
+    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css","version":"5.0","type":"css", "name":"materialdesignicons.min.css"},
+    
     {"url":"https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.js","version":"5.4.1","type":"js", "name":"echarts.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vue-echarts@6.5.4","version":"6.5.4","type":"js", "name":"vue-echarts.js", "components":{"vuechart":"VueECharts"}},
-    {"url":"https://unpkg.com/vue-async-computed@3.9.0","version":"3.9.0","type":"js", "name":"vue-async-computed.js"},
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.css","version":"6.2.2","type":"css", "name":"handsontable.full.min.css"},
-    {"url":"https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/handsontable.full.min.js","version":"6.2.2","type":"js", "name":"handsontable.full.min.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/@handsontable/vue@4.1.1/dist/vue-handsontable.min.js","version":"4.1.1","type":"js", "name":"vue-handsontable.min.js", "components":{"HotTable":"Handsontable.vue.HotTable"}},
-    {"url":"https://unpkg.com/v-currency-field@3.1.1/dist/v-currency-field.umd.min.js","version":"3.1.1","type":"js", "name":"v-currency-field.umd.min.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.eot?v=4.9.95", "version":"4.9.95", "type":"eot", "name":"materialdesignicons-webfont.eot"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.eot?#iefix&v=4.9.95", "version":"4.9.95", "type":"eot", "name":"materialdesignicons-webfont-iefix.eot"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.woff2?v=4.9.95", "version":"4.9.95", "type":"woff2", "name":"materialdesignicons-webfont.woff2"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.woff?v=4.9.95", "version":"4.9.95", "type":"woff", "name":"materialdesignicons-webfont.woff"},
-    {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@4.x/fonts/materialdesignicons-webfont.ttf?v=4.9.95", "version":"4.9.95", "type":"ttf", "name":"materialdesignicons-webfont.ttf"},
-    {"url":"https://unpkg.com/vue-router@3", "version":"3.6.5", "type":"js", "name":"vue-router.js"},
-    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader@0.8.4/dist/vue2-sfc-loader.js", "version":"0.8.4", "type":"js", "name":"vue2-sfc-loader.js"}
+    {"url":"https://cdn.jsdelivr.net/npm/vue-echarts@6.6.0","version":"6.6.0","type":"js", "name":"vue-echarts.js", "components":{"vuechart":"VueECharts"}},
+
+    
+    {"url":"https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js", "version":"4.2.2", "type":"js", "name":"vue-router.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js", "version":"0.9.5", "type":"js", "name":"vue3-sfc-loader.js"},
+
+    {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js","version":"1.2.0","type":"js", "name":"vue-quill.js", "components":{"QuillEditor": "VueQuill.QuillEditor"}},
+    {"url":"https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css","version":"1.2.0","type":"css", "name":"vue-quill.snow.prod.css","css":".ql-container{height:auto}"},
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid.umd.js","version":"3.7.0","type":"js", "name":"Vue3Revogrid.js","css":"revo-grid .main-viewport {flex-grow:0; height:auto}"},
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vgrid-numeric.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridNumeric.js","init_script":"const NumberColumnType=VgridNumeric.default","components":{"VgridNumeric":"VgridNumeric"}},
+    {"url":" https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js","version":"3.7.0","type":"js", "name":"revo-dropdown.js"},   
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridSelect.js","init_script":"const SelectTypePlugin=RevoGridColumnSelect.default","components":{"RevoGridColumnSelect":"RevoGridColumnSelect"}},
+     {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js","version":"3.34.1","type":"js", "name":"VueNumberFormat.js","directives":{"number":"VueNumberFormat.directive"}}
+    
 ]

@@ -4,7 +4,7 @@ doc="Component for file upload, allows multiple files. When used, the submit fun
     function example(req::HTTP.Request)<br>
     VueJS.parse(req)
     </code>",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     haskey(x.attrs,"multiple") ? nothing : x.attrs["multiple"]=false
 end)
@@ -30,8 +30,8 @@ doc="""Should be used as a argument in other elements, normally v-btn. Example:<
 value_attr=nothing,
 fn=(x)->begin
     haskey(x.attrs,"offset-y") ? nothing : x.attrs["offset-y"]=true
-    @el(menu_list,"v-list",items=x.attrs["items"])
-    x.child=menu_list
+    haskey(x.attrs,"items") ? nothing : x.attrs["items"]=[]    
+    
 end)
 
 UPDATE_VALIDATION["v-switch"]=(
@@ -40,7 +40,7 @@ doc="""Simple element, value attribute is input-value. Switch value on is true, 
     @el(sw,"v-switch",label="Switch",value=false)<br>
     </code>
     """,
-value_attr="input-value",    
+value_attr="model-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
@@ -53,7 +53,7 @@ doc="""Simple element, value attribute is input-value. CheckBox ticked value is 
     @el(sw,"v-checkbox",label="Check",value=false)<br>
     </code>
     """,
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     x.attrs["true-value"]=true
     x.attrs["false-value"]=false
@@ -77,6 +77,7 @@ doc="""Simple Element, value attribute is value. Important attributes are min an
     @el(slid,"v-slider",value=0,min=0,max=50,thumb-label="always",thumb-color="red")
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
@@ -87,6 +88,7 @@ doc="""Simple Element, value attribute is value, return is an array of low and h
     @el(slid,"v-range-slider",value=[10,20],min=0,max=50,thumb-label="always",thumb-color="red")
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=3 : nothing
 end)
@@ -97,7 +99,8 @@ doc="""Simple Element, value attribute is value. Is invoked when v-text-field el
     @el(dpt,"v-text-field",label="Date",type="date")<br>
     @el(dp,"v-date-picker",color="red") # utilization without text field
     </code>
-    """,    
+    """,
+value_attr="model-value",    
 fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
@@ -109,13 +112,12 @@ doc="""Simple Element, allows you to select a color using a variety of input met
     @el(color_picker_in_txt_field, "v-text-field", label="Color", type="color", value="")<br>
     @el(color_picker, "v-color-picker") # utilization without text field
     </code>
-    """,    
+    """,  
+value_attr="model-value",
 fn=(x)->begin
 
     x.cols==nothing ? x.cols=3 : nothing
 end)
-
-
 
 UPDATE_VALIDATION["v-text-field"]=(
 doc="""Simple Element, value attribute is value. If type is date invokes a date picker, if type is color invokes a color picker and finally, if type is number when submited the value will be a valid number in JSON.<br>
@@ -128,35 +130,40 @@ doc="""Simple Element, value attribute is value. If type is date invokes a date 
     @el(tf6, "v-text-field", label="Color Field" , type="color", value="", color-attrs = Dict("show-swatches" => true))  <br>
     </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=2 : nothing
     
-   # -- Render "v-text-field" with date-picker or color-picker.
-    if get(x.attrs,"type","") == "date" || get(x.attrs,"type","") == "color"
-            
-        render_type = x.attrs["type"]
+    # -- Render "v-text-field" with date-picker or color-picker.
+    render_type = get(x.attrs,"type","")
+    if render_type in ["date", "color"]
+
         type_attrs = Dict{String, Any}(get(x.attrs, "$(render_type)-attrs", Dict()))
         type_id    = render_type == "date" ? "v-date-picker" : "v-color-picker"
-                        
+
         x.render_func=(y;opts=PAGE_OPTIONS)->begin
+
             path=opts.path == "" ? "" : opts.path*"."
-            menu_var = "$path$(y.id).menu"
-            y.binds["menu"]  = menu_var
-            y.attrs["v-on"]  = "on"
-            type_attrs["v-model"] = "$path$(y.id).value"
-            
+
+            y.attrs["v-bind"]   = "props"
+            y.attrs["v-model"]  = "$(path)$(y.id).value"
+            y.attrs["readonly"] = true # TODO:
+
+            type_attrs["v-model"]            = "$(path)$(y.id).date"
+            type_attrs["@update:modelValue"] = "$(path)$(y.id).value = dateToString($(path)$(y.id).date)"
+
             # -- Cleanup of attrs not relevant to "v-text-field" element
             delete!(y.attrs,"type")
             delete!(y.attrs,"$(render_type)-attrs")
             delete!(y.binds,"$(render_type)-attrs")
-            dom_txt    = VueJS.dom(y,prevent_render_func=true,opts=opts)
-            domcontent = [ 
-                    html("template",dom_txt,Dict("v-slot:activator"=>"{ on }")),
-                    html(type_id,"", type_attrs) 
+            dom_txt = VueJS.dom(y,prevent_render_func=true,opts=opts)
+            domcontent = [
+                html("template",dom_txt,Dict("v-slot:activator"=>"{ props }")),
+                html(type_id,"",type_attrs) 
             ]
-                
-            return html("v-menu",domcontent,Dict("v-model"=>menu_var,"nudge-right"=>0,"nudge-bottom"=>50,"transition"=>"scale-transition","min-width"=>"290px"),cols=x.cols)    
+
+            return html("v-menu", domcontent, Dict("v-model"=>"$(path)$(y.id).isMenuOpen", ":close-on-content-click"=>"false", "nudge-right"=>40, "transition"=>"scale-transition", "min-width"=>"290px"), cols = x.cols)
         end
     end
 end)
@@ -191,6 +198,7 @@ doc="""Simple Element, value attribute is items. Items are the options available
     @el(sel,"v-select",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify Select element with no arg items!"
@@ -209,6 +217,7 @@ doc="""Simple Element, value attribute is items. Items are the options available
     @el(sel,"v-autocomplete",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify autocomplete element with no arg items!"
@@ -223,7 +232,7 @@ end)
 
 UPDATE_VALIDATION["v-radio-group"]=(
 doc="",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=1 : nothing
@@ -237,7 +246,7 @@ end)
 
 UPDATE_VALIDATION["v-radio"]=(
 doc="",
-value_attr="input-value",
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=1 : nothing
 end)
@@ -250,66 +259,6 @@ fn=(x)->begin
     @assert haskey(x.attrs,"items") "Vuetify List element with no arg items!"
     @assert typeof(x.attrs["items"])<:Array "Vuetify List element with non Array arg items!"
 
-    if haskey(x.attrs,"item") || haskey(x.attrs,"content")
-        
-    
-        if haskey(x.attrs,"item")
-            x.child=x.attrs["item"]
-            delete!(x.attrs,"item")
-        else
-            x.child=x.attrs["content"]
-            delete!(x.attrs,"content")
-        end
-        
-        x.render_func=(y;opts=PAGE_OPTIONS)->begin
-            path=opts.path=="" ? "" : opts.path*"."
-            dom_list=VueJS.dom(y,prevent_render_func=true,opts=opts)
-            
-            opts_item=deepcopy(opts)
-            opts_item.rows=false
-            
-            dom_item=VueJS.dom(y.child,opts=opts_item,is_child=true)
-                        
-            dom_item=html("v-list-item",dom_item)
-            dom_item.attrs["v-for"]="(item, index) in $path$(x.id).value"
-            dom_item.attrs[":key"]="index"
-            
-            dom_list.value=dom_item
-            dom_list
-        end
-    else
-        items=x.attrs["items"]
-            
-        temp = html("template", [], Dict("v-for" => "(item, index) in $(x.id).value"))
-        push!(temp.value, html("v-divider", [], Dict("v-if" => "item.divider", ":key" => "index", "class" => "ma-5")))
-    
-        child = html("v-list-item",[],Dict(":class" => "item.class", "dense" => true, "v-else" => true))
-        
-        #child.attrs["v-for"]="(item, index) in $(x.id).value"
-        #child.attrs[":key"]="index"
-                        
-        sum(map(x->haskey(x,"avatar"),items))>0 ? push!(child.value,html("v-list-item-avatar",html("v-img","",Dict(":src"=>"item.avatar")))) : ""
-        sum(map(x->haskey(x,"icon"),items))>0 ? push!(child.value,html("v-list-item-icon",html("v-icon","",Dict("v-text"=>"item.icon")))) : ""
-        if sum(map(x->haskey(x,"title"),items))>0 
-            contents=[]
-            push!(contents,html("v-list-item-title","",Dict("v-text"=>"item.title")))
-            sum(map(x->haskey(x,"subtitle"),items))>0 ? push!(contents,html("v-list-item-subtitle","",Dict("v-text"=>"item.subtitle"))) : ""
-            push!(child.value,html("v-list-item-content",contents))
-        end
-        
-        has_href=sum(map(x->haskey(x,"href"),items))>0 
-        has_click=sum(map(x->haskey(x,"click"),items))>0 
-        
-        @assert !(has_href && haskey(child.attrs,"click")) "You must choose between href and click!"
-        
-        if has_href
-            child.attrs["link"]=true
-            child.attrs["click"]="open(item.href)"
-        end
-            
-        push!(temp.value, child)
-        x.child=temp            
-    end
 end)
 
 UPDATE_VALIDATION["v-tabs"]=(
@@ -318,6 +267,7 @@ doc="""Holder Element, helper function is the correct method to use. Accepts arr
     tabs(["Tab1"=>[el1,el2,el3],"Tab2"=>[el4,[el5,el6]]])
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify tab with no names, please define names array!"
@@ -325,46 +275,49 @@ fn=(x)->begin
     @assert length(x.attrs["names"])==length(x.elements) "Vuetify Tabs elements should have the same number of names!"
 
     x.render_func=(y;opts=PAGE_OPTIONS)->begin
-       content=[]
+       content1=[]
+       content2=[]
        for (i,r) in enumerate(y.elements)
-           push!(content,HtmlElement("v-tab",Dict(),nothing,y.attrs["names"][i]))
-           value=r isa Array ? VueJS.dom(r,opts=opts) : VueJS.dom([r],opts=opts)
-           push!(content,HtmlElement("v-tab-item",Dict(),12,value))
+            if i>1     
+               push!(content1,HtmlElement("v-tab",Dict("value"=>y.attrs["names"][i]),nothing,y.attrs["names"][i]))
+               value=r isa Array ? VueJS.dom(r,opts=opts) : VueJS.dom([r],opts=opts)
+               push!(content2,HtmlElement("v-window-item",Dict("value"=>y.attrs["names"][i]),nothing,value))
+            end
+            
        end
-       HtmlElement("v-tabs",y.attrs,12,content)
+       el_path=y.elements[1].path=="" ? y.elements[1].id*".value" : y.elements[1].path*"."*y.elements[1].id*".value"
+       state_dict=Dict("v-model"=>el_path)
+       HtmlElement("div",Dict(),nothing,[HtmlElement("v-tabs",state_dict,nothing,content1),HtmlElement("v-window",state_dict,nothing,content2)])
     end
 end)
 
-UPDATE_VALIDATION["v-navigation-drawer"]=(
+VueJS.UPDATE_VALIDATION["v-navigation-drawer"]=(
 doc="",
-value_attr=nothing,
+value_attr="model-value",
 fn=(x)->begin
 
     @assert haskey(x.attrs,"items") "Vuetify navigation with no items, please define items array!"
     @assert x.attrs["items"] isa Array "Vuetify navigation items should be an array"
-
-    item_names=collect(keys(x.attrs["items"][1]))
-    x.tag="v-list"
-            
-    VueJS.update_validate!(x)
-
+    
     x.render_func=(y;opts=PAGE_OPTIONS)->begin
-
-        dom_nav=VueJS.dom(y,prevent_render_func=true,opts=PAGE_OPTIONS)
-
-        nav_attrs=Dict()
-
-        for (k,v) in Dict("clipped"=>true,"width"=>200, "expand-on-hover"=>true, "permanent"=>true, "right"=>false)
-            haskey(y.attrs,k) ? nav_attrs[k]=y.attrs[k] : nav_attrs[k]=v
-        end
-
-        html("v-navigation-drawer",dom_nav,nav_attrs,cols=12)
+    
+        domvalue = VueJS.dom(y, prevent_render_func = true, opts = opts)
+        
+        items_path=domvalue.attrs[":items"]    
+        delete!(domvalue.attrs,":items")
+       
+        dom_list=html("v-list","",Dict(":items"=>items_path,"item-props"=>true),cols=y.cols)
+        
+        domvalue.value=dom_list
+        
+        return domvalue    
     end
 end)
 
 
 UPDATE_VALIDATION["v-card"]=(
-doc="", 
+doc="",
+value_attr=nothing,    
 fn=(x)->begin
 
     @assert haskey(x.attrs,"names") "Vuetify card with no names, please define names array!"
@@ -391,7 +344,7 @@ value_attr=nothing,
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=12 : nothing
-    
+   
     ## Validations
     haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
     
@@ -400,10 +353,12 @@ fn=(x)->begin
     haskey(x.attrs,"type") ? nothing : x.attrs["type"]="success"
     haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
     
+        
     ## 3 Basic Bindings
     x.binds["content"]=x.id*".content"
     x.binds["type"]=x.id*".type"
     x.binds["value"]=x.id*".value"
+    x.binds["model-value"]=x.id*".value"
     
     x.binds["v-html"]=x.id*".content"
     
@@ -421,7 +376,8 @@ doc="""Simple Element, value attribute is value. Text Box bigger than v-text-fie
     <code>
     @el(tf,"v-textarea",label="Text Field",rows=10)<br>
     </code>
-    """, 
+    """,
+value_attr="model-value",    
 fn=(x)->begin
     
     x.cols==nothing ? x.cols=3 : nothing
@@ -434,6 +390,7 @@ doc="""Simple Element. Items are the options available to select. Value is the s
     @el(sel,"v-combobox",items=["A","B","C"],multiple=true)
     </code>
     """,
+value_attr="model-value",
 fn=(x)->begin
     x.cols==nothing ? x.cols=2 : nothing
     
@@ -479,6 +436,7 @@ EX-4:
 Custom prepend. Expects custom icon field "file" to specify icon information, else defaults to custom default icon "mdi-upload".
 <code> @el(tree, "v-treeview", items=tree_data,  prepend-icon = Dict("default-icon" => "mdi-upload", "custom-icon-field" => "file"))  </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
     
     # Default attributes
@@ -526,6 +484,7 @@ doc="""The <code> v-progress-linear </code> component is used to convey data vis
 Default v-progress-linear; By default it has width corresponding to the size of its container, is indeterminate and is hidden (inactive).
 <code> @el(loading, "v-progress-linear")  </code>
 """,
+value_attr="model-value",
 fn=(x)->begin
         x.cols == nothing ? x.cols = 12 : nothing
         

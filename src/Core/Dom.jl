@@ -29,7 +29,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
             if value isa AbstractString && occursin("item.",value)
                 r.attrs[":$k"]=trf_vue_expr(value,opts=opts)               
                 if k==r.value_attr 
-                    event=r.value_attr=="value" ? "input" : "change"
+                    event=r.value_attr=="model-value" ? "update:$(r.value_attr)" : "update:$(r.value_attr)"
                     ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
                       if haskey(r.attrs,event)
                         r.attrs[event]=ev_expr*r.attrs[event]*";"
@@ -69,8 +69,13 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
          
         ## Own attrs
         else
-            r.attrs[":$k"]=vue_escape(value)
-            delete!(r.attrs,k)
+            if k in DIRECTIVES
+                r.attrs[k]=vue_escape(value)
+            else
+                r.attrs[":$k"]=vue_escape(value)
+                delete!(r.attrs,k)
+            end
+          
         end
     end
 
@@ -78,8 +83,16 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
     if haskey(r.binds,r.value_attr)
         v=r.binds[r.value_attr]
         value=opts.path=="" ? v : opts.path*"."*v
-        event=r.value_attr=="value" ? "input" : "change"
-        ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
+        event=r.value_attr=="model-value" ? "update:$(r.value_attr)" : "update:$(r.value_attr)"
+
+        ## Numbers - Directive v-number ##
+        if haskey(r.attrs,"v-number")
+            vnumberpath=opts.path=="" ? r.id*".v_number" : opts.path*"."*r.id*".v_number"
+            ev_expr="$value= toNumber(\$event,$vnumberpath);"
+        else
+            ev_expr="$value= \$event;"
+        end
+        
         if haskey(r.attrs,event)
             r.attrs[event]=ev_expr*r.attrs[event]*";"
         else
@@ -153,68 +166,50 @@ function dom(vuel_orig::VueJS.VueElement;opts=VueJS.PAGE_OPTIONS,prevent_render_
     ## Tooltip 
     tooltip=get(vuel.no_dom_attrs,"tooltip",nothing)
     if tooltip!=nothing
-       dom_ret=VueJS.activator(tooltip,dom_ret,"v-tooltip") 
+        tooltip_dom=dom(tooltip,opts=opts,is_child=true)
+        if tooltip_dom isa HtmlElement
+            tooltip_dom.tag=="v-tooltip" ? nothing : tooltip_dom=HtmlElement("v-tooltip", Dict(), tooltip_dom.cols, tooltip_dom)
+            tooltip_dom.attrs["activator"]="parent"
+        end
+        if dom_ret.value==""
+            dom_ret.value=tooltip_dom
+        else
+            dom_ret.value=[dom_ret.value,tooltip_dom]
+        end
     end
     
     ## Menu 
     menu=get(vuel.no_dom_attrs,"menu",nothing)
     if menu!=nothing
-        
-       dom_ret=VueJS.activator(menu,dom_ret,"v-menu") 
-       path=opts.path=="" ? "" : opts.path*"."
-       if haskey(vuel.attrs,"click")
-            # place @click at list-item level, not at the template level
-            [x.attrs["click"] = vuel.attrs["click"] for x in dom_ret.value[1].value.value if x.tag == "v-list-item"]
-            #dom_ret.value[1].value.attrs["click"]=vuel.attrs["click"]
-            delete!(vuel.attrs,"click")
+            
+        if menu isa Vector
+            menu_items=deepcopy(menu)
+            @el(menu,"v-menu",items=menu_items)
         end
-       dom_ret.value[1].value.attrs["v-for"]="(item, index) in $path$(vuel.id).items"
-       delete!(dom_ret.attrs,"items")
-       delete!(dom_ret.value[1].attrs,"items")
-       
+
+       @assert menu.tag=="v-menu" "Menu value shall be a v-menu Element"
+       delete!(menu.attrs,"items")
+       menu_dom=dom(menu,opts=opts,is_child=true)
+       items_path=vuel.attrs[":items"]
+       menu_dom.value=html("v-list",html("v-list-item",html("v-list-item-title","{{item.title}}",Dict()),
+                Dict("v-for"=>"(item, index) in $items_path",":key"=>"index",":value"=>"index")))
+       if haskey(vuel.attrs,"click") 
+            menu_dom.value.value.attrs["click"]=vuel.attrs["click"]
+            delete!(vuel.attrs,"click")
+       else
+            menu_dom.value.value.attrs["click"]="open(item.href)"
+       end
+       delete!(vuel.attrs,":items")
+      
+       if menu isa VueJS.VueElement
+            menu_dom.attrs["activator"]="parent"
+       end
+        
+       dom_ret.value=dom_ret.value=="" ? menu_dom : [dom_ret.value,menu_dom]
+        
     end
     
     return dom_ret
-end
-
-function activator(activated::VueJS.VueElement,dom_ret::VueJS.HtmlElement,act_type::String)
-    
-    dom_act=dom(activated,is_child=true)
-    
-    return activator(dom_act,dom_ret,act_type)
-end
-
-function activator(dom_act::VueJS.HtmlElement,dom_ret::VueJS.HtmlElement,act_type::String)
-    @assert dom_act.tag==act_type "Element $dom_act cannot be activated!"
-    dom_ret.attrs["v-on"]="on"
-    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
-    dom_act.cols=dom_ret.cols
-    
-    if dom_ret.value==nothing
-       dom_act.value=dom_template
-    else
-        dom_act.value=[dom_act.value,dom_template]
-    end
-
-    return dom_act
-end
-
-function activator(dom_act::String,dom_ret::VueJS.HtmlElement,act_type::String)
-    
-    dom_ret.attrs["v-on"]="on"
-    dom_template=html("template",dom_ret,Dict("v-slot:activator"=>"{on}"))
-    dom_act=html(act_type,[dom_act,dom_template])
-    dom_act.cols=dom_ret.cols
-
-    return dom_act
-end
-
-function activator(items::Vector,dom_ret::VueJS.HtmlElement,act_type::String)
-      @el(new_menu,"v-menu",items=items)
-      dom_act=VueJS.dom(new_menu,is_child=true)
-      dom_act=activator(dom_act,dom_ret,act_type)
-
-    return dom_act
 end
 
 function get_cols(v::Array;rows=true)

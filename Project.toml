@@ -1,7 +1,7 @@
 name = "VueJS"
 uuid = "dd23b82c-c6e2-490f-8a36-5dab9c7f2253"
 authors = ["Antonio Loureiro <ajose.loureiro@gmail.com>"]
-version = "1.2.0"
+version = "2.0.0"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"

@@ -2,6 +2,12 @@
 
 ## Documentation: [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://antonioloureiro.github.io/VueJS.jl/)
 
+## Introduction
+
+VueJS.jl is a Julia package that facilitates the creation of reactive, interactive web applications by leveraging the Vue.js framework directly from Julia. It allows you to combine the flexibility and simplicity of Vue.js with the computational power of Julia, making it an excellent tool for building dynamic web applications with ease.
+It uses [Vuetify](https://vuetifyjs.com/en/) as main Vue Framework, but also leverages on Echarts through Julia Namtso package and others.
+The main philosofy is to pass through to the frameworks all of the introduced arguments with several automations and special cases.
+
 ## Installation
 
 The package can be installed with Julia's package manager,
@@ -15,10 +21,10 @@ julia> using Pkg; Pkg.add("VueJS")
 ```
 
 ## Quick Start
-See Documentation for additional examples
+See [Documentation](https://antonioloureiro.github.io/VueJS.jl/) for additional examples.
 
 ```julia
-using HTTP,VueJS
+using HTTP,VueJS,Sockets
 
 function home(req::HTTP.Request)
     @el(slider,"v-slider",value=20,label="Use Slider",cols=4)
@@ -33,6 +39,6 @@ function home(req::HTTP.Request)
 end
 
 const ROUTER = HTTP.Router()
-HTTP.@register(ROUTER, "GET", "/home", home)
-HTTP.serve(ROUTER,"127.0.0.1", 80)
+HTTP.@register!(ROUTER, "GET", "/home", home)
+HTTP.serve(ROUTER,Sockets.getipaddr(), 80)
 ```

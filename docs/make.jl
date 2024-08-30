@@ -36,7 +36,7 @@ function docs()
     @css "code" Dict("background-color"=>"lightcyan")
     
     @el(bt,"v-btn",value="Link",click="open(item.Link)",small=true,outlined=true,color="indigo")
-    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),caption="Live Examples",density="comfortable",items-per-page=50,cols=3.5)
+    @el(dt_live,"v-data-table",items=df_examples,col_template=Dict("Link"=>bt),density="comfortable",items-per-page=50,cols=3.5)
 
     df_components=DataFrame(Component=[],Library=[],Value_Attr=[],Doc=[])
     for (k,v) in VueJS.UPDATE_VALIDATION
@@ -44,7 +44,7 @@ function docs()
     end
     @el(bt_doc,"v-btn",value="Doc",click="doc_el.value=item.doc;title_el.value=item.component;dial.active.value=true",small=true,outlined=true,color="indigo")
     @el(st,"v-text-field",label="Search Components")
-    @el(dt_components,"v-data-table",items=df_components,col_template=Dict("Doc"=>bt_doc),caption="Components",binds=Dict("search"=>"st.value"),density="comfortable",items-per-page=50,cols=4)
+    @el(dt_components,"v-data-table",items=df_components,col_template=Dict("Doc"=>bt_doc),binds=Dict("search"=>"st.value"),density="comfortable",items-per-page=50,cols=4)
 
     @el(doc_el,"v-text-field",value="",v-show="false")
     @el(title_el,"v-text-field",value="",v-show="false")
@@ -79,7 +79,7 @@ function docs()
         close(io)
     end
     
-    pcomp=page([st,[dt_components,spacer(),dt_live],dial,title_el,doc_el],navigation=nav,bar=barapp);
+    pcomp=page([st,[[html("h3","Components",cols=4),dt_components],spacer(),[html("h3","Demo Pages (with Code)",cols=3.5),dt_live]],dial,title_el,doc_el],navigation=nav,bar=barapp);
         
     # write out entry page to index.html
     io = open(joinpath(TARGET_DIR, INDEX_PAGE), "w")

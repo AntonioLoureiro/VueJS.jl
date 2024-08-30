@@ -7,7 +7,7 @@ using Namtso, VueJS
 @dialog(dial,[r1,r2],persistent=false,max-width=800)
 
 @testset "Tests" begin
-    @test r1.value_attr=="value"
+    @test r1.value_attr=="model-value"
     @test c1.binds==Dict("r1" => Dict("label"=>Dict("r2"=>"value")))
     @test c1.grid[1].attrs==Dict("label"=>"R1","disabled" => false,"value"=> "R1 Value","prepend-icon" => "mdi-account")
     @test dial.id=="dial"

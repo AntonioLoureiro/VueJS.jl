@@ -69,8 +69,13 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
          
         ## Own attrs
         else
-            r.attrs[":$k"]=vue_escape(value)
-            delete!(r.attrs,k)
+            if k in DIRECTIVES
+                r.attrs[k]=vue_escape(value)
+            else
+                r.attrs[":$k"]=vue_escape(value)
+                delete!(r.attrs,k)
+            end
+          
         end
     end
 
@@ -79,7 +84,15 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
         v=r.binds[r.value_attr]
         value=opts.path=="" ? v : opts.path*"."*v
         event=r.value_attr=="model-value" ? "update:$(r.value_attr)" : "update:$(r.value_attr)"
-        ev_expr=get(r.attrs,"type","")=="number" ? "$value= toNumber(\$event);" : "$value= \$event;"
+
+        ## Numbers - Directive v-number ##
+        if haskey(r.attrs,"v-number")
+            vnumberpath=opts.path=="" ? r.id*".v_number" : opts.path*"."*r.id*".v_number"
+            ev_expr="$value= toNumber(\$event,$vnumberpath);"
+        else
+            ev_expr="$value= \$event;"
+        end
+        
         if haskey(r.attrs,event)
             r.attrs[event]=ev_expr*r.attrs[event]*";"
         else

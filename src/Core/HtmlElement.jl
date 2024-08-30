@@ -20,8 +20,6 @@ function attr_render(k,v)
         return " $k"
     elseif v isa Bool && !v   #false
         return ""
-    elseif startswith(k,":")
-        return " $k=\"$(replace(string(v),"\""=>"'"))\" "
     else
         return " $k=\"$(replace(string(v),"\""=>"'"))\" "
     end

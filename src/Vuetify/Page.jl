@@ -76,6 +76,7 @@ function htmlstring(page_inst::VueJS.Page)
                 comp_script=[]                    
                 push!(comp_script,"template: '#app-template'")
                 push!(comp_script,"components:components")
+                push!(comp_script,"directives:directives")        
                 push!(comp_script,"data(){return app_state}")
                 push!(comp_script, v.scripts)
                 
@@ -106,8 +107,13 @@ function htmlstring(page_inst::VueJS.Page)
         # Add components to scripts
         components = Dict{String,String}()
         [merge!(components, d.components) for d in page_inst.dependencies if length(d.components) > 0]
+
+        # Add directives to scripts
+        directives = Dict{String,String}()
+        [merge!(directives, d.directives) for d in page_inst.dependencies if length(d.directives) > 0]
                 
         scripts=vcat(["""const components = $(replace(VueJS.JSON.json(components),"\""=>""))""",
+        """const directives = $(replace(VueJS.JSON.json(directives),"\""=>""))""",               
         join(map(x->x.init_script,filter(x->x.init_script!="",page_inst.dependencies)),"\n"),
         "const app_state = $(VueJS.vue_json(app_state))"],scripts)
             

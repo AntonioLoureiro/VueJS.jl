@@ -4,6 +4,7 @@ Base.@kwdef mutable struct WebDependency
     version::String                 = ""
     type::String                    = extension(path)
     components::Dict{String,String} = Dict{String, String}()
+    directives::Dict{String,String} = Dict{String, String}()    
     init_script::String             = ""
     css::String                     = ""
     sha::String                     = ""
@@ -14,6 +15,7 @@ WebDependency(x::Dict) = WebDependency(get(x, "name", basename(x["url"])),
                     x["version"], 
                     get(x, "type", extension(basename(x["url"]))), 
                     get(x,"components",Dict()),
+                    get(x,"directives",Dict()),
                     get(x,"init_script",""),
                     get(x,"css",""), 
                     "", 

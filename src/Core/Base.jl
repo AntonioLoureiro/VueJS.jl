@@ -1,5 +1,5 @@
 const MODULE_ROOT           = normpath(joinpath(@__FILE__,"..","..", ".."))
-const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show"]
+const DIRECTIVES            = ["v-html", "v-text", "v-for", "v-if", "v-on", "v-style", "v-show","v-number"]
 const KNOWN_JS_EVENTS       = ["input", "click", "mouseover", "mouseenter", "change","update"]
 const KNOWN_JS_EVENTS_COLLON=map(x->x*":",KNOWN_JS_EVENTS)
 const CONTEXT_JS_FUNCTIONS  = ["submit", "add", "remove"]
@@ -303,3 +303,5 @@ function trf_vue_expr(expr::String;opts=PAGE_OPTIONS)
     end
     return join(expr_out)
 end
+
+trf_vue_expr(expr;opts=PAGE_OPTIONS)=expr

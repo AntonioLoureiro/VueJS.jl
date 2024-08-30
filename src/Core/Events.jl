@@ -158,8 +158,22 @@ function(name, value, days) {
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("setcookie","",function_script))
 
 #toNumber
-function_script = """function (val) {
+function_script = """function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
   var n = parseFloat(val);
+    
   return isNaN(n) ? val : n
 }"""
 push!(STANDARD_APP_EVENTS,MethodsEventHandler("toNumber","",function_script))

@@ -260,26 +260,31 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         if context!="app_state"
             push!(fn_dict_prev["submit"],"$(vs.id):this.$(vs.id).submit(url,null, method, async,true)")
         end
-    
-     ### Submit fn
-     if fn_dict["mp_mode"]==false
-         def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
-            
+
+        ### Submit fn
+        files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
+        json_obj="{"*join(fn_dict["submit"],",")*"}"
+
+        def_data["submit"] = """function(url, sub_content=null, method, async, no_post=false, mp_mode=$(fn_dict["mp_mode"])) {
+
+    // JSON object mode
+    if (mp_mode) {
+
         if (sub_content==null){
-         content={$(join(fn_dict["submit"],","))};
+            content={$(join(fn_dict["submit"],","))};
             if (no_post) {
                 return content
             } else {
                 return xhr(JSON.stringify(content), url, method, async)
             }
-            } else {
-               if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
-               return xhr(JSON.stringify(sub_content), url, method, async)
-            }}"""
-    else
-        files_obj=join(map(x->"{'$x':$x}",fn_dict["submit_files"]),",")
-        json_obj="{"*join(fn_dict["submit"],",")*"}"
-        def_data["submit"]="""function(url, sub_content=null,method, async, no_post=false) {
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
         if (sub_content==null){
             const content = new FormData();
             json_content=JSON.stringify($json_obj);
@@ -294,35 +299,37 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
                     }
                 }
             }
-                if (no_post) {
-                     return $json_obj
-                } else {
-                    return xhr(content, url, method, async)
-                }
+            if (no_post) {
+                return $json_obj
+            } else {
+                return xhr(content, url, method, async)
+            }
         } else{ 
             if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
             const content = new FormData();
             for (oi in sub_content){
-                            if (Array.isArray(sub_content[oi])){
+                if (Array.isArray(sub_content[oi])){
                     if(typeof(sub_content[oi][0])=="object"){
                         
                         for (const el in sub_content[oi]){
-                                if(typeof(sub_content[oi][0].filename=="String")){
-                                    file_name='app_state.'+oi+'.value.'+el
-                                    content.append(file_name,sub_content[oi][el]);
-                                }
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
                         } 
-                    }}}
-            
+                    }
+                }
+            }
             json_content=JSON.stringify(sub_content);
             const blob = new Blob([json_content], {type: 'application/json'});
             content.append("json", blob);
             return xhr(content, url, method, async)
-        }}"""   
-            
-    end
-    
-    vs.def_data=def_data
+        }
+
+    }         
+}"""
+
+	vs.def_data=def_data
     end
     
     if fn_dict["mp_mode"] 

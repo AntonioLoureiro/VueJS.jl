@@ -36,6 +36,17 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
     style=get(attrs,"style",Dict())
     @assert style isa Dict "style attr should be a Dict"
     length(style)!=0 ? style=convert(Dict{String,Any},style) : nothing
+
+    ## V-Number
+    v_number=get(attrs,"v-number",Dict())
+    @assert v_number isa Dict "v-number should be a Dict"
+    if length(v_number)!=0
+       v_number=convert(Dict{String,Any},v_number)
+       ## Number Defaults 
+       haskey(v_number,"decimal") ? nothing : v_number["decimal"]="."
+       haskey(v_number,"separator") ? nothing : v_number["separator"]=" "
+       attrs["v-number"]=v_number
+    end
     
     ## No Dom attrs
     no_dom_attrs=Dict{String, Any}()

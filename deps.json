@@ -4,7 +4,7 @@
     {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.js","version":"3.5.6","type":"js", "name":"vuetify.min.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vuetify@3.5.6/dist/vuetify.min.css","version":"3.5.6","type":"css", "name":"vuetify.min.css", "css":"[v-cloak] {display: none}"},
      
-
+    {"url":"https://unpkg.com/vue-async-computed@4.0.1/dist/vue-async-computed.js","version":"4.0.1","type":"js", "name":"VueAsyncComputed.js"},
     {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"5.0","type":"css", "name":"googlefonts.css"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css","version":"5.0","type":"css", "name":"materialdesignicons.min.css"},
     
@@ -22,5 +22,5 @@
     {"url":" https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js","version":"3.7.0","type":"js", "name":"revo-dropdown.js"},   
     {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect.umd.js","version":"3.7.0","type":"js", "name":"Vue3RevogridSelect.js","init_script":"const SelectTypePlugin=RevoGridColumnSelect.default","components":{"RevoGridColumnSelect":"RevoGridColumnSelect"}},
      {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js","version":"3.34.1","type":"js", "name":"VueNumberFormat.js","directives":{"number":"VueNumberFormat.directive"}}
-    
+   
 ]

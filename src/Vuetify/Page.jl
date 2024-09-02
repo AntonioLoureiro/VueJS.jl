@@ -79,8 +79,9 @@ function htmlstring(page_inst::VueJS.Page)
                 push!(comp_script,"directives:directives")        
                 push!(comp_script,"data(){return app_state}")
                 push!(comp_script, v.scripts)
-                
-                comp_script="const app = Vue.createApp({"*join(comp_script,",")*"}).use(vuetify).mount('#app')"
+
+                ## AsyncComputed is mandatory ##
+                comp_script="const app = Vue.createApp({"*join(comp_script,",")*"}).use(vuetify).use(AsyncComputed).mount('#app')"
                 push!(scripts,comp_script)
                 opts=VueJS.PAGE_OPTIONS
                 opts.path="root"

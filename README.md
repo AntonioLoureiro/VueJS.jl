@@ -21,7 +21,7 @@ julia> using Pkg; Pkg.add("VueJS")
 ```
 
 ## Quick Start
-See [Documentation](https://antonioloureiro.github.io/VueJS.jl/) **(that is dynamically created using VueJS!)** for additional examples.
+See [Documentation](https://antonioloureiro.github.io/VueJS.jl/) **(that is created using VueJS!)** for additional examples.
 
 ```julia
 using HTTP,VueJS,Sockets

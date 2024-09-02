@@ -30,7 +30,7 @@ function update_dom(r::VueElement;opts=PAGE_OPTIONS,is_child=false)
                 r.attrs[":$k"]=trf_vue_expr(value,opts=opts)               
                 if k==r.value_attr 
                     event="update:$(r.value_attr)"
-                    if ev_expr=get(r.attrs,"type","")=="number"
+                    if haskey(r.attrs,"v-number")
                        vnumberpath=opts.path=="" ? r.id*".v_number" : opts.path*"."*r.id*".v_number"
                        ev_expr="$value= toNumber(\$event,$vnumberpath);" 
                     end

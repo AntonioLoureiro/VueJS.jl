@@ -268,7 +268,7 @@ function in_context_functions!(vs::VueStruct,fn_dict_prev::Dict,context::String,
         def_data["submit"] = """function(url, sub_content=null, method, async, no_post=false, mp_mode=$(fn_dict["mp_mode"])) {
 
     // JSON object mode
-    if (mp_mode) {
+    if (!mp_mode) {
 
         if (sub_content==null){
             content={$(join(fn_dict["submit"],","))};

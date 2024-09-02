@@ -339,36 +339,28 @@ fn=(x)->begin
 end)
 
 UPDATE_VALIDATION["v-alert"]=(
-doc="",
-value_attr=nothing,
+doc="""Simple Element, that can be used to display important information to the user<br>
+    <code>
+    @el(tf,"v-alert",text="Alert text",value=true,type="warning",rows=10)<br>
+    </code>
+    """,
+value_attr="model-value",
 fn=(x)->begin
     
+    # Defaults
     x.cols==nothing ? x.cols=12 : nothing
-   
-    ## Validations
-    haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
-    
-    ## 3 Basic Defaults
-    haskey(x.attrs,"content") ? nothing : x.attrs["content"]=""
+    haskey(x.attrs,"text") ? nothing : x.attrs["text"]=""
     haskey(x.attrs,"type") ? nothing : x.attrs["type"]="success"
-    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false
-    
-        
-    ## 3 Basic Bindings
-    x.binds["content"]=x.id*".content"
-    x.binds["type"]=x.id*".type"
-    x.binds["value"]=x.id*".value"
-    x.binds["model-value"]=x.id*".value"
-    
-    x.binds["v-html"]=x.id*".content"
-    
-    dismissible = get(x.attrs, "dismissible", false)
-    timeout = get(x.attrs, "timeout", 4000)
-    delay = get(x.attrs, "delay", 0)
+    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false  
+    haskey(x.attrs,"closable") ? nothing : x.attrs["closable"]=false  
 
+    # Validations
+    haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing
+
+    # Auto-close
+    timeout = get(x.attrs, "timeout", 4000)
     timeout_func="function(val,old){val ? setTimeout(()=>{this.$(x.id).value = false}, $timeout) : ''}"
     haskey(x.events,"watch") ? x.events["watch"]["$(x.id).value"]=timeout_func : x.events["watch"]=Dict("$(x.id).value"=>timeout_func)
-
 end)
 
 UPDATE_VALIDATION["v-textarea"]=(

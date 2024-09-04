@@ -45,6 +45,7 @@ function create_vuel_update_attrs(id::String,tag::String,attrs::Dict)
        ## Number Defaults 
        haskey(v_number,"decimal") ? nothing : v_number["decimal"]="."
        haskey(v_number,"separator") ? nothing : v_number["separator"]=" "
+       @assert v_number["separator"]!="." """Separator in V-Number should not be a "." (Bug in JS Library!)"""
        attrs["v-number"]=v_number
     end
     

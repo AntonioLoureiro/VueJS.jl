@@ -14,6 +14,8 @@ df[!,:Value]=rand(10).*10000 .-5000
 @el(r2,"revo-grid",value=df,cols=3) ## DataFrame Input
 @el(r3,"revo-grid",value=df,cols=3) ## DataFrame Input
 
+@css ".bubble" Dict("display"=>"inline-block","line-height"=>"24px","border-radius"=>"100%","padding"=>"0 20px","color"=>"white")
+     
 ## Attribute Editing after initialization ##
 ct=Dict("numeric"=>js"new NumberColumnType('0,0.00')","select"=> js"new SelectTypePlugin()","date"=> js"new DateTypePlugin()")
 r3.attrs["columnTypes"]=ct

@@ -74,6 +74,8 @@ fn=(x)->begin
        x.attrs["columns"]=ret_data.columns
        ret_data.columnTypes==Dict() ? nothing : x.attrs["columnTypes"]=ret_data.columnTypes
     end
+     
+    haskey(x.attrs,"hide-attribution") ? nothing : x.attrs["hide-attribution"]=true
     
     @assert haskey(x.attrs,"columns") "columns attr is mandatory!"
 end)

@@ -351,8 +351,11 @@ fn=(x)->begin
     x.cols==nothing ? x.cols=12 : nothing
     haskey(x.attrs,"text") ? nothing : x.attrs["text"]=""
     haskey(x.attrs,"type") ? nothing : x.attrs["type"]="success"
-    haskey(x.attrs,"value") ? nothing : x.attrs["value"]=false  
     haskey(x.attrs,"closable") ? nothing : x.attrs["closable"]=false  
+    
+    ## Binds
+    haskey(x.binds,"text") ? nothing : x.binds["text"]=x.id.*".text"
+    haskey(x.binds,"type") ? nothing : x.binds["type"]=x.id.*".type"
 
     # Validations
     haskey(x.attrs,"value") ? (@assert x.attrs["value"] isa Bool "Value Attr of Alert Should be Bool") : nothing

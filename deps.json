@@ -20,7 +20,7 @@
     
     {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGrid/vue3-datagrid.umd.js","version":"4.11.8","type":"js", "name":"Vue3Revogrid.js","css":"revo-grid .main-viewport {flex-grow:0; height:auto} revo-grid[theme=default] {border:0px}"},
     
-    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js","version":"1.0.2","type":"js", "name":"Vue3RevogridNumeric.js","init_script":"const NumberColumnType=VgridNumeric.default","components":{"VgridNumeric":"VgridNumeric"}},
+    {"url":"https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js","version":"2.0.3","type":"js", "name":"Vue3RevogridNumeric.js","init_script":"const NumberColumnType=VgridNumeric.default","components":{"VgridNumeric":"VgridNumeric"}},
     
     {"url":"https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js","version":"3.6.5","type":"js", "name":"revo-dropdown.js"},   
     

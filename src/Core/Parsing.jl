@@ -31,7 +31,7 @@ function parse(req::HTTP.Request)
         end
         
     else
-       body=JSON.parse(String(req.body), dicttype = Dict)
+       body=JSON.parse(String(req.body), Dict)
     end
     
     return (body=body,headers=headers,args=args)

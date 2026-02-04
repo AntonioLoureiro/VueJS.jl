@@ -1,0 +1,2 @@
+- name: Register Julia Package
+  uses: julia-actions/RegisterAction@v0.3.2

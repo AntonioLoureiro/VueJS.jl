@@ -10,7 +10,7 @@ function parse(req::HTTP.Request)
         files_arr=[]
         for (i,p) in enumerate(mp)
             if p.name=="json"
-                body=JSON.parse(p.data) 
+                body=JSON.parse(p.data, Dict)
             else
                push!(files_arr,Dict("name"=>p.name,"filename"=>p.filename,"contenttype"=>p.contenttype,"data"=>String(take!(p.data))))
             end

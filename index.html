@@ -1,0 +1,241 @@
+<!DOCTYPE html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.css"  type="text/css" ></link><script src="https://unpkg.com/vue-async-computed@4.0.1/dist/vue-async-computed.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" ></link><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"  type="text/css" ></link><script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@7.0.3" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js" ></script><script src="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css"  type="text/css" ></link><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGrid/vue3-datagrid.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js" ></script><script src="https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect/RevoGridColumnSelect.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnDate/revogrid-column-date.umd.cjs" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js" ></script><style>  [v-cloak] {display: none}         .ql-container{height:auto} revo-grid .main-viewport {flex-grow:0; height:auto} revo-grid[theme=default] {border:0px}      .custom_css {font-weight:bold;background-color:lightcyan;} .bubble {display:inline-block;padding:0 20px;color:white;border-radius:100%;line-height:24px;} code {background-color:lightcyan;}</style></head><body><script v-cloak id="app-template"  type="text/x-template" ><v-app><v-main><v-container fluid><v-row><v-col align-content="center"  md="2"  justify="center"  align="center" ><v-text-field label="Search Components"  :model-value="st.value"  @update:model-value="st.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="4"  justify="center"  align="center" ><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><h3><div>Components</div></h3></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-data-table :search="st.value"  density="comfortable"  :model-value="dt_components.value"  :headers="dt_components.headers"  :items-per-page="dt_components.items_per_page"  :items="dt_components.items"  @update:model-value="dt_components.value= $event;" ><template v-slot:item.col_doc='{item}'><div><v-btn outlined @click="doc_el.value=item.col_doc;title_el.value=item.col_component;dial.active.value=true"  small color="indigo" ><div>Doc</div></v-btn></div></template></v-data-table></v-col></v-row></v-col><v-col align-content="center"  md="1"  justify="center"  align="center" ><v-spacer></v-spacer></v-col><v-col align-content="center"  class="flex-grow-1"  md="4"  style="max-width: 29%;"  justify="center"  align="center" ><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><h3><div>Demo Pages (with Code)</div></h3></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-data-table density="comfortable"  :model-value="dt_live.value"  :headers="dt_live.headers"  :items-per-page="dt_live.items_per_page"  :items="dt_live.items"  @update:model-value="dt_live.value= $event;" ><template v-slot:item.col_link='{item}'><div><v-btn outlined @click="open(item.col_link)"  small color="indigo" ><div>Link</div></v-btn></div></template></v-data-table></v-col></v-row></v-col></v-row><v-dialog max-width="2400"  active="0"  width="800"  :model-value="dial.active.value"  persistent><v-card><v-container><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><div><div><h2 v-html="title_el.value" align="left"></h2></div></div></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-card names="Any['v-card-text']" ><v-card-text><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><div><div><div v-html="doc_el.value" align="left"></div></div></div></v-col></v-row></v-card-text></v-card></v-col></v-row><v-row><v-col align-content="center"  md="1"  justify="center"  align="center" ><v-btn :outlined="dial.bt_close.outlined"  @click="dial.active.value=false"  :small="dial.bt_close.small"  color="indigo" ><div>Close</div></v-btn></v-col></v-row></v-container></v-card></v-dialog><v-row><v-col align-content="center"  md="2"  justify="center"  align="center" ><v-text-field v-show="false"  :model-value="title_el.value"  @update:model-value="title_el.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="2"  justify="center"  align="center" ><v-text-field v-show="false"  :model-value="doc_el.value"  @update:model-value="doc_el.value= $event;" ></v-text-field></v-col></v-row></v-container></v-main><v-navigation-drawer @update:model-value="v_navigation_drawer.nav.value= $event;"  :expand-on-hover="v_navigation_drawer.nav.expand_on_hover"  app :model-value="v_navigation_drawer.nav.value" ><v-list item-props :items="v_navigation_drawer.nav.items" ></v-list></v-navigation-drawer><v-app-bar dense clipped-left color="dark-v accent-4"  dark app><v-btn @click="open('/VueJS.jl/index.html')"  :icon="v_app_bar.homeb.icon" ><div><v-icon>mdi-home</v-icon></div></v-btn><div>VueJS Documentation</div></v-app-bar></v-app></script><div id="app" ></div><script>xhr=function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}
+const components = {vuechart:VueECharts,QuillEditor:VueQuill.QuillEditor,VgridNumeric:VgridNumeric,RevoGridColumnSelect:RevoGridColumnSelect,RevoColumnType:RevoColumnType}
+const directives = {number:VueNumberFormat.directive}
+const NumberColumnType=VgridNumeric.default
+const SelectTypePlugin=RevoGridColumnSelect.default
+const DateTypePlugin=RevoColumnType
+const app_state = {"st": {"value": null},"submit": function(url, sub_content=null, method, async, no_post=false, mp_mode=false) {
+
+    // JSON object mode
+    if (!mp_mode) {
+
+        if (sub_content==null){
+            content={st:this.st.value,dt_components:this.dt_components.value,dt_live:this.dt_live.value,dial:this.dial.submit(url,null, method, async,true),title_el:this.title_el.value,doc_el:this.doc_el.value};
+            if (no_post) {
+                return content
+            } else {
+                return xhr(JSON.stringify(content), url, method, async)
+            }
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify({st:this.st.value,dt_components:this.dt_components.value,dt_live:this.dt_live.value,dial:this.dial.submit(url,null, method, async,true),title_el:this.title_el.value,doc_el:this.doc_el.value});
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
+                }
+            }
+            if (no_post) {
+                return {st:this.st.value,dt_components:this.dt_components.value,dt_live:this.dt_live.value,dial:this.dial.submit(url,null, method, async,true),title_el:this.title_el.value,doc_el:this.doc_el.value}
+            } else {
+                return xhr(content, url, method, async)
+            }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
+                        } 
+                    }
+                }
+            }
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }
+
+    }         
+},"dt_live": {"items": [{"col_link": "/VueJS.jl/Elements%20Basics.html","col_name": "Elements Basics"},{"col_link": "/VueJS.jl/Basic%20Grid.html","col_name": "Basic Grid"},{"col_link": "/VueJS.jl/Basic%20Binding.html","col_name": "Basic Binding"},{"col_link": "/VueJS.jl/Basic%20Events.html","col_name": "Basic Events"},{"col_link": "/VueJS.jl/Elements%20Special%20args%20Tooltip%20and%20Menu.html","col_name": "Elements Special args Tooltip and Menu"},{"col_link": "/VueJS.jl/Rich%20Text%20Editor.html","col_name": "Rich Text Editor"},{"col_link": "/VueJS.jl/Vue%20Struct.html","col_name": "Vue Struct"},{"col_link": "/VueJS.jl/Iterable%20Vue%20Struct.html","col_name": "Iterable Vue Struct"},{"col_link": "/VueJS.jl/Basic%20Datatables.html","col_name": "Basic Datatables"},{"col_link": "/VueJS.jl/Revogrid%20%28Excel%20Like%20Tables%29.html","col_name": "Revogrid (Excel Like Tables)"},{"col_link": "/VueJS.jl/Navigation%20and%20Bar.html","col_name": "Navigation and Bar"},{"col_link": "/VueJS.jl/Lists.html","col_name": "Lists"},{"col_link": "/VueJS.jl/Computed%2C%20Async%20and%20Mounted.html","col_name": "Computed, Async and Mounted"},{"col_link": "/VueJS.jl/ECharts.html","col_name": "ECharts"}],"headers": [{"key": "col_name","key_orig": "Name","title": "Name"},{"key": "col_link","key_orig": "Link","title": "Link","align": "center"}],"items_per_page": 50,"value": []},"doc_el": {"value": ""},"globals": {},"dt_components": {"items": [{"col_doc": "Simple Element, value attribute is value. Text Box bigger than v-text-field<br>\n<code>\n@el(tf,\"v-textarea\",label=\"Text Field\",rows=10)<br>\n</code>\n","col_component": "v-textarea","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Should be used as a argument in other elements, normally v-btn. Example:<br>\n<code>\nitems=[Dict(\"title\"=>\"Action 1\",\"val\"=>\"BATATA\"),Dict(\"title\"=>\"Action 2\",\"val\"=>\"https://www.amazon.com\")]<br>\n@el(menu,\"v-menu\",items=items,dark=true)<br>\n@el(m2,\"v-btn\",menu=menu,value=\"Menu\")<br>\n</code>\n","col_component": "v-menu","col_library": "vuetify","col_value_attr": null},{"col_doc": "","col_component": "v-radio","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "v-navigation-drawer","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "v-card","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple Element, allows you to select a color using a variety of input methods. Is invoked when v-text-field element has type color!. Can be used without v-text-field<br>\n<code>\n@el(color_picker_in_txt_field, \"v-text-field\", label=\"Color\", type=\"color\", value=\"\")<br>\n@el(color_picker, \"v-color-picker\") # utilization without text field\n</code>\n","col_component": "v-color-picker","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "v-toolbar","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple Element, value attribute is items. Items are the options available to select. Value is the selected item, allows for multiple.<br>\n<code>\n@el(sel,\"v-autocomplete\",items=[\"A\",\"B\",\"C\"],multiple=true)\n</code>\n","col_component": "v-autocomplete","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Component for file upload, allows multiple files. When used, the submit function will submit all the files including contents and filenames. In server side parse the request with:<br>\n    <code>\n    function example(req::HTTP.Request)<br>\n    VueJS.parse(req)\n    </code>","col_component": "v-file-input","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Simple Element, value attribute is value. If type is date invokes a date picker, if type is color invokes a color picker and finally, if type is number when submited the value will be a valid number in JSON.<br>\n    <code>\n    @el(tf1, \"v-text-field\", label=\"Text Field\")                              <br>\n    @el(tf2, \"v-text-field\", label=\"Number Field\", type=\"number\")             <br>\n    @el(tf3, \"v-text-field\", label=\"Date Field\"  , type=\"date\")               <br>\n    @el(tf4, \"v-text-field\", label=\"Date Field\"  , type=\"date\",  date-attrs = Dict(\"type\" => \"month\")) <br>\n    @el(tf5, \"v-text-field\", label=\"Color Field\" , type=\"color\", value=\"\")              <br>\n    @el(tf6, \"v-text-field\", label=\"Color Field\" , type=\"color\", value=\"\", color-attrs = Dict(\"show-swatches\" => true))  <br>\n    </code>\n","col_component": "v-text-field","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Should be used as a argument in other elements. Example:<br>\n<code>\n@el(ttp,\"v-tooltip\",content=\"Tooltip Text\",bottom=true,color=\"rgba(0, 0, 255, 0.5)\")<br>\n@el(ch1,\"v-chip\",content=\"Tooltip\",tooltip=ttp)\n</code>\n","col_component": "v-tooltip","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple Element, value attribute is value. Is invoked when v-text-field element has type date!. Can be used without v-text-field<br>\n<code>\n@el(dpt,\"v-text-field\",label=\"Date\",type=\"date\")<br>\n@el(dp,\"v-date-picker\",color=\"red\") # utilization without text field\n</code>\n","col_component": "v-date-picker","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Spreadsheet Element - Revogrid. See Documentation in <a href=\"https://revolist.github.io/revogrid/guide/\"\"\n<code>\n columns= [Dict(\"name\"=> \"Birth\",\n           \"prop\"=> \"birthdate\",\n           \"columnType\"=> \"date\",\n           \"size\"=> 150),\n      Dict(\"prop\"=> \"name\",\n           \"columnType\"=> \"numeric\",\n           \"name\"=> \"First\"),\n      Dict(\"prop\"=> \"details\",\n           \"name\"=> \"Second\")]\n rows= [Dict(\"birthdate\"=> \"2022-08-24\",\n        \"name\"=> 1000,\n        \"details\"=> \"Item 1\"),\n   Dict(\"birthdate\"=> \"2022-08-24\",\n        \"name\"=> 2000,\n        \"details\"=> \"Item 2\")]\n @el(r1,\"revo-grid\",value=rows,columns=columns,range=true,cols=6)  \n</code>\n","col_component": "revo-grid","col_library": "revo-grid","col_value_attr": "source"},{"col_doc": "The <code> v-progress-linear </code> component is used to convey data visually to users. It's a practical way to show users that a loading or importing process is being executed at the moment.(see examples <a href=\"https://vuetifyjs.com/en/components/progress-linear/\">here</a>)\nDefault v-progress-linear; By default it has width corresponding to the size of its container, is indeterminate and is hidden (inactive).\n<code> @el(loading, \"v-progress-linear\")  </code>\n","col_component": "v-progress-linear","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "v-radio-group","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "vuechart","col_library": "echarts","col_value_attr": null},{"col_doc": "Holder Element, helper function is the correct method to use. Special attributes are rows and cols for number of rows and cols of space.<br>\n<code>\nspacer() # One col of space<br>\nspacer(rows=2,cols=3) # 2 rows and 3 cols of space\n</code>\n","col_component": "v-spacer","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple element, value attribute is input-value. CheckBox ticked value is true, non ticked is false.<br>\n<code>\n@el(sw,\"v-checkbox\",label=\"Check\",value=false)<br>\n</code>\n","col_component": "v-checkbox","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "","col_component": "v-list","col_library": "vuetify","col_value_attr": "items"},{"col_doc": "        The v-expansion-panel component is useful for reducing vertical space with large amounts of information.\n        All v-expansion-panels must be inside a <v-expansion-panels> tag. Here is an example of how to use it:\n\n        @el(ex_panel_1, \"v-expansion-panel\", header = \"Test\",         content = \"drive\")\n        @el(ex_panel_2, \"v-expansion-panel\", header = \"Another test\", content = \"drive\")\n        expansion_panels([ex_panel_1, ex_panel_2], cols = 7)\n","col_component": "v-expansion-panel","col_library": "vuetify","col_value_attr": "value"},{"col_doc": "Simple element, value attribute is input-value. Switch value on is true, off is false.<br>\n<code>\n@el(sw,\"v-switch\",label=\"Switch\",value=false)<br>\n</code>\n","col_component": "v-switch","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Simple Element, value attribute is nothing, when submitted has no value. Can be used with with events,e.g. click (like any other vuetify element)<br>\n<code>\n@el(b,\"v-btn\",content=\"Button\",click=\"submit('login')\",small=true,outlined=true,color=\"indigo\")\n</code>\n","col_component": "v-btn","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple Element, value attribute is value. Important attributes are min and max for minimum and maximum values, thumb-label will show the selected value if true or always for persintent.<br>\n<code>\n@el(slid,\"v-slider\",value=0,min=0,max=50,thumb-label=\"always\",thumb-color=\"red\")\n</code>\n","col_component": "v-slider","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Simple Element, value attribute is value, return is an array of low and high value. Important attributes are min and max for minimum and maximum values, thumb-label will show the selected value if true or always for persintent.<br>\n<code>\n@el(slid,\"v-range-slider\",value=[10,20],min=0,max=50,thumb-label=\"always\",thumb-color=\"red\")\n</code>\n","col_component": "v-range-slider","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Simple Element. Items are the options available to select. Value is the selected items (custom or predefined), allows for multiple.<br>\n<code>\n@el(sel,\"v-combobox\",items=[\"A\",\"B\",\"C\"],multiple=true)\n</code>\n","col_component": "v-combobox","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Holder Element, helper function is the correct method to use. Accepts array of pairs key is Tab Name value is the content<br>\n<code>\ntabs([\"Tab1\"=>[el1,el2,el3],\"Tab2\"=>[el4,[el5,el6]]])\n</code>\n","col_component": "v-tabs","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "The v-snackbar component is used to display a quick message to a user.\n  <code>\n  ### Snackbars\n  @el(snackbar, \"v-snackbar\", content = \"This is a snackbar\", timeout = 3000)\n  </code>\n  Timeout, color and content properties are all binded to the elements data *id*.timeout, *id*.color, *id*.content, so they can be dynamically changed during page interaction.\n","col_component": "v-snackbar","col_library": "vuetify","col_value_attr": null},{"col_doc": "Simple Element, value attribute is items. Items are the options available to select. Value is the selected item, allows for multiple.<br>\n<code>\n@el(sel,\"v-select\",items=[\"A\",\"B\",\"C\"],multiple=true)\n</code>\n","col_component": "v-select","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Simple Element, that can be used to display important information to the user<br>\n<code>\n@el(tf,\"v-alert\",text=\"Alert text\",value=true,type=\"warning\",rows=10)<br>\n</code>\n","col_component": "v-alert","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "The <code> v-treeview </code> component is useful for displaying large amounts of nested data by using a tree format.\nIts behaviour is manipulated by using the various props from the vuetify library. Input data must be in tree format (see example <a href=\"https://github.com/vuetifyjs/vuetify/blob/master/packages/docs/src/examples/v-treeview/usage.vue\">here</a> - items)\n\nDefault v-treeview; By default it is hoverable, dense, aligns to the left and occupies 6 columns\n<code> @el(tree, \"v-treeview\", items=tree_data)  </code>\n\nThe next examples define the behaviour of a v-treeview using the prepend-icon attribute to define an prepend-icon slot. (Ex: File explorer)\nEX-1: \nDefault prepend. Expects \"icon\" field to specify icon information, else defaults to folder.\n<code> @el(tree, \"v-treeview\", items=tree_data,  prepend-icon = true)  </code>\n\nEX-2: \nCustom default icon. Expects \"icon\" field to specify icon information, else is equal to the custom default icon \"mdi-alarm-note\".\n<code> @el(tree, \"v-treeview\", items=tree_data,  prepend-icon = Dict(\"default-icon\" => \"mdi-alarm-note\"))  </code>\n\nEX-3: \nCustom icon field. Expects custom icon field \"file\" to specify icon information, else defaults to folder.\n<code> @el(tree, \"v-treeview\", items=tree_data,  prepend-icon = Dict(\"custom-icon-field\" => \"file\"))  </code>\n\nEX-4: \nCustom prepend. Expects custom icon field \"file\" to specify icon information, else defaults to custom default icon \"mdi-upload\".\n<code> @el(tree, \"v-treeview\", items=tree_data,  prepend-icon = Dict(\"default-icon\" => \"mdi-upload\", \"custom-icon-field\" => \"file\"))  </code>\n","col_component": "v-treeview","col_library": "vuetify","col_value_attr": "model-value"},{"col_doc": "Rich Text Element. See Documentation in <a href=\"https://vueup.github.io/vue-quill/\"\"\n<code>\n @el(q,\"quill-editor\",value=\"<b>Bold Text</b>\",toolbar=[\"strike\",\"bold\", \"italic\", \"underline\",\"link\",\"image\"],cols=4) \n</code>\n","col_component": "quill-editor","col_library": "quill-editor","col_value_attr": "content"},{"col_doc": "Simple Element, value attribute is nothing, when submitted has no value. Can be used with with events,e.g. click (like any other vuetify element)<br>\n<code>\n@el(chip,\"v-chip\",content=\"Chip\",color=\"rgba(200,0,0,0.8)\",text-color=\"white\",click=\"open('https://www.google.com')\")\n</code>\n","col_component": "v-chip","col_library": "vuetify","col_value_attr": null},{"col_doc": "","col_component": "v-data-table","col_library": "vuetify","col_value_attr": "model-value"}],"search": null,"headers": [{"key": "col_component","key_orig": "Component","title": "Component"},{"key": "col_library","key_orig": "Library","title": "Library"},{"key": "col_value_attr","key_orig": "Value_Attr","title": "Value_Attr"},{"key": "col_doc","key_orig": "Doc","title": "Doc","align": "center"}],"items_per_page": 50,"value": []},"dial": {"bt_close": {"outlined": true,"small": true},"submit": function(url, sub_content=null, method, async, no_post=false, mp_mode=false) {
+
+    // JSON object mode
+    if (!mp_mode) {
+
+        if (sub_content==null){
+            content={};
+            if (no_post) {
+                return content
+            } else {
+                return xhr(JSON.stringify(content), url, method, async)
+            }
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify({});
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
+                }
+            }
+            if (no_post) {
+                return {}
+            } else {
+                return xhr(content, url, method, async)
+            }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
+                        } 
+                    }
+                }
+            }
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }
+
+    }         
+},"active": {"value": 0}},"v_navigation_drawer": {"nav": {"items": [{"href": "/VueJS.jl/index.html","title": "Components","prepend-icon": "mdi-table-settings"},{"type": "divider"},{"icon": "mdi-file-document-outline","href": "/VueJS.jl/DocsElements.html","title": "Elements","prepend-icon": "mdi-file-document-outline"},{"icon": "mdi-palette-swatch-outline","href": "/VueJS.jl/DocsStyling.html","title": "Styling","prepend-icon": "mdi-palette-swatch-outline"},{"icon": "mdi-account-group-outline","href": "/VueJS.jl/DocsHolders.html","title": "Holders","prepend-icon": "mdi-account-group-outline"},{"icon": "mdi-domain","href": "/VueJS.jl/DocsStructs.html","title": "Structs","prepend-icon": "mdi-domain"},{"icon": "mdi-laptop","href": "/VueJS.jl/DocsMethods.html","title": "Methods","prepend-icon": "mdi-laptop"},{"icon": "mdi-calculator","href": "/VueJS.jl/DocsComputed.html","title": "Computed","prepend-icon": "mdi-calculator"},{"icon": "mdi-hook","href": "/VueJS.jl/DocsHooks.html","title": "Hooks","prepend-icon": "mdi-hook"},{"icon": "mdi-view-grid-outline","href": "/VueJS.jl/DocsSFC.html","title": "SFC","prepend-icon": "mdi-view-grid-outline"}],"value": null,"expand_on_hover": false}},"title_el": {"value": ""},"v_app_bar": {"homeb": {"icon": true}}}
+const vuetify = Vuetify.createVuetify()
+const app = Vue.createApp({template: '#app-template',components:components,directives:directives,data(){return app_state},methods : {stringToDate : function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}, open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+}, datatable_col_format :  function(item,format_script) {
+return format_script(item)
+}, filter_dt : function(cont,col,value){
+  var col_out=col.replace(" ", "");
+  var col_out=col_out.replace("-","_");
+  var col_out=col_out.replace("%","_perc");
+  var col_out="col_"+col_out.toLowerCase()
+  var obj_search = JSON.parse(cont.search);
+  obj_search[col_out]=value;
+  cont.search=JSON.stringify(obj_search); 
+}, adjust_to_window_size : function(w,h,cols){
+available_w=window.innerWidth/12*cols;
+return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}, getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+, toNumber : function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
+  var n = parseFloat(val);
+    
+  return isNaN(n) ? val : n
+}, setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+, dateToString : function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}, xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+},  }}).use(vuetify).use(AsyncComputed).mount('#app')</script></body></!DOCTYPE html>

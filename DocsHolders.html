@@ -1,0 +1,179 @@
+<!DOCTYPE html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.css"  type="text/css" ></link><script src="https://unpkg.com/vue-async-computed@4.0.1/dist/vue-async-computed.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" ></link><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"  type="text/css" ></link><script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@7.0.3" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js" ></script><script src="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css"  type="text/css" ></link><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGrid/vue3-datagrid.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js" ></script><script src="https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect/RevoGridColumnSelect.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnDate/revogrid-column-date.umd.cjs" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js" ></script><style>  [v-cloak] {display: none}         .ql-container{height:auto} revo-grid .main-viewport {flex-grow:0; height:auto} revo-grid[theme=default] {border:0px}      .custom_css {font-weight:bold;background-color:lightcyan;} .bubble {display:inline-block;padding:0 20px;color:white;border-radius:100%;line-height:24px;} code {background-color:lightcyan;}</style></head><body><script v-cloak id="app-template"  type="text/x-template" ><v-app><v-main><v-container fluid><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><iframe height="1000"  src="/VueJS.jl/docs/notebooks/DocsHolders.html"  width="100%"  frameborder="0" ><div></div></iframe></v-col></v-row></v-container></v-main><v-navigation-drawer @update:model-value="v_navigation_drawer.nav.value= $event;"  :expand-on-hover="v_navigation_drawer.nav.expand_on_hover"  app :model-value="v_navigation_drawer.nav.value" ><v-list item-props :items="v_navigation_drawer.nav.items" ></v-list></v-navigation-drawer><v-app-bar dense clipped-left color="dark-v accent-4"  dark app><v-btn @click="open('/VueJS.jl/index.html')"  :icon="v_app_bar.homeb.icon" ><div><v-icon>mdi-home</v-icon></div></v-btn><div>VueJS Documentation</div></v-app-bar></v-app></script><div id="app" ></div><script>xhr=function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}
+const components = {vuechart:VueECharts,QuillEditor:VueQuill.QuillEditor,VgridNumeric:VgridNumeric,RevoGridColumnSelect:RevoGridColumnSelect,RevoColumnType:RevoColumnType}
+const directives = {number:VueNumberFormat.directive}
+const NumberColumnType=VgridNumeric.default
+const SelectTypePlugin=RevoGridColumnSelect.default
+const DateTypePlugin=RevoColumnType
+const app_state = {"submit": function(url, sub_content=null, method, async, no_post=false, mp_mode=false) {
+
+    // JSON object mode
+    if (!mp_mode) {
+
+        if (sub_content==null){
+            content={};
+            if (no_post) {
+                return content
+            } else {
+                return xhr(JSON.stringify(content), url, method, async)
+            }
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify({});
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
+                }
+            }
+            if (no_post) {
+                return {}
+            } else {
+                return xhr(content, url, method, async)
+            }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
+                        } 
+                    }
+                }
+            }
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }
+
+    }         
+},"globals": {},"v_navigation_drawer": {"nav": {"items": [{"href": "/VueJS.jl/index.html","title": "Components","prepend-icon": "mdi-table-settings"},{"type": "divider"},{"icon": "mdi-file-document-outline","href": "/VueJS.jl/DocsElements.html","title": "Elements","prepend-icon": "mdi-file-document-outline"},{"icon": "mdi-palette-swatch-outline","href": "/VueJS.jl/DocsStyling.html","title": "Styling","prepend-icon": "mdi-palette-swatch-outline"},{"icon": "mdi-account-group-outline","href": "/VueJS.jl/DocsHolders.html","title": "Holders","prepend-icon": "mdi-account-group-outline"},{"icon": "mdi-domain","href": "/VueJS.jl/DocsStructs.html","title": "Structs","prepend-icon": "mdi-domain"},{"icon": "mdi-laptop","href": "/VueJS.jl/DocsMethods.html","title": "Methods","prepend-icon": "mdi-laptop"},{"icon": "mdi-calculator","href": "/VueJS.jl/DocsComputed.html","title": "Computed","prepend-icon": "mdi-calculator"},{"icon": "mdi-hook","href": "/VueJS.jl/DocsHooks.html","title": "Hooks","prepend-icon": "mdi-hook"},{"icon": "mdi-view-grid-outline","href": "/VueJS.jl/DocsSFC.html","title": "SFC","prepend-icon": "mdi-view-grid-outline"}],"value": null,"expand_on_hover": false}},"v_app_bar": {"homeb": {"icon": true}}}
+const vuetify = Vuetify.createVuetify()
+const app = Vue.createApp({template: '#app-template',components:components,directives:directives,data(){return app_state},methods : {stringToDate : function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}, open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+}, datatable_col_format :  function(item,format_script) {
+return format_script(item)
+}, filter_dt : function(cont,col,value){
+  var col_out=col.replace(" ", "");
+  var col_out=col_out.replace("-","_");
+  var col_out=col_out.replace("%","_perc");
+  var col_out="col_"+col_out.toLowerCase()
+  var obj_search = JSON.parse(cont.search);
+  obj_search[col_out]=value;
+  cont.search=JSON.stringify(obj_search); 
+}, adjust_to_window_size : function(w,h,cols){
+available_w=window.innerWidth/12*cols;
+return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}, getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+, toNumber : function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
+  var n = parseFloat(val);
+    
+  return isNaN(n) ? val : n
+}, setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+, dateToString : function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}, xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+},  }}).use(vuetify).use(AsyncComputed).mount('#app')</script></body></!DOCTYPE html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.css"  type="text/css" ></link><script src="https://unpkg.com/vue-async-computed@4.0.1/dist/vue-async-computed.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" ></link><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"  type="text/css" ></link><script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@7.0.3" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js" ></script><script src="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css"  type="text/css" ></link><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGrid/vue3-datagrid.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js" ></script><script src="https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect/RevoGridColumnSelect.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnDate/revogrid-column-date.umd.cjs" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js" ></script><style>  [v-cloak] {display: none}         .ql-container{height:auto} revo-grid .main-viewport {flex-grow:0; height:auto} revo-grid[theme=default] {border:0px}      </style>
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+</head><body><script v-cloak id="app-template"  type="text/x-template" ><v-app><v-main><v-container fluid><div style="padding-bottom:10px" v-pre><pre class='hljl'>
+<span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>el1</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Element 1&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Default Value&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>el2</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-select&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;A&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;A&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;B&quot;</span><span class='hljl-p'>],</span><span class='hljl-n'>update</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;el2.value==&#39;B&#39; ? el1.value=&#39;Triggered Value&#39; : el1.value=&#39;Default Value&#39;&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Trigger&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>el3</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-select&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;blue&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;blue&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;green&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;red&quot;</span><span class='hljl-p'>],</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Color&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>el4</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-checkbox&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Visible&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>el5</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-chip&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>content</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Conditional Chip&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>text</span><span class='hljl-oB'>-</span><span class='hljl-n'>color</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;white&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>v</span><span class='hljl-oB'>-</span><span class='hljl-n'>show</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;el4.value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>binds</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;color&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;el3.value&quot;</span><span class='hljl-p'>),</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>2</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>btn_add</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-btn&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>content</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;ADD&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>click</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;vs.add()&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>outlined</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>color</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;indigo&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>btn_del</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-btn&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>content</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;DELETE&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>click</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;vs.remove(index)&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-n'>outlined</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>color</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;indigo&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-nd'>@st</span><span class='hljl-p'>(</span><span class='hljl-n'>vs</span><span class='hljl-p'>,[</span><span class='hljl-nf'>card</span><span class='hljl-p'>([[</span><span class='hljl-n'>el1</span><span class='hljl-p'>,</span><span class='hljl-n'>el2</span><span class='hljl-p'>,</span><span class='hljl-n'>el3</span><span class='hljl-p'>,</span><span class='hljl-n'>el4</span><span class='hljl-p'>,</span><span class='hljl-n'>el5</span><span class='hljl-p'>,</span><span class='hljl-n'>btn_del</span><span class='hljl-p'>]])],</span><span class='hljl-n'>iterable</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>data</span><span class='hljl-oB'>=</span><span class='hljl-p'>[</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;el1&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;Overrided Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;el3&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;red&quot;</span><span class='hljl-p'>),</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;el3&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;blue&quot;</span><span class='hljl-p'>),</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;el3&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;green&quot;</span><span class='hljl-p'>)])</span><span class='hljl-t'>
+
+</span><span class='hljl-nf'>page</span><span class='hljl-p'>([</span><span class='hljl-n'>btn_add</span><span class='hljl-p'>,</span><span class='hljl-n'>vs</span><span class='hljl-p'>])</span>
+</pre>
+</div><v-row><v-col align-content="center"  md="1"  justify="center"  align="center" ><v-btn :outlined="btn_add.outlined"  @click="vs.add()"  color="indigo" ><div>ADD</div></v-btn></v-col></v-row><v-row><v-container fluid v-for="(vs_item,index) in vs.value" ><v-row><v-col align-content="center"  md="8"  justify="center"  align="center" ><v-card names="Any['v-card-text']" ><v-card-text><v-row><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-text-field label="Element 1"  :model-value="vs_item.el1.value"  @update:model-value="vs_item.el1.value= $event;" ></v-text-field></v-col><v-col align-content="center"  class="flex-grow-1"  md="2"  style="max-width: 12%;"  justify="center"  align="center" ><v-select label="Trigger"  :model-value="vs_item.el2.value"  :items="vs_item.el2.items"  @update:model-value="vs_item.el2.value= $event;vs_item.el2.value=='B' ? vs_item.el1.value='Triggered Value' : vs_item.el1.value='Default Value';" ></v-select></v-col><v-col align-content="center"  class="flex-grow-1"  md="2"  style="max-width: 12%;"  justify="center"  align="center" ><v-select label="Color"  :model-value="vs_item.el3.value"  :items="vs_item.el3.items"  @update:model-value="vs_item.el3.value= $event;" ></v-select></v-col><v-col align-content="center"  class="flex-grow-1"  md="2"  style="max-width: 12%;"  justify="center"  align="center" ><v-checkbox label="Visible"  :false-value="vs_item.el4.false_value"  :true-value="vs_item.el4.true_value"  :model-value="vs_item.el4.value"  @update:model-value="vs_item.el4.value= $event;" ></v-checkbox></v-col><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-chip text-color="white"  v-show="vs_item.el4.value"  :color="vs_item.el3.value" ><div>Conditional Chip</div></v-chip></v-col><v-col align-content="center"  class="flex-grow-1"  md="2"  style="max-width: 12%;"  justify="center"  align="center" ><v-btn :outlined="vs_item.btn_del.outlined"  @click="vs.remove(index)"  color="indigo" ><div>DELETE</div></v-btn></v-col></v-row></v-card-text></v-card></v-col></v-row></v-container></v-row></v-container></v-main></v-app></script><div id="app" ></div><script>xhr=function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}
+const components = {vuechart:VueECharts,QuillEditor:VueQuill.QuillEditor,VgridNumeric:VgridNumeric,RevoGridColumnSelect:RevoGridColumnSelect,RevoColumnType:RevoColumnType}
+const directives = {number:VueNumberFormat.directive}
+const NumberColumnType=VgridNumeric.default
+const SelectTypePlugin=RevoGridColumnSelect.default
+const DateTypePlugin=RevoColumnType
+const app_state = {"submit": function(url, sub_content=null, method, async, no_post=false, mp_mode=false) {
+
+    // JSON object mode
+    if (!mp_mode) {
+
+        if (sub_content==null){
+            content={vs:this.vs.value.map(function(x) { return {el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value}})};
+            if (no_post) {
+                return content
+            } else {
+                return xhr(JSON.stringify(content), url, method, async)
+            }
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify({vs:this.vs.value.map(function(x) { return {el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value}})});
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
+                }
+            }
+            if (no_post) {
+                return {vs:this.vs.value.map(function(x) { return {el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value,el1:x.el1.value,el2:x.el2.value,el3:x.el3.value,el4:x.el4.value}})}
+            } else {
+                return xhr(content, url, method, async)
+            }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
+                        } 
+                    }
+                }
+            }
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }
+
+    }         
+},"globals": {},"btn_add": {"outlined": true},"vs": {"empty_obj": {"el4": {"true-value": true,"value": null,"false-value": false},"el3": {"items": ["blue","green","red"],"value": null},"el1": {"value": null},"el5": {"color": null},"btn_del": {"outlined": true},"el2": {"items": ["A","B"],"value": null}},"add": function(){this.value.push({"el4": {"true-value": true,"value": null,"false-value": false},"el3": {"items": ["blue","green","red"],"value": null},"el1": {"value": null},"el5": {"color": null},"btn_del": {"outlined": true},"el2": {"items": ["A","B"],"value": null}})},"value": [{"el4": {"value": true,"true_value": true,"false_value": false},"el3": {"items": ["blue","green","red"],"value": "red"},"el1": {"value": "Overrided Value"},"el5": {"color": null},"btn_del": {"outlined": true},"el2": {"items": ["A","B"],"value": "A"}},{"el4": {"value": null,"true_value": true,"false_value": false},"el3": {"items": ["blue","green","red"],"value": "blue"},"el1": {"value": null},"el5": {"color": null},"btn_del": {"outlined": true},"el2": {"items": ["A","B"],"value": null}},{"el4": {"value": null,"true_value": true,"false_value": false},"el3": {"items": ["blue","green","red"],"value": "green"},"el1": {"value": null},"el5": {"color": null},"btn_del": {"outlined": true},"el2": {"items": ["A","B"],"value": null}}],"remove": function(i){this.value.splice(i,1)}}}
+const vuetify = Vuetify.createVuetify()
+const app = Vue.createApp({template: '#app-template',components:components,directives:directives,data(){return app_state},methods : {stringToDate : function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}, open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+}, datatable_col_format :  function(item,format_script) {
+return format_script(item)
+}, filter_dt : function(cont,col,value){
+  var col_out=col.replace(" ", "");
+  var col_out=col_out.replace("-","_");
+  var col_out=col_out.replace("%","_perc");
+  var col_out="col_"+col_out.toLowerCase()
+  var obj_search = JSON.parse(cont.search);
+  obj_search[col_out]=value;
+  cont.search=JSON.stringify(obj_search); 
+}, adjust_to_window_size : function(w,h,cols){
+available_w=window.innerWidth/12*cols;
+return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}, getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+, toNumber : function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
+  var n = parseFloat(val);
+    
+  return isNaN(n) ? val : n
+}, setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+, dateToString : function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}, xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+},  }}).use(vuetify).use(AsyncComputed).mount('#app')</script></body></!DOCTYPE html>

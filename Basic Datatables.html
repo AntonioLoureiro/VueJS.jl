@@ -1,0 +1,324 @@
+<!DOCTYPE html><head><meta charset="UTF-8" ></meta><meta name="viewport"  content="width=device-width, initial-scale=1" ></meta><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/vuetify@3.7.6/dist/vuetify.min.css"  type="text/css" ></link><script src="https://unpkg.com/vue-async-computed@4.0.1/dist/vue-async-computed.js" ></script><link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"  type="text/css" ></link><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"  type="text/css" ></link><script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue-echarts@7.0.3" ></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.2.2/vue-router.global.prod.min.js" ></script><script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js" ></script><script src="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.global.prod.min.js" ></script><link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@vueup/vue-quill@1.2.0/dist/vue-quill.snow.prod.min.css"  type="text/css" ></link><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGrid/vue3-datagrid.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnNumeral/vgrid-numeric.umd.js" ></script><script src="https://cdn.jsdelivr.net/npm/@revolist/revo-dropdown@latest/dist/revo-dropdown/revo-dropdown.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnSelect/RevoGridColumnSelect.umd.js" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/RevoGridColumnDate/revogrid-column-date.umd.cjs" ></script><script src="https://s3.eu-central-1.amazonaws.com/antonio.loureiro/JS/vue-number-format.umd.js" ></script><style>  [v-cloak] {display: none}         .ql-container{height:auto} revo-grid .main-viewport {flex-grow:0; height:auto} revo-grid[theme=default] {border:0px}      .custom_css {font-weight:bold;background-color:lightcyan;}</style>
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+</head><body><script v-cloak id="app-template"  type="text/x-template" ><v-app><v-main><v-container fluid><div style="padding-bottom:10px" v-pre><pre class='hljl'>
+<span class='hljl-n'>df</span><span class='hljl-oB'>=</span><span class='hljl-nf'>DataFrame</span><span class='hljl-p'>()</span><span class='hljl-t'>
+</span><span class='hljl-n'>df</span><span class='hljl-p'>[</span><span class='hljl-oB'>!</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-n'>Class</span><span class='hljl-p'>]</span><span class='hljl-oB'>=</span><span class='hljl-nf'>rand</span><span class='hljl-p'>([</span><span class='hljl-s'>&quot;A&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;B&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;C&quot;</span><span class='hljl-p'>],</span><span class='hljl-ni'>10</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>df</span><span class='hljl-p'>[</span><span class='hljl-oB'>!</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-n'>Text</span><span class='hljl-p'>]</span><span class='hljl-oB'>=</span><span class='hljl-nf'>rand</span><span class='hljl-p'>([</span><span class='hljl-s'>&quot;ABC&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;DEF&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;GHI&quot;</span><span class='hljl-p'>],</span><span class='hljl-ni'>10</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-n'>df</span><span class='hljl-p'>[</span><span class='hljl-oB'>!</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-n'>Value</span><span class='hljl-p'>]</span><span class='hljl-oB'>=</span><span class='hljl-nf'>rand</span><span class='hljl-p'>(</span><span class='hljl-ni'>10</span><span class='hljl-p'>)</span><span class='hljl-oB'>.*</span><span class='hljl-ni'>10000</span><span class='hljl-t'> </span><span class='hljl-oB'>.-</span><span class='hljl-ni'>5000</span><span class='hljl-t'>
+
+</span><span class='hljl-nd'>@css</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;.custom_css&quot;</span><span class='hljl-t'> </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;background-color&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;lightcyan&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;font-weight&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;bold&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>st</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-text-field&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Search&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>d1</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-data-table&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-n'>df</span><span class='hljl-p'>,</span><span class='hljl-n'>binds</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;search&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;st.value&quot;</span><span class='hljl-p'>),</span><span class='hljl-n'>row</span><span class='hljl-oB'>-</span><span class='hljl-n'>props</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;cond_form&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>3</span><span class='hljl-p'>,</span><span class='hljl-n'>density</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;comfortable&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>sel</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-select&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Filter Class&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;A&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;B&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;C&quot;</span><span class='hljl-p'>],</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-nfB'>1.2</span><span class='hljl-p'>,</span><span class='hljl-n'>update</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;filter_dt(d2,&#39;Class&#39;,sel.value)&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>rs</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-range-slider&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;Filter Value&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>thumb</span><span class='hljl-oB'>-</span><span class='hljl-n'>label</span><span class='hljl-oB'>=</span><span class='hljl-kc'>true</span><span class='hljl-p'>,</span><span class='hljl-n'>value</span><span class='hljl-oB'>=</span><span class='hljl-p'>[</span><span class='hljl-oB'>-</span><span class='hljl-ni'>5000</span><span class='hljl-p'>,</span><span class='hljl-ni'>5000</span><span class='hljl-p'>],</span><span class='hljl-n'>class</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;pt-4&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-oB'>=-</span><span class='hljl-ni'>5000</span><span class='hljl-p'>,</span><span class='hljl-n'>max</span><span class='hljl-oB'>=</span><span class='hljl-ni'>5000</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-nfB'>1.8</span><span class='hljl-p'>,</span><span class='hljl-n'>update</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;filter_dt(d2,&#39;Value&#39;,rs.value)&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>d2</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-data-table&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-n'>df</span><span class='hljl-p'>,</span><span class='hljl-n'>filter</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Class&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;==&quot;</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;Value&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;range&quot;</span><span class='hljl-p'>),</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>3</span><span class='hljl-p'>,</span><span class='hljl-n'>density</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;comfortable&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>df</span><span class='hljl-p'>[</span><span class='hljl-oB'>!</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-n'>Action</span><span class='hljl-p'>]</span><span class='hljl-oB'>=</span><span class='hljl-n'>df</span><span class='hljl-p'>[</span><span class='hljl-oB'>!</span><span class='hljl-p'>,</span><span class='hljl-oB'>:</span><span class='hljl-n'>Text</span><span class='hljl-p'>]</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>alert</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-alert&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>type</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;success&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>3</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>btn</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-btn&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>content</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;{{item.Text}}&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>binds</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;color&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;item.Value&lt;0 ? &#39;red&#39; : &#39;blue&#39;&quot;</span><span class='hljl-p'>),</span><span class='hljl-n'>click</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;alert.text=item.Text;alert.value=true&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-nd'>@el</span><span class='hljl-p'>(</span><span class='hljl-n'>d3</span><span class='hljl-p'>,</span><span class='hljl-s'>&quot;v-data-table&quot;</span><span class='hljl-p'>,</span><span class='hljl-n'>items</span><span class='hljl-oB'>=</span><span class='hljl-n'>df</span><span class='hljl-p'>,</span><span class='hljl-n'>col_template</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Action&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-n'>btn</span><span class='hljl-p'>),</span><span class='hljl-n'>cols</span><span class='hljl-oB'>=</span><span class='hljl-ni'>3</span><span class='hljl-p'>,</span><span class='hljl-n'>density</span><span class='hljl-oB'>=</span><span class='hljl-s'>&quot;comfortable&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+</span><span class='hljl-nf'>page</span><span class='hljl-p'>([[[</span><span class='hljl-n'>st</span><span class='hljl-p'>,</span><span class='hljl-n'>d1</span><span class='hljl-p'>],</span><span class='hljl-nf'>spacer</span><span class='hljl-p'>(),[[</span><span class='hljl-n'>sel</span><span class='hljl-p'>,</span><span class='hljl-n'>rs</span><span class='hljl-p'>],</span><span class='hljl-n'>d2</span><span class='hljl-p'>],</span><span class='hljl-nf'>spacer</span><span class='hljl-p'>(),[</span><span class='hljl-nf'>spacer</span><span class='hljl-p'>(</span><span class='hljl-n'>rows</span><span class='hljl-oB'>=</span><span class='hljl-ni'>4</span><span class='hljl-p'>),</span><span class='hljl-n'>d3</span><span class='hljl-p'>,</span><span class='hljl-n'>alert</span><span class='hljl-p'>]]],</span><span class='hljl-t'>
+    </span><span class='hljl-n'>methods</span><span class='hljl-oB'>=</span><span class='hljl-nf'>Dict</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;cond_form&quot;</span><span class='hljl-oB'>=&gt;</span><span class='hljl-s'>&quot;&quot;&quot;function(data){return data.item.col_value&lt;0 ? {class:&#39;custom_css&#39;} : {} }&quot;&quot;&quot;</span><span class='hljl-p'>))</span><span class='hljl-t'>   </span>
+</pre>
+</div><v-row><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-row><v-col align-content="center"  md="8"  justify="center"  align="center" ><v-text-field label="Search"  :model-value="st.value"  @update:model-value="st.value= $event;" ></v-text-field></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-data-table density="comfortable"  :search="st.value"  :col_format="d1.col_format"  :row-props="cond_form"  :model-value="d1.value"  :headers="d1.headers"  :items="d1.items"  @update:model-value="d1.value= $event;" ><template v-slot:item.col_value='{item}'><div><div>{{datatable_col_format(item.col_value,d1.col_format.col_value)}}</div></div></template></v-data-table></v-col></v-row></v-col><v-col align-content="center"  md="1"  justify="center"  align="center" ><v-spacer></v-spacer></v-col><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-row><v-col align-content="center"  class="flex-shrink-1"  md="5"  style="max-width: 40%;"  justify="center"  align="center" ><v-select label="Filter Class"  :model-value="sel.value"  :items="sel.items"  @update:model-value="sel.value= $event;filter_dt(d2,'Class',sel.value);" ></v-select></v-col><v-col align-content="center"  class="flex-grow-1"  md="7"  style="max-width: 60%;"  justify="center"  align="center" ><v-range-slider label="Filter Value"  :max="rs.max"  class="pt-4"  :min="rs.min"  :thumb-label="rs.thumb_label"  :model-value="rs.value"  @update:model-value="rs.value= $event;filter_dt(d2,'Value',rs.value);" ></v-range-slider></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-data-table @update:model-value="d2.value= $event;"  :custom-key-filter="d2.custom_key_filter"  density="comfortable"  :col_format="d2.col_format"  :search="d2.search"  :custom-filter="d2.custom_filter"  :headers="d2.headers"  :items="d2.items"  :model-value="d2.value" ><template v-slot:item.col_value='{item}'><div><div>{{datatable_col_format(item.col_value,d2.col_format.col_value)}}</div></div></template></v-data-table></v-col></v-row></v-col><v-col align-content="center"  md="1"  justify="center"  align="center" ><v-spacer></v-spacer></v-col><v-col align-content="center"  md="3"  justify="center"  align="center" ><v-row><v-col align-content="center"  md="4"  justify="center"  align="center" ><v-spacer><div><br><br><br></div></v-spacer></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-data-table density="comfortable"  :col_format="d3.col_format"  :model-value="d3.value"  :headers="d3.headers"  :items="d3.items"  @update:model-value="d3.value= $event;" ><template v-slot:item.col_value='{item}'><div><div>{{datatable_col_format(item.col_value,d3.col_format.col_value)}}</div></div></template><template v-slot:item.col_action='{item}'><div><v-btn @click="alert.text=item.col_text;alert.value=true"  :color="item.col_value<0?'red':'blue'" ><div>{{item.col_text}}</div></v-btn></div></template></v-data-table></v-col></v-row><v-row><v-col align-content="center"  md="12"  justify="center"  align="center" ><v-alert :text="alert.text"  :model-value="alert.value"  :type="alert.type"  :closable="alert.closable"  @update:model-value="alert.value= $event;" ></v-alert></v-col></v-row></v-col></v-row></v-container></v-main></v-app></script><div id="app" ></div><script>xhr=function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+}
+const components = {vuechart:VueECharts,QuillEditor:VueQuill.QuillEditor,VgridNumeric:VgridNumeric,RevoGridColumnSelect:RevoGridColumnSelect,RevoColumnType:RevoColumnType}
+const directives = {number:VueNumberFormat.directive}
+const NumberColumnType=VgridNumeric.default
+const SelectTypePlugin=RevoGridColumnSelect.default
+const DateTypePlugin=RevoColumnType
+const app_state = {"st": {"value": null},"rs": {"max": 5000,"min": -5000,"thumb_label": true,"value": [-5000,5000]},"d3": {"items": [{"col_value": 340.8066693474466,"col_class": "A","col_action": "GHI","col_text": "GHI"},{"col_value": 4329.679307675262,"col_class": "B","col_action": "DEF","col_text": "DEF"},{"col_value": -4833.072493056614,"col_class": "B","col_action": "DEF","col_text": "DEF"},{"col_value": 3958.339514820904,"col_class": "B","col_action": "GHI","col_text": "GHI"},{"col_value": -4458.337367131659,"col_class": "A","col_action": "ABC","col_text": "ABC"},{"col_value": 2250.290658980205,"col_class": "B","col_action": "ABC","col_text": "ABC"},{"col_value": -861.5550540299637,"col_class": "B","col_action": "DEF","col_text": "DEF"},{"col_value": -4248.280225059586,"col_class": "C","col_action": "GHI","col_text": "GHI"},{"col_value": -3861.036906800954,"col_class": "B","col_action": "GHI","col_text": "GHI"},{"col_value": -2721.892679457969,"col_class": "B","col_action": "DEF","col_text": "DEF"}],"headers": [{"key": "col_class","key_orig": "Class","title": "Class"},{"key": "col_text","key_orig": "Text","title": "Text"},{"key": "col_value","key_orig": "Value","title": "Value","align": "end"},{"key": "col_action","key_orig": "Action","title": "Action","align": "center"}],"col_format": {"col_value": x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: 0, maximumFractionDigits: 0})},"value": []},"d1": {"items": [{"col_value": 340.8066693474466,"col_class": "A","col_text": "GHI"},{"col_value": 4329.679307675262,"col_class": "B","col_text": "DEF"},{"col_value": -4833.072493056614,"col_class": "B","col_text": "DEF"},{"col_value": 3958.339514820904,"col_class": "B","col_text": "GHI"},{"col_value": -4458.337367131659,"col_class": "A","col_text": "ABC"},{"col_value": 2250.290658980205,"col_class": "B","col_text": "ABC"},{"col_value": -861.5550540299637,"col_class": "B","col_text": "DEF"},{"col_value": -4248.280225059586,"col_class": "C","col_text": "GHI"},{"col_value": -3861.036906800954,"col_class": "B","col_text": "GHI"},{"col_value": -2721.892679457969,"col_class": "B","col_text": "DEF"}],"search": null,"headers": [{"key": "col_class","key_orig": "Class","title": "Class"},{"key": "col_text","key_orig": "Text","title": "Text"},{"key": "col_value","key_orig": "Value","title": "Value","align": "end"}],"col_format": {"col_value": x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: 0, maximumFractionDigits: 0})},"row_props": null,"value": []},"submit": function(url, sub_content=null, method, async, no_post=false, mp_mode=false) {
+
+    // JSON object mode
+    if (!mp_mode) {
+
+        if (sub_content==null){
+            content={st:this.st.value,d1:this.d1.value,sel:this.sel.value,rs:this.rs.value,d2:this.d2.value,d3:this.d3.value,alert:this.alert.value};
+            if (no_post) {
+                return content
+            } else {
+                return xhr(JSON.stringify(content), url, method, async)
+            }
+        } else {
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            return xhr(JSON.stringify(sub_content), url, method, async)
+        }
+
+    // Multipart mode
+    } else {
+
+        if (sub_content==null){
+            const content = new FormData();
+            json_content=JSON.stringify({st:this.st.value,d1:this.d1.value,sel:this.sel.value,rs:this.rs.value,d2:this.d2.value,d3:this.d3.value,alert:this.alert.value});
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            const arr_files=[];
+            for (const i in arr_files) {
+                for (const el in arr_files[i]){
+                    for (const filei in arr_files[i][el]){
+                    file_name=el+'.'+filei
+                    content.append(file_name,arr_files[i][el][filei]);
+                    }
+                }
+            }
+            if (no_post) {
+                return {st:this.st.value,d1:this.d1.value,sel:this.sel.value,rs:this.rs.value,d2:this.d2.value,d3:this.d3.value,alert:this.alert.value}
+            } else {
+                return xhr(content, url, method, async)
+            }
+        } else{ 
+            if (typeof(sub_content) !== "object") {throw new Error("2nd arg should be object")}
+            const content = new FormData();
+            for (oi in sub_content){
+                if (Array.isArray(sub_content[oi])){
+                    if(typeof(sub_content[oi][0])=="object"){
+                        
+                        for (const el in sub_content[oi]){
+                            if(typeof(sub_content[oi][0].filename=="String")){
+                                file_name='app_state.'+oi+'.value.'+el
+                                content.append(file_name,sub_content[oi][el]);
+                            }
+                        } 
+                    }
+                }
+            }
+            json_content=JSON.stringify(sub_content);
+            const blob = new Blob([json_content], {type: 'application/json'});
+            content.append("json", blob);
+            return xhr(content, url, method, async)
+        }
+
+    }         
+},"globals": {},"sel": {"items": ["","A","B","C"],"value": null},"alert": {"closable": false,"value": null,"text": "","type": "success"},"d2": {"items": [{"col_value": 340.8066693474466,"col_class": "A","col_text": "GHI"},{"col_value": 4329.679307675262,"col_class": "B","col_text": "DEF"},{"col_value": -4833.072493056614,"col_class": "B","col_text": "DEF"},{"col_value": 3958.339514820904,"col_class": "B","col_text": "GHI"},{"col_value": -4458.337367131659,"col_class": "A","col_text": "ABC"},{"col_value": 2250.290658980205,"col_class": "B","col_text": "ABC"},{"col_value": -861.5550540299637,"col_class": "B","col_text": "DEF"},{"col_value": -4248.280225059586,"col_class": "C","col_text": "GHI"},{"col_value": -3861.036906800954,"col_class": "B","col_text": "GHI"},{"col_value": -2721.892679457969,"col_class": "B","col_text": "DEF"}],"search": "{}","headers": [{"key": "col_class","key_orig": "Class","title": "Class"},{"key": "col_text","key_orig": "Text","title": "Text"},{"key": "col_value","key_orig": "Value","title": "Value","align": "end"}],"col_format": {"col_value": x=> x==null ? x : x.toLocaleString('pt',{minimumFractionDigits: 0, maximumFractionDigits: 0})},"custom_key_filter": {"col_value": function (value,item,c){
+    
+var col_name='col_value' 
+var fn=    function(item,filter) {
+        c = (item, filter) =>    {return item >= filter[0] && item <= filter[1] };        
+        if (filter == null || filter == '') { return true; }
+        
+        if (Array.isArray(filter) && 'range'.toLowerCase() !== 'range') {
+            return filter.some((x) => c(value, x));  
+        }
+        return c(item, filter)
+    }
+    
+var filter_values=JSON.parse(item)
+var filter_value=filter_values[col_name];
+               
+return  fn(c["columns"][col_name],filter_value)
+}
+,"col_class": function (value,item,c){
+    
+var col_name='col_class' 
+var fn=    function(item,filter) {
+        c = (item, filter) =>    {return item == filter};        
+        if (filter == null || filter == '') { return true; }
+        
+        if (Array.isArray(filter) && '=='.toLowerCase() !== 'range') {
+            return filter.some((x) => c(value, x));  
+        }
+        return c(item, filter)
+    }
+    
+var filter_values=JSON.parse(item)
+var filter_value=filter_values[col_name];
+               
+return  fn(c["columns"][col_name],filter_value)
+}
+},"custom_filter": function (value,item,c){return true},"value": []}}
+const vuetify = Vuetify.createVuetify()
+const app = Vue.createApp({template: '#app-template',components:components,directives:directives,data(){return app_state},methods : {datatable_col_format :  function(item,format_script) {
+return format_script(item)
+}, getcookie :  function(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+, dateToString : function (val) {
+  return val.getFullYear()+"-"+(val.getMonth()+1).toString().padStart(2,'0')+"-"+val.getDate().toString().padStart(2,'0')
+}, stringToDate : function (val) {
+  var n = Date.parse(val)
+  return isNaN(n) ? val : n
+}, adjust_to_window_size : function(w,h,cols){
+available_w=window.innerWidth/12*cols;
+return {width:""+available_w+"px",height:""+available_w/w*h+"px"}}, cond_form : function(data){return data.item.col_value<0 ? {class:'custom_css'} : {} }, toNumber : function (val,vnumberpath) {
+
+   const args = ['prefix','sufix','separator','decimal']
+   for (i in args) {
+        arg_val=vnumberpath[args[i]]
+        if (typeof arg_val!='string') {
+            continue;}
+
+        if(args[i]=='decimal'){
+            (arg_val.length>0 && arg_val!='.') ? val=val.replaceAll(arg_val,'.') : ''
+        }
+        else{
+            arg_val.length>0 ? val=val.replaceAll(arg_val,'') : ''
+        }};
+  var n = parseFloat(val);
+    
+  return isNaN(n) ? val : n
+}, filter_dt : function(cont,col,value){
+  var col_out=col.replace(" ", "");
+  var col_out=col_out.replace("-","_");
+  var col_out=col_out.replace("%","_perc");
+  var col_out="col_"+col_out.toLowerCase()
+  var obj_search = JSON.parse(cont.search);
+  obj_search[col_out]=value;
+  cont.search=JSON.stringify(obj_search); 
+}, open :  function(url,name) {
+name = typeof name !== 'undefined' ? name : '_self';
+window.open(url,name);
+}, setcookie : function(name, value, days) {
+    var d = new Date;
+    d.setTime(d.getTime() + 24*60*60*1000*days);
+    maxage = days*86400;
+    document.cookie = name + "=" + value + ";path=/;max-age="+maxage+";expires=" + d.toGMTString();
+}
+, xhr : function(contents, url=window.location.pathname, method="POST", async=true) {
+
+    var request = new XMLHttpRequest();
+
+    return new Promise(function (resolve, reject) {
+
+        request.onerror = function() {reject({
+                        status: 'error',
+                        statusText: 'fatal error'});}
+    
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) return;
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText,
+			responseText: request.responseText
+                    });
+            }};
+     request.open(method, url, async);
+     request.send(contents);
+
+	});
+},  },watch : {'alert.value' : function(val,old){val ? setTimeout(()=>{this.alert.value = false}, 4000) : ''}}}).use(vuetify).use(AsyncComputed).mount('#app')</script></body></!DOCTYPE html>

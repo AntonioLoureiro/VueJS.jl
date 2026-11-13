@@ -8,7 +8,7 @@
     {"url":"https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900","version":"5.0","type":"css", "name":"googlefonts.css"},
     {"url":"https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css","version":"7.4.47","type":"css", "name":"materialdesignicons.min.css"},
     
-    {"url":"https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.js","version":"5.6.0","type":"js", "name":"echarts.js"},
+    {"url":"https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.js","version":"6.1.0","type":"js", "name":"echarts.js"},
     {"url":"https://cdn.jsdelivr.net/npm/vue-echarts@7.0.3","version":"7.0.3","type":"js", "name":"vue-echarts.js", "components":{"vuechart":"VueECharts"}},
 
     
